@@ -118,6 +118,45 @@ main{flex:1;padding:2rem 2.2rem 4rem;max-width:1180px;margin:0 auto;width:100%}
 }
 .extra-thumbs a:hover{background:rgba(58,134,255,.15)}
 
+.prog-check{display:inline-flex;align-items:center;cursor:pointer;margin-left:auto;flex-shrink:0}
+.prog-check input{display:none}
+.prog-check .prog-box{width:1.3rem;height:1.3rem;border:2px solid rgba(255,255,255,.22);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:var(--t);font-size:.8rem;font-weight:900;color:var(--navy)}
+.prog-check input:checked + .prog-box{background:var(--teal);border-color:var(--teal)}
+.prog-check input:checked + .prog-box::after{content:'✓'}
+.card.done{border-color:rgba(6,214,160,.35);background:rgba(6,214,160,.04)}
+.card.done .card-title{opacity:.55;text-decoration:line-through}
+.extra-item-row.done{opacity:.5}
+.extra-item-row.done .ti{text-decoration:line-through}
+.list-row.done{opacity:.5}
+.list-row.done .card-title{text-decoration:line-through}
+
+.reset-btn{
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.05em;
+  padding:.4rem .85rem;border-radius:20px;border:1px solid rgba(239,71,111,.35);
+  background:rgba(239,71,111,.08);color:var(--red-l);cursor:pointer;white-space:nowrap;transition:var(--t);
+}
+.reset-btn:hover{background:rgba(239,71,111,.18)}
+
+.theme-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.2rem}
+.theme-chip{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.03em;
+  padding:.42rem 1rem;border-radius:20px;border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.04);color:rgba(250,246,237,.65);cursor:pointer;transition:var(--t);
+}
+.theme-chip:hover{background:rgba(255,255,255,.09)}
+.theme-chip.active{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+.test-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:1.3rem 1.4rem}
+.test-controls{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.test-controls label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:rgba(250,246,237,.6)}
+.test-controls input[type=number]{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);border-radius:8px;
+  padding:.4rem .6rem;color:var(--cream);width:5.5rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;
+}
+#testOutput{
+  width:100%;background:rgba(255,255,255,.05);color:var(--cream);border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;padding:.8rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.5;resize:vertical;
+}
+
 .list-row{
   display:flex;align-items:center;gap:.8rem;padding:.6rem .9rem;border-radius:10px;
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
@@ -151,6 +190,7 @@ footer a{color:var(--gold-l);text-decoration:none}
       <h1>Hub Anglais — Cours &amp; Exercices</h1>
     </div>
     <div class="tab-nav" id="tabNav"></div>
+    <button class="reset-btn" onclick="resetProgress()">↺ Réinitialiser ma progression</button>
   </div>
 
   <main>
@@ -196,6 +236,24 @@ footer a{color:var(--gold-l);text-decoration:none}
       <div class="section-sub">Relative Clauses &amp; Connecteurs — exercices supplémentaires</div>
       <div class="grid" id="complementsGrid"></div>
     </div>
+
+    <div class="tab-panel" data-panel="test">
+      <div class="section-title">🧪 Générateur de test de semestre</div>
+      <div class="section-sub">Sélectionne les thématiques, choisis le nombre de questions, copie la demande générée pour Claude</div>
+      <div class="test-box">
+        <div id="testThemesGrid" class="theme-grid"></div>
+        <div class="test-controls">
+          <label for="testNQuestions">Nombre de questions :</label>
+          <input type="number" id="testNQuestions" value="30" min="5" max="200" step="5">
+          <button class="btn cours" onclick="generateTestRequest()">📋 Générer la demande</button>
+        </div>
+        <div id="testOutputWrap" style="display:none;margin-top:1.1rem">
+          <textarea id="testOutput" readonly rows="7"></textarea>
+          <button id="copyBtn" class="btn wa" style="margin-top:.6rem" onclick="copyTestRequest()">📋 Copier le texte</button>
+          <div style="font-size:.75rem;color:rgba(250,246,237,.45);margin-top:.5rem">Colle ce texte dans une conversation avec Claude (claude.ai) pour recevoir ton test complet avec corrigé et barème.</div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer>
@@ -215,6 +273,7 @@ const TABS = [
   {id:"vocabbase", label:"Vocab. de base"},
   {id:"wrapup", label:"Wrap-up"},
   {id:"complements", label:"Compléments"},
+  {id:"test", label:"🧪 Test"},
 ];
 
 const EXTRA = {"g04": {"label": "G04 — All Tenses", "items": [{"id": "t-052-past-past-perefect", "title": "T 052 past past perefect", "fiche": "g04/t-052-past-past-perefect.pdf", "corrige": "g04/t-052-past-past-perefect.pdf"}, {"id": "t-005-all-tenses", "title": "T 005 all tenses", "fiche": "g04/t-005-all-tenses.pdf", "corrige": "g04/t-005-all-tenses.pdf"}, {"id": "t-006-all-tenses", "title": "T 006 all tenses", "fiche": "g04/t-006-all-tenses.pdf", "corrige": "g04/t-006-all-tenses.pdf"}, {"id": "t-007-all-tenses", "title": "T 007 all tenses", "fiche": "g04/t-007-all-tenses.pdf", "corrige": "g04/t-007-all-tenses.pdf"}, {"id": "t-010-sentence-building", "title": "T 010 sentence building", "fiche": "g04/t-010-sentence-building.pdf", "corrige": "g04/t-010-sentence-building.pdf"}, {"id": "t-011-all-tenses", "title": "T 011 all tenses", "fiche": "g04/t-011-all-tenses.pdf", "corrige": "g04/t-011-all-tenses.pdf"}, {"id": "t-013-all-tenses", "title": "T 013 all tenses", "fiche": "g04/t-013-all-tenses.pdf", "corrige": "g04/t-013-all-tenses.pdf"}, {"id": "t-014-all-tenses", "title": "T 014 all tenses", "fiche": "g04/t-014-all-tenses.pdf", "corrige": "g04/t-014-all-tenses.pdf"}, {"id": "t-015-all-tenses", "title": "T 015 all tenses", "fiche": "g04/t-015-all-tenses.pdf", "corrige": "g04/t-015-all-tenses.pdf"}, {"id": "t-017-all-tenses", "title": "T 017 all tenses", "fiche": "g04/t-017-all-tenses.pdf", "corrige": "g04/t-017-all-tenses.pdf"}, {"id": "t-020-all-tenses", "title": "T 020 all tenses", "fiche": "g04/t-020-all-tenses.pdf", "corrige": "g04/t-020-all-tenses.pdf"}, {"id": "t-029-all-tenses", "title": "T 029 all tenses", "fiche": "g04/t-029-all-tenses.pdf", "corrige": "g04/t-029-all-tenses.pdf"}, {"id": "t-030-all-tenses", "title": "T 030 all tenses", "fiche": "g04/t-030-all-tenses.pdf", "corrige": "g04/t-030-all-tenses.pdf"}, {"id": "t-031-all-tenses-sentence-building", "title": "T 031 all tenses sentence building", "fiche": "g04/t-031-all-tenses-sentence-building.pdf", "corrige": "g04/t-031-all-tenses-sentence-building.pdf"}, {"id": "t-034-all-tenses", "title": "T 034 all tenses", "fiche": "g04/t-034-all-tenses.pdf", "corrige": "g04/t-034-all-tenses.pdf"}, {"id": "t-035-all-tenses", "title": "T 035 all tenses", "fiche": "g04/t-035-all-tenses.pdf", "corrige": "g04/t-035-all-tenses.pdf"}, {"id": "t-040-narrative-tenses", "title": "T 040 narrative tenses", "fiche": "g04/t-040-narrative-tenses.pdf", "corrige": "g04/t-040-narrative-tenses.pdf"}, {"id": "t-046-all-tenses", "title": "T 046 all tenses", "fiche": "g04/t-046-all-tenses.pdf", "corrige": "g04/t-046-all-tenses.pdf"}, {"id": "t-047-all-tenses", "title": "T 047 all tenses", "fiche": "g04/t-047-all-tenses.pdf", "corrige": "g04/t-047-all-tenses.pdf"}, {"id": "t-049-cycling-holiday", "title": "T 049 cycling holiday", "fiche": "g04/t-049-cycling-holiday.pdf", "corrige": "g04/t-049-cycling-holiday.pdf"}, {"id": "t-050-all-tenses", "title": "T 050 all tenses", "fiche": "g04/t-050-all-tenses.pdf", "corrige": "g04/t-050-all-tenses.pdf"}, {"id": "t-051-all-tenses-sentence-building", "title": "T 051 all tenses sentence building", "fiche": "g04/t-051-all-tenses-sentence-building.pdf", "corrige": "g04/t-051-all-tenses-sentence-building.pdf"}, {"id": "t-054-all-tenses", "title": "T 054 all tenses", "fiche": "g04/t-054-all-tenses.pdf", "corrige": "g04/t-054-all-tenses.pdf"}, {"id": "t-056-past-tense-simple-progressive", "title": "T 056 past tense simple progressive", "fiche": "g04/t-056-past-tense-simple-progressive.pdf", "corrige": "g04/t-056-past-tense-simple-progressive.pdf"}], "images": ["g04-images/students_1.png", "g04-images/students_2.png", "g04-images/identifying_1.png", "g04-images/identifying_2.png", "g04-images/identifying_3.png", "g04-images/identifying_4.png"]}, "g07": {"label": "G07 — Conditionals", "items": [{"id": "if001", "title": "If001", "fiche": "g07/if001.pdf", "corrige": "g07/if001.pdf"}, {"id": "if002", "title": "If002", "fiche": "g07/if002.pdf", "corrige": "g07/if002.pdf"}, {"id": "if003", "title": "If003", "fiche": "g07/if003.pdf", "corrige": "g07/if003.pdf"}, {"id": "if004", "title": "If004", "fiche": "g07/if004.pdf", "corrige": "g07/if004.pdf"}, {"id": "if005", "title": "If005", "fiche": "g07/if005.pdf", "corrige": "g07/if005.pdf"}, {"id": "if006", "title": "If006", "fiche": "g07/if006.pdf", "corrige": "g07/if006.pdf"}, {"id": "if009-if-clauses-all-types", "title": "If009 if clauses all types", "fiche": "g07/if009-if-clauses-all-types.pdf", "corrige": "g07/if009-if-clauses-all-types.pdf"}, {"id": "if010-if-clauses-type-1", "title": "If010 if clauses type 1", "fiche": "g07/if010-if-clauses-type-1.pdf", "corrige": "g07/if010-if-clauses-type-1.pdf"}, {"id": "if011-if-clauses-type-2", "title": "If011 if clauses type 2", "fiche": "g07/if011-if-clauses-type-2.pdf", "corrige": "g07/if011-if-clauses-type-2.pdf"}, {"id": "if012-if-clauses-type-3", "title": "If012 if clauses type 3", "fiche": "g07/if012-if-clauses-type-3.pdf", "corrige": "g07/if012-if-clauses-type-3.pdf"}, {"id": "if-exercises-1a4", "title": "IF Clauses — Exercices 1 à 4 (+ rappels)", "fiche": "g07/IF_Exercises_1a4.pdf", "corrige": "g07/IF_Exercises_1a4_correction.docx"}], "refs": [{"title": "Rappel — If clauses", "file": "g07/Rappel.pdf"}, {"title": "Rappel — Conditionnel passé", "file": "g07/Rappel_conditionnel_passe.pdf"}]}, "g13": {"label": "G13 — Quantifiers", "items": [{"id": "q001-some-any-every-no-with-compounds", "title": "Q001 some any every no with compounds", "fiche": "g13/q001-some-any-every-no-with-compounds.pdf", "corrige": "g13/q001-some-any-every-no-with-compounds.pdf"}, {"id": "q002-each-every-one-other-another", "title": "Q002 each every one other another", "fiche": "g13/q002-each-every-one-other-another.pdf", "corrige": "g13/q002-each-every-one-other-another.pdf"}, {"id": "q003-some-any-and-compounds", "title": "Q003 some any and compounds", "fiche": "g13/q003-some-any-and-compounds.pdf", "corrige": "g13/q003-some-any-and-compounds.pdf"}, {"id": "q004-little-a-little-few-a-few", "title": "Q004 little a little few a few", "fiche": "g13/q004-little-a-little-few-a-few.pdf", "corrige": "g13/q004-little-a-little-few-a-few.pdf"}]}, "g19": {"label": "G19 — I wish", "items": [{"id": "if007-i-wish", "title": "If007 i wish", "fiche": "g19/if007-i-wish.pdf", "corrige": "g19/if007-i-wish.pdf"}], "refs": [{"title": "Récapitulatif I wish (image)", "file": "g19/Recap_I_wish.png"}], "images": ["g19-images/exo_1.png", "g19-images/exo_2.png", "g19-images/exo_3.png", "g19-images/exo_4.png"]}, "connecteurs": {"label": "Connecteurs & Linking Words", "items": [{"id": "con001", "title": "Con001", "fiche": "connecteurs/con001.pdf", "corrige": "connecteurs/con001.pdf"}, {"id": "con002", "title": "Con002", "fiche": "connecteurs/con002.pdf", "corrige": "connecteurs/con002.pdf"}, {"id": "con003-connectives-linking-words", "title": "Con003 connectives linking words", "fiche": "connecteurs/con003-connectives-linking-words.pdf", "corrige": "connecteurs/con003-connectives-linking-words.pdf"}, {"id": "con004-connectives-linking-words", "title": "Con004 connectives linking words", "fiche": "connecteurs/con004-connectives-linking-words.pdf", "corrige": "connecteurs/con004-connectives-linking-words.pdf"}], "refs": [{"title": "Tableau des connecteurs (bilingue)", "file": "connecteurs/Tableau_connecteurs_bilingue.pdf"}, {"title": "Tableau des connecteurs (bilingue) v2", "file": "connecteurs/Tableau_connecteurs_bilingue_2.pdf"}]}, "g02": {"label": "G02 — Past Simple", "items": [{"id": "t-056-past-tense-simple-progressive", "title": "T 056 past tense simple progressive", "fiche": "g02/t-056-past-tense-simple-progressive.pdf", "corrige": "g02/t-056-past-tense-simple-progressive.pdf"}]}, "g06": {"label": "G06 — Reported Speech", "items": [{"id": "rs001", "title": "Rs001", "fiche": "g06/rs001.pdf", "corrige": "g06/rs001.pdf"}, {"id": "rs002", "title": "Rs002", "fiche": "g06/rs002.pdf", "corrige": "g06/rs002.pdf"}, {"id": "rs003", "title": "Rs003", "fiche": "g06/rs003.pdf", "corrige": "g06/rs003.pdf"}, {"id": "rs004", "title": "Rs004", "fiche": "g06/rs004.pdf", "corrige": "g06/rs004.pdf"}, {"id": "rs005-reported-speech", "title": "Rs005 reported speech", "fiche": "g06/rs005-reported-speech.pdf", "corrige": "g06/rs005-reported-speech.pdf"}, {"id": "rs006-reported-speech", "title": "Rs006 reported speech", "fiche": "g06/rs006-reported-speech.pdf", "corrige": "g06/rs006-reported-speech.pdf"}, {"id": "rs007-reported-speech", "title": "Rs007 reported speech", "fiche": "g06/rs007-reported-speech.pdf", "corrige": "g06/rs007-reported-speech.pdf"}, {"id": "rs008-reported-questions", "title": "Rs008 reported questions", "fiche": "g06/rs008-reported-questions.pdf", "corrige": "g06/rs008-reported-questions.pdf"}, {"id": "rs009-reported-commands", "title": "Rs009 reported commands", "fiche": "g06/rs009-reported-commands.pdf", "corrige": "g06/rs009-reported-commands.pdf"}, {"id": "rs010-reported-speech", "title": "Rs010 reported speech", "fiche": "g06/rs010-reported-speech.pdf", "corrige": "g06/rs010-reported-speech.pdf"}, {"id": "rs011-reported-speech", "title": "Rs011 reported speech", "fiche": "g06/rs011-reported-speech.pdf", "corrige": "g06/rs011-reported-speech.pdf"}, {"id": "rs012-reported-questions-and-commands", "title": "Rs012 reported questions and commands", "fiche": "g06/rs012-reported-questions-and-commands.pdf", "corrige": "g06/rs012-reported-questions-and-commands.pdf"}, {"id": "rs013-reported-speech", "title": "Rs013 reported speech", "fiche": "g06/rs013-reported-speech.pdf", "corrige": "g06/rs013-reported-speech.pdf"}]}, "g05": {"label": "G05 — Passive Voice", "items": [{"id": "pa001", "title": "Pa001", "fiche": "g05/pa001.pdf", "corrige": "g05/pa001.pdf"}, {"id": "pa003-change-to-passive-voice", "title": "Pa003 change to passive voice", "fiche": "g05/pa003-change-to-passive-voice.pdf", "corrige": "g05/pa003-change-to-passive-voice.pdf"}, {"id": "pa004-change-to-passive-voice", "title": "Pa004 change to passive voice", "fiche": "g05/pa004-change-to-passive-voice.pdf", "corrige": "g05/pa004-change-to-passive-voice.pdf"}, {"id": "pa005-change-to-passive-voice", "title": "Pa005 change to passive voice", "fiche": "g05/pa005-change-to-passive-voice.pdf", "corrige": "g05/pa005-change-to-passive-voice.pdf"}, {"id": "pa006-make-sentences-in-passive-voice", "title": "Pa006 make sentences in passive voice", "fiche": "g05/pa006-make-sentences-in-passive-voice.pdf", "corrige": "g05/pa006-make-sentences-in-passive-voice.pdf"}, {"id": "pa007-verbs-in-passive-voice", "title": "Pa007 verbs in passive voice", "fiche": "g05/pa007-verbs-in-passive-voice.pdf", "corrige": "g05/pa007-verbs-in-passive-voice.pdf"}, {"id": "pa008-change-to-passive-voice", "title": "Pa008 change to passive voice", "fiche": "g05/pa008-change-to-passive-voice.pdf", "corrige": "g05/pa008-change-to-passive-voice.pdf"}, {"id": "pa009-active-and-passive-voice", "title": "Pa009 active and passive voice", "fiche": "g05/pa009-active-and-passive-voice.pdf", "corrige": "g05/pa009-active-and-passive-voice.pdf"}, {"id": "pa010-change-to-passive-voice", "title": "Pa010 change to passive voice", "fiche": "g05/pa010-change-to-passive-voice.pdf", "corrige": "g05/pa010-change-to-passive-voice.pdf"}, {"id": "pa011-change-to-passive-voice", "title": "Pa011 change to passive voice", "fiche": "g05/pa011-change-to-passive-voice.pdf", "corrige": "g05/pa011-change-to-passive-voice.pdf"}, {"id": "pa012-change-to-passive-voice", "title": "Pa012 change to passive voice", "fiche": "g05/pa012-change-to-passive-voice.pdf", "corrige": "g05/pa012-change-to-passive-voice.pdf"}, {"id": "pa013-change-to-passive-voice", "title": "Pa013 change to passive voice", "fiche": "g05/pa013-change-to-passive-voice.pdf", "corrige": "g05/pa013-change-to-passive-voice.pdf"}, {"id": "pa014-change-to-passive-voice", "title": "Pa014 change to passive voice", "fiche": "g05/pa014-change-to-passive-voice.pdf", "corrige": "g05/pa014-change-to-passive-voice.pdf"}, {"id": "pa015-active-or-passive", "title": "Pa015 active or passive", "fiche": "g05/pa015-active-or-passive.pdf", "corrige": "g05/pa015-active-or-passive.pdf"}, {"id": "pa016-local-sports-centre", "title": "Pa016 local sports centre", "fiche": "g05/pa016-local-sports-centre.pdf", "corrige": "g05/pa016-local-sports-centre.pdf"}]}, "g08": {"label": "G08 — Modal Verbs", "items": [{"id": "mod001", "title": "Mod001", "fiche": "g08/mod001.pdf", "corrige": "g08/mod001.pdf"}, {"id": "mod002-must-mustnt-neednt", "title": "Mod002 must mustnt neednt", "fiche": "g08/mod002-must-mustnt-neednt.pdf", "corrige": "g08/mod002-must-mustnt-neednt.pdf"}, {"id": "mod003", "title": "Mod003", "fiche": "g08/mod003.pdf", "corrige": "g08/mod003.pdf"}, {"id": "mod004", "title": "Mod004", "fiche": "g08/mod004.pdf", "corrige": "g08/mod004.pdf"}, {"id": "mod005-modal-verbs", "title": "Mod005 modal verbs", "fiche": "g08/mod005-modal-verbs.pdf", "corrige": "g08/mod005-modal-verbs.pdf"}, {"id": "mod006-modal-verbs", "title": "Mod006 modal verbs", "fiche": "g08/mod006-modal-verbs.pdf", "corrige": "g08/mod006-modal-verbs.pdf"}, {"id": "mod007-modal-verbs", "title": "Mod007 modal verbs", "fiche": "g08/mod007-modal-verbs.pdf", "corrige": "g08/mod007-modal-verbs.pdf"}, {"id": "mod008-modal-verbs", "title": "Mod008 modal verbs", "fiche": "g08/mod008-modal-verbs.pdf", "corrige": "g08/mod008-modal-verbs.pdf"}]}, "g10": {"label": "G10 — Question Tags", "items": [{"id": "qt001-question-tags", "title": "Qt001 question tags", "fiche": "g10/qt001-question-tags.pdf", "corrige": "g10/qt001-question-tags.pdf"}]}, "relative-clauses": {"label": "Relative Clauses", "items": [{"id": "rc001", "title": "Rc001", "fiche": "relative-clauses/rc001.pdf", "corrige": "relative-clauses/rc001.pdf"}, {"id": "rc002", "title": "Rc002", "fiche": "relative-clauses/rc002.pdf", "corrige": "relative-clauses/rc002.pdf"}, {"id": "rc003-relative-clauses", "title": "Rc003 relative clauses", "fiche": "relative-clauses/rc003-relative-clauses.pdf", "corrige": "relative-clauses/rc003-relative-clauses.pdf"}, {"id": "rc004-relative-pronouns", "title": "Rc004 relative pronouns", "fiche": "relative-clauses/rc004-relative-pronouns.pdf", "corrige": "relative-clauses/rc004-relative-pronouns.pdf"}, {"id": "rc005-relative-clauses", "title": "Rc005 relative clauses", "fiche": "relative-clauses/rc005-relative-clauses.pdf", "corrige": "relative-clauses/rc005-relative-clauses.pdf"}]}};
@@ -255,6 +314,33 @@ function waLink(text, url){
   return "https://wa.me/?text=" + encodeURIComponent(text + " " + BASE_URL + "/" + url);
 }
 
+/* ==== Progression (localStorage) ==== */
+function getProgress(){
+  try { return JSON.parse(localStorage.getItem('peip2_progress') || '{}'); } catch(e){ return {}; }
+}
+function isDone(id){ return !!getProgress()[id]; }
+function doneClass(id){ return isDone(id) ? ' done' : ''; }
+function onProgressToggle(id, el){
+  const p = getProgress();
+  if(el.checked) p[id] = true; else delete p[id];
+  localStorage.setItem('peip2_progress', JSON.stringify(p));
+  const container = el.closest('.card') || el.closest('.extra-item-row') || el.closest('.list-row');
+  if(container) container.classList.toggle('done', el.checked);
+}
+function progressCheckbox(id){
+  const checked = isDone(id) ? 'checked' : '';
+  return `<label class="prog-check" onclick="event.stopPropagation()" title="Marquer comme fait">
+    <input type="checkbox" ${checked} onchange="onProgressToggle('${id}', this)">
+    <span class="prog-box"></span>
+  </label>`;
+}
+function resetProgress(){
+  if(confirm('Réinitialiser toute ta progression sur le hub ? Cette action est irréversible.')){
+    localStorage.removeItem('peip2_progress');
+    location.reload();
+  }
+}
+
 function resPair(cls, icon, label, url, waText){
   return `<span class="res-pair">
     <a class="btn ${cls}" href="${url}" target="_blank">${icon} ${label}</a>
@@ -273,10 +359,12 @@ function corrigeBox(id, url){
 function extraItemRow(slug, it){
   const ficheUrl = `extra/${it.fiche}`;
   const label = it.title;
-  return `<div class="extra-item-row">
+  const pid = "extra-" + slug + "-" + it.id;
+  return `<div class="extra-item-row${doneClass(pid)}">
     <span class="ti">${label}</span>
     <a class="btn fiche" href="${ficheUrl}" target="_blank">📄 Ouvrir</a>
     <a class="wa-icon" href="${waLink('PEIP2 — ' + label, ficheUrl)}" target="_blank" title="Envoyer par WhatsApp">💬</a>
+    ${progressCheckbox(pid)}
   </div>`;
 }
 
@@ -334,11 +422,13 @@ function grammaireCard(g){
   const murphy = `cours/${g.n}_MURPHY.pdf`;
   const label = g.n + ' : ' + g.title.replace(/&amp;/g,'&');
   const slug = g.n.toLowerCase();
+  const pid = "g-" + g.n;
   return `
-  <div class="card">
+  <div class="card${doneClass(pid)}">
     <div class="card-head">
       <span class="badge">${g.n}</span>
       <span class="card-title">${g.title}</span>
+      ${progressCheckbox(pid)}
     </div>
     <div class="btn-row">
       ${g.cours ? resPair("cours", "▶", "Cours", g.cours, "PEIP2 — " + label + " (cours animé)") : ""}
@@ -354,11 +444,13 @@ function grammaireCard(g){
 function vocabCard(v){
   const doc = `vocabulaire/${v.n}_VOCABULAIRE.pdf`;
   const label = v.n + ' : ' + v.title.replace(/&amp;/g,'&');
+  const pid = "v-" + v.n;
   return `
-  <div class="card">
+  <div class="card${doneClass(pid)}">
     <div class="card-head">
       <span class="badge v">${v.n}</span>
       <span class="card-title">${v.title}</span>
+      ${progressCheckbox(pid)}
     </div>
     <div class="btn-row">
       ${resPair("fiche", "📄", "Fiche", doc, "PEIP2 — " + label)}
@@ -380,21 +472,25 @@ const verbesItems = [
   {badge:"B4", title:"Test — Batch 4", file:"verbes-irreguliers/batch4_test.html", isHtml:true},
   {badge:"B5", title:"Test — Batch 5", file:"verbes-irreguliers/batch5_test.html", isHtml:true},
 ];
-document.getElementById("verbesGrid").innerHTML = verbesItems.map(it => `
-  <div class="card">
+document.getElementById("verbesGrid").innerHTML = verbesItems.map((it, idx) => {
+  const pid = "verbe-" + idx;
+  return `
+  <div class="card${doneClass(pid)}">
     <div class="card-head">
       <span class="badge irr">${it.badge}</span>
       <span class="card-title">${it.title}</span>
+      ${progressCheckbox(pid)}
     </div>
     <div class="btn-row">
       ${resPair(it.isHtml ? "cours" : "fiche", it.isHtml ? "▶" : "📄", it.isHtml ? "Ouvrir" : "Fiche", it.file, it.title.replace(/&amp;/g,'&'))}
     </div>
-  </div>`).join("");
+  </div>`;
+}).join("");
 
 /* WH Questions */
 document.getElementById("whGrid").innerHTML = `
-  <div class="card">
-    <div class="card-head"><span class="badge wh">WH</span><span class="card-title">Cours — La structure interrogative</span></div>
+  <div class="card${doneClass('wh-cours')}">
+    <div class="card-head"><span class="badge wh">WH</span><span class="card-title">Cours — La structure interrogative</span>${progressCheckbox('wh-cours')}</div>
     <div class="btn-row">
       ${resPair("cours", "▶", "Cours", "wh-questions/WH_cours.html", "PEIP2 — WH Questions : cours")}
       ${resPair("fiche", "📄", "Fiche", "wh-questions/partie1_wh_questions.pdf", "PEIP2 — WH Questions : fiche")}
@@ -405,27 +501,29 @@ let whRows = "";
 for(let i=1;i<=10;i++){
   const num = String(i).padStart(2,"0");
   const file = `wh-questions/WH_exercice_${num}.html`;
+  const pid = "wh-ex-" + i;
   whRows += `
-  <div class="list-row">
+  <div class="list-row${doneClass(pid)}">
     <span class="badge wh">Ex. ${num}</span>
     <span class="card-title">Exercice WH Questions n°${i}</span>
     <div class="btn-row">
       ${resPair("cours", "▶", "Ouvrir", file, "PEIP2 — WH Questions, exercice " + i)}
     </div>
+    ${progressCheckbox(pid)}
   </div>`;
 }
 document.getElementById("whList").innerHTML = whRows;
 
 /* Vocabulaire de base */
 document.getElementById("vocabBaseGrid").innerHTML = `
-  <div class="card">
-    <div class="card-head"><span class="badge v">VOC</span><span class="card-title">Petit vocabulaire anglais illustré</span></div>
+  <div class="card${doneClass('vocabbase-1')}">
+    <div class="card-head"><span class="badge v">VOC</span><span class="card-title">Petit vocabulaire anglais illustré</span>${progressCheckbox('vocabbase-1')}</div>
     <div class="btn-row">
       ${resPair("cours", "▶", "Ouvrir", "vocabulaire-base/petit_vocabulaire_anglais.html", "PEIP2 — Petit vocabulaire anglais")}
     </div>
   </div>
-  <div class="card">
-    <div class="card-head"><span class="badge v">QUIZ</span><span class="card-title">Quiz de vocabulaire</span></div>
+  <div class="card${doneClass('vocabbase-2')}">
+    <div class="card-head"><span class="badge v">QUIZ</span><span class="card-title">Quiz de vocabulaire</span>${progressCheckbox('vocabbase-2')}</div>
     <div class="btn-row">
       ${resPair("cours", "▶", "Ouvrir", "vocabulaire-base/quiz_vocabulaire.html", "PEIP2 — Quiz de vocabulaire")}
     </div>
@@ -433,8 +531,8 @@ document.getElementById("vocabBaseGrid").innerHTML = `
 
 /* Wrap-up */
 document.getElementById("wrapupGrid").innerHTML = `
-  <div class="card">
-    <div class="card-head"><span class="badge">✓</span><span class="card-title">Quiz de synthèse — Grammaire 1, 2 &amp; 3</span></div>
+  <div class="card${doneClass('wrapup-1')}">
+    <div class="card-head"><span class="badge">✓</span><span class="card-title">Quiz de synthèse — Grammaire 1, 2 &amp; 3</span>${progressCheckbox('wrapup-1')}</div>
     <div class="btn-row">
       ${resPair("cours", "▶", "Ouvrir", "wrapup/quiz_grammaire_123.html", "PEIP2 — Quiz de synthèse Grammaire 1-2-3")}
     </div>
@@ -451,24 +549,73 @@ function complementCard(slug, badgeCls, badgeTxt){
       <span class="ti" style="color:var(--red-l)">🔒 Corrigé complet + rappel grammatical</span>
       <a class="btn prof" href="${corrigePage}" target="_blank">Ouvrir le corrigé</a>
     </div>` : "";
+  const pid = "comp-" + slug;
   return `
-  <div class="card" style="grid-column:1/-1">
-    <div class="card-head"><span class="badge ${badgeCls}">${badgeTxt}</span><span class="card-title">${data.label}</span></div>
+  <div class="card${doneClass(pid)}" style="grid-column:1/-1">
+    <div class="card-head"><span class="badge ${badgeCls}">${badgeTxt}</span><span class="card-title">${data.label}</span>${progressCheckbox(pid)}</div>
     ${rappelButtons(slug)}
     <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.3rem">${items}${refs}${corrigeRow}</div>
   </div>`;
 }
 function extraItemRowStandalone(slug, it){
   const ficheUrl = `extra/${it.fiche}`;
-  return `<div class="extra-item-row">
+  const pid = "extra-" + slug + "-" + it.id;
+  return `<div class="extra-item-row${doneClass(pid)}">
     <span class="ti">${it.title}</span>
     <a class="btn fiche" href="${ficheUrl}" target="_blank">📄 Ouvrir</a>
     <a class="wa-icon" href="${waLink('PEIP2 — ' + it.title, ficheUrl)}" target="_blank" title="Envoyer par WhatsApp">💬</a>
+    ${progressCheckbox(pid)}
   </div>`;
 }
 document.getElementById("complementsGrid").innerHTML =
   complementCard("relative-clauses", "purple", "REL") +
   complementCard("connecteurs", "teal", "CON");
+
+/* Générateur de test de semestre */
+const TEST_THEMES = [
+  ...GRAMMAIRE.map(g => ({id:g.n, label:g.n+' — '+g.title.replace(/&amp;/g,'&')})),
+  {id:"vocab", label:"Vocabulaire (V01–V05)"},
+  {id:"verbes", label:"Verbes irréguliers"},
+  {id:"wh", label:"WH Questions"},
+  {id:"vocabbase", label:"Vocabulaire de base"},
+  {id:"relative-clauses", label:"Relative Clauses"},
+  {id:"connecteurs", label:"Connecteurs & Linking Words"},
+];
+const selectedThemes = new Set();
+
+document.getElementById("testThemesGrid").innerHTML = TEST_THEMES.map(t =>
+  `<button type="button" class="theme-chip" data-id="${t.id}">${t.label}</button>`
+).join("");
+document.getElementById("testThemesGrid").addEventListener("click", e => {
+  const btn = e.target.closest(".theme-chip");
+  if(!btn) return;
+  const id = btn.dataset.id;
+  if(selectedThemes.has(id)){ selectedThemes.delete(id); btn.classList.remove("active"); }
+  else { selectedThemes.add(id); btn.classList.add("active"); }
+});
+
+function generateTestRequest(){
+  const n = document.getElementById("testNQuestions").value || 30;
+  if(selectedThemes.size===0){
+    alert("Sélectionne au moins une thématique.");
+    return;
+  }
+  const labels = TEST_THEMES.filter(t => selectedThemes.has(t.id)).map(t => t.label);
+  const text = `Construis-moi un test de semestre PEIP2 de ${n} questions couvrant les thématiques suivantes :\n- ${labels.join("\n- ")}\n\nRépartis les questions proportionnellement entre ces thématiques, mélange grammaire et vocabulaire, difficulté progressive (A2 à B2), et fournis un corrigé séparé avec barème sur ${n} points.`;
+  document.getElementById("testOutput").value = text;
+  document.getElementById("testOutputWrap").style.display = "block";
+}
+
+function copyTestRequest(){
+  const el = document.getElementById("testOutput");
+  el.select();
+  navigator.clipboard.writeText(el.value).then(() => {
+    const btn = document.getElementById("copyBtn");
+    const old = btn.textContent;
+    btn.textContent = "✓ Copié !";
+    setTimeout(() => btn.textContent = old, 1500);
+  });
+}
 
 /* Tabs */
 const tabNav = document.getElementById("tabNav");
