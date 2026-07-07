@@ -222,18 +222,18 @@
       {
         "id": "if-exercises-1a4",
         "title": "IF Clauses — Exercices 1 à 4 (+ rappels)",
-        "fiche": "g07/IF_Exercises_1a4.docx",
+        "fiche": "g07/IF_Exercises_1a4.pdf",
         "corrige": "g07/IF_Exercises_1a4_correction.docx"
       }
     ],
     "refs": [
       {
         "title": "Rappel — If clauses",
-        "file": "g07/Rappel.docx"
+        "file": "g07/Rappel.pdf"
       },
       {
         "title": "Rappel — Conditionnel passé",
-        "file": "g07/Rappel_conditionnel_passe.docx"
+        "file": "g07/Rappel_conditionnel_passe.pdf"
       }
     ]
   },
@@ -320,11 +320,11 @@
     "refs": [
       {
         "title": "Tableau des connecteurs (bilingue)",
-        "file": "connecteurs/Tableau_connecteurs_bilingue.docx"
+        "file": "connecteurs/Tableau_connecteurs_bilingue.pdf"
       },
       {
         "title": "Tableau des connecteurs (bilingue) v2",
-        "file": "connecteurs/Tableau_connecteurs_bilingue_2.docx"
+        "file": "connecteurs/Tableau_connecteurs_bilingue_2.pdf"
       }
     ]
   },
