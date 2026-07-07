@@ -287,6 +287,20 @@ const THEME_CORRIGE_PAGE = {
   "relative-clauses":"prof-extra/relative-clauses/corrige.html"
 };
 
+const THEME_RAPPEL = {
+  g02:"extra/g02/", g04:"extra/g04/", g05:"extra/g05/", g06:"extra/g06/", g07:"extra/g07/",
+  g08:"extra/g08/", g10:"extra/g10/", g13:"extra/g13/", g19:"extra/g19/", "relative-clauses":"extra/relative-clauses/"
+};
+
+function rappelButtons(slug, label){
+  const base = THEME_RAPPEL[slug];
+  if(!base) return "";
+  return `<div class="btn-row" style="margin-top:.2rem">
+    <a class="btn cours" href="${base}rappel.html" target="_blank">▶ Projeter le rappel</a>
+    <a class="btn murphy" href="${base}rappel.pdf" target="_blank">📥 Télécharger (PDF)</a>
+  </div>`;
+}
+
 function extraBlock(slug){
   const data = EXTRA[slug];
   if(!data) return "";
@@ -331,6 +345,7 @@ function grammaireCard(g){
       ${resPair("fiche", "📄", "Fiche", fiche, "PEIP2 — " + label + " (fiche)")}
       ${resPair("murphy", "＋", "Murphy", murphy, "PEIP2 — " + label + " (supplément Murphy)")}
     </div>
+    ${rappelButtons(slug)}
     ${extraBlock(slug)}
     ${corrigeBox("corrige-" + g.n, prof)}
   </div>`;
@@ -439,6 +454,7 @@ function complementCard(slug, badgeCls, badgeTxt){
   return `
   <div class="card" style="grid-column:1/-1">
     <div class="card-head"><span class="badge ${badgeCls}">${badgeTxt}</span><span class="card-title">${data.label}</span></div>
+    ${rappelButtons(slug)}
     <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.3rem">${items}${refs}${corrigeRow}</div>
   </div>`;
 }
