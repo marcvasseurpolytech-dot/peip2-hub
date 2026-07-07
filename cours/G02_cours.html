@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G02 — The Past Simple · Polytech Lille</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #0d1b2a;
+  --gold:   #C9A020;
+  --gold-l: #e8b84b;
+  --cream:  #FAF6ED;
+  --blue:   #3a86ff;
+  --blue-l: #a8c8ff;
+  --teal:   #06d6a0;
+  --teal-l: #a8f0de;
+  --red:    #ef476f;
+  --red-l:  #ffb3c6;
+  --amber:  #ffd166;
+  --purple: #9b5de5;
+  --purp-l: #d4a8ff;
+  --t: .34s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Source Serif 4',Georgia,serif;background:var(--navy);color:var(--cream)}
+
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift 22s ease-in-out infinite alternate}
+.orb1{width:650px;height:650px;background:rgba(155,93,229,.09);top:-200px;left:-160px}
+.orb2{width:500px;height:500px;background:rgba(6,214,160,.07);bottom:-140px;right:-100px;animation-delay:-9s}
+.orb3{width:380px;height:380px;background:rgba(201,160,32,.06);top:30%;left:42%;animation-delay:-17s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(48px,32px)}}
+
+#app{width:100vw;height:100vh;display:flex;flex-direction:column;position:relative;z-index:1}
+
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.65rem 2.8rem;
+  background:rgba(13,27,42,.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  flex-shrink:0;z-index:20;
+}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.pill{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;
+  padding:.3rem .9rem;border-radius:20px;
+  background:rgba(155,93,229,.22);color:var(--purp-l);
+  border:1px solid rgba(155,93,229,.35);
+}
+.sc{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:rgba(250,246,237,.3)}
+
+/* SLIDES */
+.sa{flex:1;position:relative;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  padding:2.2rem 3.8rem 1.4rem;
+  overflow-y:auto;
+  opacity:0;transform:translateX(70px);
+  transition:opacity .36s var(--t),transform .36s var(--t);
+  pointer-events:none;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-70px)}
+
+/* BOTTOM NAV */
+.bnav{
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  padding:.9rem 2rem;
+  background:rgba(13,27,42,.92);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,.07);
+  flex-shrink:0;z-index:20;
+}
+.nb{font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:.06em;padding:.55rem 2rem;border-radius:30px;border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--cream);cursor:pointer;transition:var(--t)}
+.nb:hover{background:rgba(255,255,255,.09)}
+.nb.prim{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+.nb.prim:hover{background:var(--gold-l)}
+.dots{display:flex;gap:.45rem;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:var(--t)}
+.dot.on{background:var(--gold);transform:scale(1.4)}
+
+/* TYPOGRAPHY */
+.stag{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.55rem;animation:fuA .5s both}
+.stag.p{color:var(--purp-l)}.stag.r{color:var(--red-l)}.stag.g{color:var(--gold)}.stag.t{color:var(--teal-l)}.stag.a{color:var(--amber)}
+.stitle{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.8vw,3rem);font-weight:900;line-height:1.1;margin-bottom:.85rem;animation:fuA .5s .07s both}
+.slead{font-size:1.05rem;color:rgba(250,246,237,.68);line-height:1.65;margin-bottom:1rem;max-width:80ch;animation:fuA .5s .12s both}
+
+@keyframes fuA{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+/* FORMULA BOXES */
+.fbox{border-radius:14px;padding:1.1rem 1.6rem;font-family:'JetBrains Mono',monospace;font-size:1.05rem;line-height:2;border-left:5px solid;margin-bottom:1rem;animation:fuA .5s .14s both}
+.fbox.p{background:rgba(155,93,229,.13);border-color:var(--purple)}
+.fbox.r{background:rgba(239,71,111,.12);border-color:var(--red)}
+.fbox.g{background:rgba(201,160,32,.13);border-color:var(--gold)}
+.fbox.t{background:rgba(6,214,160,.12);border-color:var(--teal)}
+.fbox.a{background:rgba(255,209,102,.12);border-color:var(--amber)}
+.fp{display:inline-block;border-radius:7px;padding:.05rem .55rem;margin:0 .12rem;font-weight:700;font-size:1rem}
+.fp-su{background:rgba(255,255,255,.12);color:#ccc}
+.fp-vb{background:rgba(6,214,160,.28);color:var(--teal-l)}
+.fp-ed{background:rgba(255,209,102,.3);color:var(--amber)}
+.fp-no{background:rgba(239,71,111,.28);color:var(--red-l)}
+.fp-did{background:rgba(169,123,212,.3);color:var(--purp-l)}
+.fp-was{background:rgba(58,134,255,.28);color:var(--blue-l)}
+
+/* EXAMPLES */
+.exlist{display:flex;flex-direction:column;gap:.52rem}
+.ex{border-radius:10px;padding:.72rem 1.1rem;border-left:3px solid;animation:fuA .45s both}
+.ex.p{background:rgba(155,93,229,.1);border-color:var(--purple)}
+.ex.r{background:rgba(239,71,111,.1);border-color:var(--red)}
+.ex.g{background:rgba(201,160,32,.1);border-color:var(--gold)}
+.ex.t{background:rgba(6,214,160,.1);border-color:var(--teal)}
+.ex.a{background:rgba(255,209,102,.1);border-color:var(--amber)}
+.ex:nth-child(1){animation-delay:.08s}.ex:nth-child(2){animation-delay:.15s}
+.ex:nth-child(3){animation-delay:.22s}.ex:nth-child(4){animation-delay:.29s}.ex:nth-child(5){animation-delay:.36s}
+.en{font-size:1.05rem;font-weight:600;color:var(--cream);margin-bottom:.18rem}
+.en .hp{color:var(--purp-l);font-style:italic}
+.en .hr{color:var(--red-l);font-style:italic}
+.en .hg{color:var(--amber);font-style:italic}
+.en .ht{color:var(--teal-l);font-style:italic}
+.fr{font-size:.88rem;color:rgba(250,246,237,.42);font-style:italic}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;padding:.38rem 1rem;border-radius:24px;animation:pop .4s both}
+.chip.p{background:rgba(155,93,229,.2);color:var(--purp-l);border:1px solid rgba(155,93,229,.35)}
+.chip.g{background:rgba(201,160,32,.18);color:var(--amber);border:1px solid rgba(201,160,32,.32)}
+.chip:nth-child(1){animation-delay:.05s}.chip:nth-child(2){animation-delay:.1s}
+.chip:nth-child(3){animation-delay:.15s}.chip:nth-child(4){animation-delay:.2s}
+.chip:nth-child(5){animation-delay:.25s}.chip:nth-child(6){animation-delay:.3s}
+.chip:nth-child(7){animation-delay:.35s}.chip:nth-child(8){animation-delay:.4s}
+.chip:nth-child(9){animation-delay:.45s}
+
+/* BAND */
+.band{border-radius:12px;padding:.9rem 1.4rem;font-size:.98rem;line-height:1.6;margin-bottom:.8rem;animation:fuA .5s .2s both}
+.band.p{background:rgba(155,93,229,.12);border:1px solid rgba(155,93,229,.25)}
+.band.r{background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.23)}
+.band.g{background:rgba(201,160,32,.1);border:1px solid rgba(201,160,32,.23)}
+.band.t{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.23)}
+.band.a{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.23)}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1.1rem 1.3rem;animation:fuA .5s both}
+.card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.12s}
+.card:nth-child(3){animation-delay:.19s}.card:nth-child(4){animation-delay:.26s}
+.clabel{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;opacity:.55;margin-bottom:.45rem}
+
+/* FORMATION TABLE */
+.ftbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin:.5rem 0}
+.ftbl th{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;text-align:left;color:rgba(250,246,237,.4)}
+.ftbl td{padding:.65rem .9rem;font-size:.95rem;background:rgba(255,255,255,.05)}
+.ftbl tr td:first-child{border-radius:9px 0 0 9px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;color:var(--purp-l)}
+.ftbl tr td:last-child{border-radius:0 9px 9px 0;color:rgba(250,246,237,.5);font-size:.88rem;font-style:italic}
+.ftbl tr td:nth-child(2){font-family:'JetBrains Mono',monospace;color:var(--cream)}
+.ftbl tr:hover td{background:rgba(255,255,255,.08)}
+
+/* ORTHO TABLE */
+.otbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin:.5rem 0}
+.otbl th{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;padding:.38rem .9rem;text-align:left;color:rgba(250,246,237,.38)}
+.otbl td{padding:.62rem .9rem;font-size:.93rem;background:rgba(255,255,255,.045)}
+.otbl tr td:first-child{border-radius:9px 0 0 9px;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--amber)}
+.otbl tr td:last-child{border-radius:0 9px 9px 0}
+.otbl tr td:nth-child(2){font-family:'JetBrains Mono',monospace;color:var(--teal-l)}
+.otbl tr td:nth-child(3){font-family:'JetBrains Mono',monospace;color:var(--cream)}
+
+/* WAS/WERE TABLE */
+.wtbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin:.5rem 0}
+.wtbl th{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;padding:.38rem .9rem;text-align:left;color:rgba(250,246,237,.38)}
+.wtbl td{padding:.65rem .9rem;font-size:.95rem;background:rgba(255,255,255,.045)}
+.wtbl tr td:first-child{border-radius:9px 0 0 9px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:rgba(250,246,237,.45)}
+.wtbl tr td:nth-child(2){font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue-l)}
+.wtbl tr td:last-child{border-radius:0 9px 9px 0;font-size:.88rem;font-style:italic;color:rgba(250,246,237,.45)}
+
+/* ANIM ORTHO */
+.oa-stage{display:flex;flex-direction:column;gap:1.3rem;margin-top:.3rem}
+.oa-row{display:flex;align-items:center;gap:0;font-family:'JetBrains Mono',monospace;font-size:1.9rem;font-weight:700;min-height:3.2rem;opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s}
+.oa-row.vis{opacity:1;transform:translateY(0)}
+.oar-label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,246,237,.3);font-weight:400;min-width:9rem;text-align:right;margin-right:1.4rem}
+.oar-arrow{color:var(--gold);font-size:1.3rem;margin:0 .9rem}
+.oar-note{font-family:'Source Serif 4',serif;font-size:.95rem;color:rgba(250,246,237,.38);margin-left:1.2rem;font-style:italic;font-weight:400}
+/* tokens */
+.tok-base{color:var(--cream)}
+.tok-ed{display:inline-block;color:var(--amber);opacity:0;transform:translateX(50px) translateY(-12px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+.tok-ed.land{opacity:1;transform:translateX(0) translateY(0)}
+.tok-e{display:inline-block;color:var(--red-l);transition:opacity .42s,transform .42s,max-width .42s;max-width:1.4ch;overflow:hidden}
+.tok-e.gone{opacity:0;transform:translateY(-18px) scale(.4);max-width:0}
+.tok-d{display:inline-block;color:var(--amber);opacity:0;transform:translateX(50px) translateY(-12px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+.tok-d.land{opacity:1;transform:translateX(0) translateY(0)}
+.tok-y{display:inline-block;color:var(--amber);transition:opacity .4s,transform .4s,max-width .4s;max-width:2ch;overflow:hidden}
+.tok-y.gone{opacity:0;transform:translateY(-18px) scale(.4);max-width:0}
+.tok-ied{display:inline-block;color:var(--amber);opacity:0;transform:translateX(50px) translateY(-12px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+.tok-ied.land{opacity:1;transform:translateX(0) translateY(0)}
+.tok-cvc{display:inline-block;color:var(--teal-l)}
+.tok-dbl{display:inline-block;color:var(--red-l);opacity:0;transform:translateY(-20px) scale(.3);transition:opacity .42s .1s,transform .42s .1s cubic-bezier(.34,1.56,.64,1)}
+.tok-dbl.show{opacity:1;transform:translateY(0) scale(1)}
+.tok-edcvc{display:inline-block;color:var(--amber);opacity:0;transform:translateX(50px) translateY(-12px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+.tok-edcvc.land{opacity:1;transform:translateX(0) translateY(0)}
+
+.play-btn{display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;letter-spacing:.08em;padding:.5rem 1.5rem;border-radius:28px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:var(--t);margin-top:.6rem;align-self:flex-start}
+.play-btn:hover{background:rgba(201,160,32,.14)}
+.play-btn.busy{opacity:.35;pointer-events:none}
+
+.mt{margin-top:.7rem}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+
+  <div class="topbar">
+    <div class="brand">Marc Vasseur · Polytech Lille · Anglais</div>
+    <div class="pill">G02 · PEIP2 Remédiation · S3 — Cours 1 · A2–B1</div>
+    <div class="sc" id="sc">1 / 7</div>
+  </div>
+
+  <div class="sa" id="sa"></div>
+
+  <div class="bnav">
+    <button class="nb" onclick="go(-1)">◀ Précédent</button>
+    <div class="dots" id="dots"></div>
+    <button class="nb prim" onclick="go(1)">Suivant ▶</button>
+  </div>
+</div>
+
+<script>
+const SLIDES = [
+
+/* 0 — TITRE */
+{html:`
+<div style="display:flex;flex-direction:column;justify-content:center;height:100%;gap:1.8rem">
+  <div class="stag p" style="font-size:.85rem">G02 · The Past Simple</div>
+  <div class="stitle" style="font-size:clamp(2.6rem,5.5vw,4.4rem)">Le <span style="color:var(--purple)">prétérit</span><br>simple</div>
+  <div class="slead" style="font-size:1.12rem">Le prétérit exprime une action <strong style="color:var(--cream)">terminée dans le passé</strong>, à un moment précis ou indéfini — mais clairement <strong style="color:var(--cream)">révolu</strong>.</div>
+  <div class="band p" style="font-size:1rem;animation-delay:.3s">
+    🧠 Si tu peux dire <strong style="color:var(--purp-l)">« hier »</strong> ou donner une <strong style="color:var(--purp-l)">heure / date précise</strong> → prétérit.<br>
+    Le passé, c'est révolu.
+  </div>
+  <div class="chips">
+    <span class="chip g">yesterday</span><span class="chip g">last week / month / year</span>
+    <span class="chip g">in 2010</span><span class="chip g">… ago</span>
+    <span class="chip g">when I was young</span><span class="chip g">once</span>
+    <span class="chip g">at that time</span>
+  </div>
+</div>`},
+
+/* 1 — FORMATION */
+{html:`
+<div class="stag p">The Past Simple · Formation</div>
+<div class="stitle">La structure de base</div>
+<div class="slead">Quatre structures à connaître — la même logique pour tous les sujets.</div>
+<table class="ftbl">
+  <thead><tr><th>Structure</th><th>Exemple</th><th>Remarque</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Verbes réguliers</td>
+      <td>work → <span style="color:var(--amber)">worked</span> · stop → <span style="color:var(--amber)">stopped</span> · study → <span style="color:var(--amber)">studied</span></td>
+      <td>Règle +ed. Doublage CVC. y→ied.</td>
+    </tr>
+    <tr>
+      <td>Verbes irréguliers</td>
+      <td>go → <span style="color:var(--purp-l)">went</span> · be → <span style="color:var(--purp-l)">was/were</span> · have → <span style="color:var(--purp-l)">had</span></td>
+      <td>À apprendre par cœur — voir G11</td>
+    </tr>
+    <tr>
+      <td>Négatif</td>
+      <td>I / he / we <span style="color:var(--red-l)">didn't</span> + <span style="color:var(--teal-l)">V base</span></td>
+      <td>didn't = did not. Pas de -ed après !</td>
+    </tr>
+    <tr>
+      <td>Interrogatif</td>
+      <td><span style="color:var(--red-l)">Did</span> you / he / they + <span style="color:var(--teal-l)">V base</span> ?</td>
+      <td>Did pour tous. Pas de -ed ni -s.</td>
+    </tr>
+  </tbody>
+</table>
+<div class="band p mt">
+  ⚠ Après <strong style="color:var(--purp-l)">didn't</strong> et <strong style="color:var(--purp-l)">Did</strong>, le verbe revient toujours à la <strong style="color:var(--teal-l)">base</strong> (infinitif sans TO) — jamais de -ed, jamais de -s.
+</div>`},
+
+/* 2 — USAGES */
+{html:`
+<div class="stag p">The Past Simple · Usages</div>
+<div class="stitle">Quand l'utiliser ?</div>
+<div class="g2">
+  <div>
+    <div class="card" style="border-color:rgba(155,93,229,.3);margin-bottom:.85rem">
+      <div class="clabel" style="color:var(--purp-l)">✔ Action ponctuelle passée</div>
+      <div class="exlist">
+        <div class="ex p" style="animation:none"><div class="en">She <span class="hp">left</span> the office at 5 PM.</div><div class="fr">Elle a quitté le bureau à 17h.</div></div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(155,93,229,.3)">
+      <div class="clabel" style="color:var(--purp-l)">✔ Habitude passée révolue</div>
+      <div class="exlist">
+        <div class="ex p" style="animation:none"><div class="en">We <span class="hp">visited</span> France every summer as children.</div><div class="fr">Nous allions en France chaque été, enfants.</div></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="border-color:rgba(155,93,229,.3);margin-bottom:.85rem">
+      <div class="clabel" style="color:var(--purp-l)">✔ Succession d'actions</div>
+      <div class="exlist">
+        <div class="ex p" style="animation:none"><div class="en">He <span class="hp">woke up</span>, <span class="hp">had</span> breakfast and <span class="hp">left</span>.</div><div class="fr">Il s'est réveillé, a déjeuné et est parti.</div></div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(155,93,229,.3)">
+      <div class="clabel" style="color:var(--purp-l)">✔ État passé</div>
+      <div class="exlist">
+        <div class="ex p" style="animation:none"><div class="en">The factory <span class="hp">was</span> very small in 1950.</div><div class="fr">L'usine était très petite en 1950.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="band g mt">
+  <strong>Mots-clés signal 🚦</strong>
+  <div class="chips" style="margin-top:.4rem">
+    <span class="chip g">yesterday</span><span class="chip g">last week / month / year</span>
+    <span class="chip g">in 2010</span><span class="chip g">… ago</span>
+    <span class="chip g">when I was young</span><span class="chip g">once</span><span class="chip g">at that time</span>
+  </div>
+</div>`},
+
+/* 3 — ORTHOGRAPHE RÉGULIERS ANIMÉE */
+{html:`
+<div class="stag a">The Past Simple · Réguliers</div>
+<div class="stitle">Orthographe des <span style="color:var(--amber)">réguliers</span></div>
+<div class="slead" style="margin-bottom:.4rem">5 règles pour bien former le prétérit des verbes réguliers.</div>
+
+<div class="oa-stage" id="oa-stage">
+  <!-- Règle 1 : +ed -->
+  <div class="oa-row" id="oar0">
+    <span class="oar-label">Général</span>
+    <span class="tok-base">work</span>
+    <span class="oar-arrow">→</span>
+    <span class="tok-base">work</span><span class="tok-ed" id="oed0">ed</span>
+    <span class="oar-note">+ ed directement</span>
+  </div>
+  <!-- Règle 2 : -e → +d -->
+  <div class="oa-row" id="oar1">
+    <span class="oar-label">Terminé en -e</span>
+    <span class="tok-base">lik<span class="tok-e" id="tokE">e</span></span>
+    <span class="oar-arrow">→</span>
+    <span class="tok-base">lik</span><span class="tok-e" id="tokE2">e</span><span class="tok-d" id="oed1">d</span>
+    <span class="oar-note">-e reste, on ajoute juste d</span>
+  </div>
+  <!-- Règle 3 : y→ied -->
+  <div class="oa-row" id="oar2">
+    <span class="oar-label">Consonne + y</span>
+    <span class="tok-base">stud<span class="tok-y" id="tokY">y</span></span>
+    <span class="oar-arrow">→</span>
+    <span class="tok-base">stud</span><span class="tok-y" id="tokY2">y</span><span class="tok-ied" id="oed2">ied</span>
+    <span class="oar-note">y → ied</span>
+  </div>
+  <!-- Règle 4 : CVC doublement -->
+  <div class="oa-row" id="oar3">
+    <span class="oar-label">CVC court</span>
+    <span class="tok-base">sto<span class="tok-cvc">p</span></span>
+    <span class="oar-arrow">→</span>
+    <span class="tok-base">sto</span><span class="tok-cvc">p</span><span class="tok-dbl" id="tokDbl">p</span><span class="tok-edcvc" id="oed3">ed</span>
+    <span class="oar-note">consonne finale doublée + ed</span>
+  </div>
+  <!-- Règle 5 : -w/-x/-y pas de doublement -->
+  <div class="oa-row" id="oar4">
+    <span class="oar-label">-w / -x / -y</span>
+    <span class="tok-base">play</span>
+    <span class="oar-arrow">→</span>
+    <span class="tok-base">play</span><span class="tok-ed" id="oed4">ed</span>
+    <span class="oar-note" style="color:rgba(239,71,111,.6)">❌ pas de doublement</span>
+  </div>
+</div>
+<button class="play-btn" id="pbtn" onclick="playOrtho()">▶ Animer les règles</button>
+`},
+
+/* 4 — BE : WAS / WERE */
+{html:`
+<div class="stag p">The Past Simple · BE</div>
+<div class="stitle">BE au prétérit — <span style="color:var(--blue)">was</span> / <span style="color:var(--blue)">were</span></div>
+<div class="slead">BE est le seul verbe avec deux formes au prétérit selon le sujet.</div>
+<table class="wtbl">
+  <thead><tr><th>Sujet</th><th>Affirmatif</th><th>Remarque</th></tr></thead>
+  <tbody>
+    <tr><td>I / he / she / it</td><td>was</td><td>Singulier → was</td></tr>
+    <tr><td>you / we / they</td><td>were</td><td>Pluriel + you → were</td></tr>
+  </tbody>
+</table>
+<div class="fbox r" style="font-size:.97rem;margin-top:.5rem">
+  <strong>Négatif</strong> : I <span class="fp fp-was">wasn't</span> / you <span class="fp fp-was">weren't</span><br>
+  <strong>Interrogatif</strong> : <span class="fp fp-was">Was</span> he? — <span class="fp fp-was">Were</span> they? &nbsp;→&nbsp; inversion directe, <span style="color:var(--red-l)">pas de Did avec BE</span>
+</div>
+<div class="band r">
+  ⚠ Jamais : <strong style="color:var(--red-l)">he were</strong> / <strong style="color:var(--red-l)">they was</strong><br>
+  Toujours : <strong style="color:var(--blue-l)">was</strong> (sing.) / <strong style="color:var(--blue-l)">were</strong> (plur. + you)
+</div>
+<div class="exlist mt">
+  <div class="ex p"><div class="en">The factory <span class="hp">was</span> very small in 1950.</div><div class="fr">L'usine était très petite en 1950.</div></div>
+  <div class="ex p"><div class="en">They <span class="hp">were</span> late for the seminar.</div><div class="fr">Ils étaient en retard pour le séminaire.</div></div>
+  <div class="ex r"><div class="en">He <span class="hr">wasn't</span> ready when the meeting started.</div><div class="fr">Il n'était pas prêt quand la réunion a commencé.</div></div>
+  <div class="ex a"><div class="en"><span class="hg">Was</span> she satisfied with the outcome?</div><div class="fr">Était-elle satisfaite du résultat ?</div></div>
+</div>`},
+
+/* 5 — NÉG + INTERRO */
+{html:`
+<div class="stag p">The Past Simple · Formation</div>
+<div class="stitle">Formes <span style="color:var(--red)">négative</span> & <span style="color:var(--amber)">interrogative</span></div>
+<div class="g2">
+  <div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red-l);margin-bottom:.5rem">Négatif</div>
+    <div class="fbox r" style="font-size:.97rem">
+      <span class="fp fp-su">Sujet</span> + <span class="fp fp-did">didn't</span> + <span class="fp fp-vb">V base</span>
+    </div>
+    <div class="band r" style="font-size:.9rem">
+      <strong>didn't</strong> = did not — pour <em>tous</em> les sujets<br>
+      Le verbe revient à la <strong style="color:var(--teal-l)">base</strong> — jamais de -ed après !
+    </div>
+    <div class="exlist">
+      <div class="ex r"><div class="en">She <span class="hr">didn't receive</span> the email.</div><div class="fr">Elle n'a pas reçu le mail.</div></div>
+      <div class="ex r"><div class="en">He <span class="hr">didn't know</span> about the change.</div><div class="fr">Il n'était pas au courant.</div></div>
+      <div class="ex r"><div class="en">We <span class="hr">didn't meet</span> the deadline.</div><div class="fr">Nous n'avons pas respecté le délai.</div></div>
+    </div>
+  </div>
+  <div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:.5rem">Interrogatif</div>
+    <div class="fbox a" style="font-size:.97rem">
+      <span class="fp fp-did">Did</span> + <span class="fp fp-su">sujet</span> + <span class="fp fp-vb">V base</span> <strong style="color:var(--amber)"> ?</strong>
+    </div>
+    <div class="band a" style="font-size:.9rem">
+      <strong>Did</strong> pour <em>tous</em> les sujets<br>
+      Pas de -ed, pas de -s après Did !
+    </div>
+    <div class="exlist">
+      <div class="ex a"><div class="en"><span class="hg">Did</span> he <span class="hg">understand</span> the instructions?</div><div class="fr">A-t-il compris les instructions ?</div></div>
+      <div class="ex a"><div class="en">Why <span class="hg">did</span> the experiment <span class="hg">fail</span>?</div><div class="fr">Pourquoi l'expérience a-t-elle échoué ?</div></div>
+      <div class="ex a"><div class="en"><span class="hg">Did</span> they <span class="hg">manage</span> to solve the problem?</div><div class="fr">Ont-ils réussi à résoudre le problème ?</div></div>
+    </div>
+  </div>
+</div>`},
+
+/* 6 — SYNTHÈSE */
+{html:`
+<div class="stag g">The Past Simple · Synthèse</div>
+<div class="stitle">Récapitulatif complet</div>
+<table class="ftbl" style="margin-bottom:.8rem">
+  <thead><tr><th>Structure</th><th>Forme</th><th>Règle clé</th></tr></thead>
+  <tbody>
+    <tr><td>Affirmatif régulier</td><td>worked / stopped / studied / liked</td><td>+ed, doublage CVC, y→ied, -e→+d</td></tr>
+    <tr><td>Affirmatif irrégulier</td><td>went / had / wrote / found</td><td>Forme 2 — à apprendre par cœur</td></tr>
+    <tr><td>Négatif</td><td>didn't + V base</td><td>Jamais de -ed après didn't !</td></tr>
+    <tr><td>Interrogatif</td><td>Did + sujet + V base ?</td><td>Did pour tous, pas de -s ni -ed</td></tr>
+    <tr><td>BE affirmatif</td><td>was (sing.) / were (plur.)</td><td>Pas de did avec BE</td></tr>
+    <tr><td>BE négatif</td><td>wasn't / weren't</td><td>Inversion directe à l'interrogatif</td></tr>
+  </tbody>
+</table>
+<div class="exlist">
+  <div class="ex p"><div class="en">The company <span class="hp">hired</span> 50 engineers <span class="hg">last year</span>.</div><div class="fr">L'entreprise a embauché 50 ingénieurs l'année dernière.</div></div>
+  <div class="ex p"><div class="en">Two of them <span class="hp">came</span> from MIT and <span class="hp">brought</span> innovative ideas.</div><div class="fr">Deux d'entre eux venaient du MIT et ont apporté des idées innovantes.</div></div>
+  <div class="ex r"><div class="en">We <span class="hr">didn't achieve</span> all our targets, but the project <span class="hp">was</span> a success.</div><div class="fr">Nous n'avons pas atteint tous nos objectifs, mais le projet a été un succès.</div></div>
+  <div class="ex a"><div class="en">The new system <span class="hg">cut</span> energy consumption by 30%, which <span class="hg">impressed</span> our investors.</div><div class="fr">Le nouveau système a réduit la consommation d'énergie de 30 %, ce qui a impressionné nos investisseurs.</div></div>
+</div>`},
+
+];
+
+/* ENGINE */
+let cur=0;
+function build(){
+  const sa=document.getElementById('sa');sa.innerHTML='';
+  SLIDES.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='slide'+(i===0?' active':'');
+    d.id='sl'+i;d.innerHTML=s.html;sa.appendChild(d);
+  });
+  buildDots();updateUI();
+}
+function buildDots(){
+  const nd=document.getElementById('dots');nd.innerHTML='';
+  SLIDES.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i===0?' on':'');
+    d.onclick=()=>goTo(i);nd.appendChild(d);
+  });
+}
+function goTo(idx){
+  if(idx<0||idx>=SLIDES.length)return;
+  const all=document.querySelectorAll('.slide');
+  all[cur].classList.remove('active');all[cur].classList.add('out');
+  const prev=cur;setTimeout(()=>{all[prev].classList.remove('out');},380);
+  cur=idx;all[cur].classList.add('active');updateUI();
+}
+function updateUI(){
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  document.getElementById('sc').textContent=(cur+1)+' / '+SLIDES.length;
+}
+function go(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(1);
+  if(e.key==='ArrowLeft')go(-1);
+});
+
+/* ORTHO ANIMATION */
+function resetOA(){
+  ['oar0','oar1','oar2','oar3','oar4'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('vis');});
+  ['oed0','oed1','oed2','oed3','oed4'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('land');});
+  ['tokE','tokE2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('gone');});
+  ['tokY','tokY2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('gone');});
+  const dbl=document.getElementById('tokDbl');if(dbl)dbl.classList.remove('show');
+}
+function playOrtho(){
+  const btn=document.getElementById('pbtn');if(!btn)return;
+  btn.classList.add('busy');resetOA();
+  const delay=ms=>new Promise(r=>setTimeout(r,ms));
+  (async()=>{
+    // Règle 1
+    const r0=document.getElementById('oar0');if(r0)r0.classList.add('vis');
+    await delay(280);
+    document.getElementById('oed0')?.classList.add('land');
+
+    // Règle 2
+    await delay(600);
+    document.getElementById('oar1')?.classList.add('vis');
+    await delay(300);
+    // pas d'efacement, juste +d arrive
+    document.getElementById('oed1')?.classList.add('land');
+
+    // Règle 3
+    await delay(600);
+    document.getElementById('oar2')?.classList.add('vis');
+    await delay(300);
+    // y disparaît des deux
+    document.getElementById('tokY')?.classList.add('gone');
+    await delay(120);
+    document.getElementById('tokY2')?.classList.add('gone');
+    await delay(320);
+    document.getElementById('oed2')?.classList.add('land');
+
+    // Règle 4
+    await delay(650);
+    document.getElementById('oar3')?.classList.add('vis');
+    await delay(300);
+    document.getElementById('tokDbl')?.classList.add('show');
+    await delay(380);
+    document.getElementById('oed3')?.classList.add('land');
+
+    // Règle 5
+    await delay(650);
+    document.getElementById('oar4')?.classList.add('vis');
+    await delay(280);
+    document.getElementById('oed4')?.classList.add('land');
+
+    await delay(500);
+    btn.classList.remove('busy');
+    btn.innerHTML='↺ Rejouer';
+  })();
+}
+
+build();
+</script>
+</body>
+</html>

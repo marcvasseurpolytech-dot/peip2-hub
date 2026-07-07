@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>WH-Questions · Exercice 5 · Polytech Lille</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1b2a;--gold:#C9A020;--gold-l:#e8b84b;--cream:#FAF6ED;--teal:#06d6a0;--teal-l:#a8f0de;--red:#ef476f;--red-l:#ffb3c6;--amber:#ffd166;--green:#2ecc71;--green-l:#a8f0c0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--navy);color:var(--cream);font-family:'Source Serif 4',serif}
+.hdr{position:sticky;top:0;z-index:50;background:rgba(13,27,42,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07);padding:.6rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.exnum{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(250,246,237,.4);letter-spacing:.1em}
+.prog-t{height:4px;background:rgba(255,255,255,.1);border-radius:3px;flex:1;min-width:80px;max-width:180px;overflow:hidden}
+.prog-f{height:100%;background:var(--gold);border-radius:3px;transition:width .3s}
+.sc-pill{font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.22rem .6rem;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:rgba(250,246,237,.7)}
+main{max-width:600px;margin:0 auto;padding:1rem 1rem 3rem}
+.splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 56px);gap:1.3rem;text-align:center;padding:1rem}
+.splash-title{font-family:'Source Serif 4',serif;font-size:2.2rem;font-weight:600;line-height:1.1}
+.splash-title span{color:var(--gold)}
+.start-btn{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.9rem;letter-spacing:.08em;padding:.75rem 2.4rem;border-radius:30px;background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.2s;margin-top:.5rem}
+.start-btn:hover{background:var(--gold-l);transform:translateY(-1px)}
+.qcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.3rem 1.3rem 1.1rem;margin-bottom:1rem;animation:su .3s both}
+@keyframes su{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.qmeta{display:flex;align-items:center;gap:.5rem;margin-bottom:.8rem;flex-wrap:wrap}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:rgba(250,246,237,.32);letter-spacing:.1em}
+.sentence{font-size:1.1rem;font-weight:600;line-height:1.6;color:var(--cream);margin-bottom:1rem}
+.underlined{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px;color:var(--gold-l)}
+.type-wrap{display:flex;gap:.55rem;align-items:center}
+.type-input{flex:1;font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:700;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;color:var(--cream);padding:.6rem .85rem;outline:none;transition:.18s;-webkit-appearance:none}
+.type-input:focus{border-color:var(--gold);background:rgba(255,255,255,.1)}
+.type-input.ok{border-color:var(--green);background:rgba(46,204,113,.12);color:var(--green-l)}
+.type-input.near{border-color:var(--amber);background:rgba(255,209,102,.1);color:var(--amber)}
+.type-input.ko{border-color:var(--red);background:rgba(239,71,111,.12);color:var(--red-l)}
+.ok-btn{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;padding:.6rem 1.1rem;border-radius:10px;background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.18s;flex-shrink:0}
+.ok-btn:hover{background:var(--gold-l)}
+.ok-btn:disabled{opacity:.35;pointer-events:none}
+.fb{margin-top:.8rem;padding:.7rem .95rem;border-radius:10px;font-size:.9rem;line-height:1.55;animation:su .25s both}
+.fb.ok{background:rgba(46,204,113,.11);border:1px solid rgba(46,204,113,.25);color:var(--green-l)}
+.fb.near{background:rgba(255,209,102,.11);border:1px solid rgba(255,209,102,.25);color:var(--amber)}
+.fb.ko{background:rgba(239,71,111,.11);border:1px solid rgba(239,71,111,.25);color:var(--red-l)}
+.fb strong{color:var(--cream)}
+.rule-box{margin-top:.4rem;padding:.45rem .65rem;background:rgba(255,255,255,.05);border-radius:7px;font-size:.83rem;color:rgba(250,246,237,.6);border-left:2px solid rgba(255,255,255,.18)}
+.nxt-btn{width:100%;margin-top:.85rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;letter-spacing:.06em;padding:.68rem;border-radius:12px;background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.18s;display:none}
+.nxt-btn.show{display:block}
+.nxt-btn:hover{background:var(--gold-l)}
+.results{animation:su .4s both;padding:1rem 0 3rem}
+.rh{text-align:center;margin-bottom:1.6rem}
+.rscore{font-family:'Source Serif 4',serif;font-size:3.4rem;font-weight:600;color:var(--gold);line-height:1}
+.rlabel{font-size:.9rem;color:rgba(250,246,237,.45);margin-top:.25rem}
+.rgrade{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;margin-top:.55rem}
+.rbar-wrap{height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin:.4rem 0}
+.rbar{height:100%;background:var(--gold);border-radius:4px;transition:width 1s cubic-bezier(.2,1,.3,1)}
+.restart{width:100%;font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;padding:.8rem;border-radius:14px;background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.18s;margin-top:1rem}
+.restart:hover{background:var(--gold-l)}
+</style>
+</head>
+<body>
+<div class="hdr" id="hdr" style="display:none">
+  <div class="brand">Marc Vasseur · Polytech Lille</div>
+  <div class="exnum">Exercice 5 / 10</div>
+  <div class="prog-t"><div class="prog-f" id="pf" style="width:0%"></div></div>
+  <div class="sc-pill" id="sc">0 / 20</div>
+</div>
+<main id="main">
+  <div class="splash" id="splash">
+    <div class="splash-title">WH-Questions<br><span>Exercice 5</span></div>
+    <div style="font-size:.95rem;color:rgba(250,246,237,.55);max-width:34ch;line-height:1.65;text-align:center">
+      20 phrases · Pose la question sur le mot souligné<br>
+      <em style="font-size:.82rem;color:rgba(250,246,237,.35)">Ordre identique au PDF</em>
+    </div>
+    <button class="start-btn" onclick="start()">▶ Commencer</button>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(250,246,237,.2);letter-spacing:.1em;text-transform:uppercase">Polytech Lille · PEIP2 Remédiation</div>
+  </div>
+</main>
+
+<script>
+const QS = [{s:"The CEO will announce the decision.",u:"The CEO",q:"Who will announce the decision?",n:"Who = sujet → pas d\'auxiliaire"},{s:"She will be presenting her findings at 10 AM tomorrow.",u:"at 10 AM tomorrow",q:"When will she be presenting her findings?"},{s:"They are relocating to the new campus next month.",u:"next month",q:"When are they relocating to the new campus?"},{s:"They had been experimenting with the formula since January.",u:"since January",q:"Since when had they been experimenting with the formula?"},{s:"He bought a new laptop three days ago.",u:"three days ago",q:"When did he buy a new laptop?"},{s:"She has been promoted three times.",u:"three times",q:"How many times has she been promoted?"},{s:"He is running so fast because he is late.",u:"because he is late",q:"Why is he running so fast?"},{s:"The intern reports to the head of department.",u:"to the head of department",q:"Who does the intern report to?"},{s:"She will collaborate with the Paris team next year.",u:"with the Paris team",q:"Who will she collaborate with next year?"},{s:"She will present her results tomorrow.",u:"tomorrow",q:"When will she present her results?"},{s:"The team will have completed three prototypes by December.",u:"The team",q:"Who will have completed three prototypes by December?",n:"Who = sujet → pas d\'auxiliaire"},{s:"He worked there for six months.",u:"for six months",q:"How long did he work there?"},{s:"She is presenting her project right now.",u:"her project",q:"What is she presenting?"},{s:"They will be analysing the data for the next three hours.",u:"for the next three hours",q:"How long will they be analysing the data?"},{s:"The lab opens at seven thirty.",u:"at seven thirty",q:"When does the lab open?"},{s:"The reactor operates at extremely high temperatures.",u:"at extremely high temperatures",q:"How does the reactor operate?"},{s:"He earns more because he has more experience.",u:"because he has more experience",q:"Why does he earn more?"},{s:"He has been abroad three times this year.",u:"three times",q:"How many times has he been abroad this year?"},{s:"They are working in the lab at the moment.",u:"in the lab",q:"Where are they working?"},{s:"She will have saved enough for a flat by 2026.",u:"for a flat",q:"What will she have saved enough for by 2026?"}];
+let cur=0, ok=0;
+
+function norm(s){
+  return s.toLowerCase().trim()
+    .replace(/[‘’]/g,"'")
+    .replace(/…/g,' ')
+    .replace(/\.\.\./g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function lev(a,b){
+  const dp=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);
+  for(let j=1;j<=b.length;j++)dp[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[a.length][b.length];
+}
+function check(user,correct){
+  const u=norm(user),c=norm(correct);
+  if(u===c)return 'ok';
+  if(lev(u,c)<=3)return 'near';
+  return 'ko';
+}
+
+function start(){
+  document.getElementById('splash').style.display='none';
+  document.getElementById('hdr').style.display='flex';
+  render();
+}
+
+function buildSentenceHtml(s,u){
+  const idx=s.indexOf(u);
+  if(idx===-1)return '<span>'+s+'</span>';
+  return s.slice(0,idx)+'<span class="underlined">'+u+'</span>'+s.slice(idx+u.length);
+}
+
+function render(){
+  if(cur>=QS.length){showResults();return;}
+  const q=QS[cur];
+  document.getElementById('pf').style.width=((cur/20)*100)+'%';
+  document.getElementById('sc').textContent=ok+' / 20';
+  document.getElementById('main').innerHTML=`
+  <div class="qcard">
+    <div class="qmeta"><span class="qnum">Q${cur+1} / 20</span></div>
+    <div class="sentence">${buildSentenceHtml(q.s,q.u)}</div>
+    <div class="type-wrap">
+      <input class="type-input" id="ti" type="text" placeholder="Pose la question…"
+        autocorrect="off" autocapitalize="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter')submit()">
+      <button class="ok-btn" id="ob" onclick="submit()">OK</button>
+    </div>
+    <div id="fb"></div>
+    <button class="nxt-btn" id="nb" onclick="next()">Question suivante →</button>
+  </div>`;
+  setTimeout(()=>{const el=document.getElementById('ti');if(el)el.focus();},100);
+}
+
+function submit(){
+  const inp=document.getElementById('ti');
+  const ob=document.getElementById('ob');
+  if(!inp||ob.disabled)return;
+  const val=inp.value.trim();if(!val)return;
+  ob.disabled=true;inp.disabled=true;
+  const q=QS[cur];
+  const res=check(val,q.q);
+  inp.className='type-input '+res;
+  if(res==='ok'||res==='near')ok++;
+  const fb=document.getElementById('fb');
+  const note=q.n?`<div class="rule-box">${q.n}</div>`:'';
+  if(res==='ok')
+    fb.innerHTML=`<div class="fb ok">✓ <strong>Correct !</strong> ${q.q}${note}</div>`;
+  else if(res==='near')
+    fb.innerHTML=`<div class="fb near">~ <strong>Presque !</strong> Réponse attendue : <strong style="color:var(--cream)">${q.q}</strong>${note}</div>`;
+  else
+    fb.innerHTML=`<div class="fb ko">✗ Réponse attendue : <strong style="color:var(--cream)">${q.q}</strong>${note}</div>`;
+  document.getElementById('sc').textContent=ok+' / 20';
+  document.getElementById('nb').classList.add('show');
+}
+
+function next(){cur++;render();}
+
+function showResults(){
+  document.getElementById('hdr').style.display='none';
+  const pct=Math.round(ok/20*100);
+  const grade=pct>=90?'🏆 Excellent':pct>=75?'✅ Bien':pct>=55?'📚 Assez bien':'⚠ À revoir';
+  document.getElementById('main').innerHTML=`
+  <div class="results">
+    <div class="rh">
+      <div class="rscore">${pct}%</div>
+      <div class="rlabel">${ok} / 20 questions correctes</div>
+      <div class="rgrade">${grade}</div>
+    </div>
+    <div style="background:rgba(255,255,255,.05);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+        <span style="font-size:.9rem;color:rgba(250,246,237,.5)">Score</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:700">${ok} / 20</span>
+      </div>
+      <div class="rbar-wrap"><div class="rbar" id="rb" style="width:0%"></div></div>
+    </div>
+  </div>`;
+  setTimeout(()=>{const b=document.getElementById('rb');if(b)b.style.width=pct+'%';},200);
+}
+</script>
+</body>
+</html>

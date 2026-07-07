@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verbes Irréguliers Anglais · Polytech Lille</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1A2B4A;
+    --gold: #C9A020;
+    --gold-l: #e8b84b;
+    --cream: #FAF6ED;
+
+    --b1: #1A3A4A; /* bleu profond */
+    --b1l: #E8F4F8;
+    --b2: #2D4A1A; /* vert forêt */
+    --b2l: #EBF5E8;
+    --b3: #4A1A2D; /* bordeaux */
+    --b3l: #F5E8EE;
+    --b4: #3A2D1A; /* brun */
+    --b4l: #F5F0E8;
+    --b5: #2D1A4A; /* violet */
+    --b5l: #EEE8F5;
+
+    --radius: 12px;
+    --transition: .22s cubic-bezier(.4,0,.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--navy);
+    color: var(--cream);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(201,160,32,.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(41,75,120,.4) 0%, transparent 55%);
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 3rem 1.5rem 1.5rem;
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 80px; height: 3px;
+    background: var(--gold);
+    margin: 1.2rem auto 0;
+    border-radius: 2px;
+  }
+  .header-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: .7rem;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--cream);
+    letter-spacing: -.01em;
+  }
+  h1 span { color: var(--gold); }
+
+  /* ── NAV BATCHES ── */
+  nav.batch-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .6rem;
+    padding: 1.8rem 1rem 0;
+  }
+  .batch-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    letter-spacing: .08em;
+    padding: .45rem 1.1rem;
+    border-radius: 30px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    background: rgba(255,255,255,.06);
+    color: var(--cream);
+  }
+  .batch-btn:hover { background: rgba(255,255,255,.14); }
+  .batch-btn.active {
+    color: var(--navy);
+    border-color: transparent;
+    font-weight: 700;
+  }
+  /* colours per batch */
+  .batch-btn[data-b="1"].active  { background: #5bb8d4; }
+  .batch-btn[data-b="2"].active  { background: #6ec96e; }
+  .batch-btn[data-b="3"].active  { background: #d47b8f; }
+  .batch-btn[data-b="4"].active  { background: #d4a96a; }
+  .batch-btn[data-b="5"].active  { background: #a97bd4; }
+
+  /* ── MAIN CONTAINER ── */
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1.2rem 4rem;
+  }
+
+  /* ── BATCH SECTION ── */
+  .batch-section { display: none; }
+  .batch-section.visible { display: block; }
+
+  .batch-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem 1.5rem;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .batch-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: .12;
+  }
+  .batch-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    position: relative;
+  }
+  .batch-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .1em;
+    opacity: .75;
+    position: relative;
+  }
+
+  /* per-batch colours */
+  [data-batch="1"] .batch-header { background: rgba(91,184,212,.15); border-left: 4px solid #5bb8d4; }
+  [data-batch="2"] .batch-header { background: rgba(110,201,110,.15); border-left: 4px solid #6ec96e; }
+  [data-batch="3"] .batch-header { background: rgba(212,123,143,.15); border-left: 4px solid #d47b8f; }
+  [data-batch="4"] .batch-header { background: rgba(212,169,106,.15); border-left: 4px solid #d4a96a; }
+  [data-batch="5"] .batch-header { background: rgba(169,123,212,.15); border-left: 4px solid #a97bd4; }
+
+  [data-batch="1"] .batch-title { color: #5bb8d4; }
+  [data-batch="2"] .batch-title { color: #6ec96e; }
+  [data-batch="3"] .batch-title { color: #d47b8f; }
+  [data-batch="4"] .batch-title { color: #d4a96a; }
+  [data-batch="5"] .batch-title { color: #a97bd4; }
+
+  /* ── MODE TOGGLE ── */
+  .mode-bar {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    margin-bottom: 1.4rem;
+    flex-wrap: wrap;
+  }
+  .mode-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .mode-toggle {
+    display: flex;
+    background: rgba(255,255,255,.07);
+    border-radius: 30px;
+    padding: 3px;
+    gap: 3px;
+  }
+  .mode-toggle button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .06em;
+    padding: .35rem .9rem;
+    border-radius: 24px;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(250,246,237,.6);
+    transition: var(--transition);
+  }
+  .mode-toggle button.on {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .shuffle-btn {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .06em;
+    padding: .38rem 1rem;
+    border-radius: 24px;
+    border: 1px solid rgba(201,160,32,.4);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .shuffle-btn:hover { background: rgba(201,160,32,.12); }
+
+  /* ── GROUP LABELS ── */
+  .group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    opacity: .45;
+    margin: 1.5rem 0 .6rem;
+    padding-left: .2rem;
+  }
+
+  /* ── VERB TABLE ── */
+  .verb-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+  }
+  .verb-table thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: .4rem .8rem;
+    text-align: left;
+    font-weight: 400;
+  }
+  .verb-table tbody tr {
+    background: rgba(255,255,255,.05);
+    transition: var(--transition);
+    cursor: default;
+  }
+  .verb-table tbody tr:hover {
+    background: rgba(255,255,255,.10);
+    transform: translateX(3px);
+  }
+  .verb-table td {
+    padding: .75rem .8rem;
+    vertical-align: middle;
+  }
+  .verb-table td:first-child {
+    border-radius: var(--radius) 0 0 var(--radius);
+    width: 2.2rem;
+  }
+  .verb-table td:last-child {
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .verb-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--gold);
+    opacity: .6;
+  }
+  .verb-inf {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--cream);
+  }
+  .verb-form {
+    font-family: 'Source Serif 4', serif;
+    font-size: .92rem;
+    color: rgba(250,246,237,.85);
+  }
+  .verb-tr {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-size: .88rem;
+    color: rgba(250,246,237,.5);
+  }
+
+  /* ── QUIZ MODE ── */
+  .verb-table td.quiz-cell {
+    position: relative;
+  }
+  .quiz-input {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .85rem;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 6px;
+    color: var(--cream);
+    padding: .28rem .6rem;
+    width: 110px;
+    outline: none;
+    transition: var(--transition);
+  }
+  .quiz-input:focus { border-color: var(--gold); background: rgba(255,255,255,.12); }
+  .quiz-input.correct { border-color: #6ec96e; background: rgba(110,201,110,.18); color: #6ec96e; }
+  .quiz-input.wrong   { border-color: #d47b8f; background: rgba(212,123,143,.18); color: #d47b8f; }
+
+  /* ── SCORE BAR ── */
+  .score-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: .9rem 1.2rem;
+    background: rgba(255,255,255,.05);
+    border-radius: var(--radius);
+    flex-wrap: wrap;
+  }
+  .score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .08em;
+    color: var(--gold);
+  }
+  .score-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cream);
+  }
+  .score-bar .check-btn {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .06em;
+    padding: .45rem 1.3rem;
+    border-radius: 24px;
+    border: none;
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .score-bar .check-btn:hover { background: var(--gold-l); }
+  .reset-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .06em;
+    padding: .45rem 1rem;
+    border-radius: 24px;
+    border: 1px solid rgba(250,246,237,.25);
+    background: transparent;
+    color: var(--cream);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .reset-btn:hover { background: rgba(255,255,255,.08); }
+
+  /* ── FLASHCARD MODE ── */
+  .flashcard-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 0 2rem;
+  }
+  .flashcard-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .1em;
+    color: var(--gold);
+  }
+  .flashcard {
+    width: 100%;
+    max-width: 480px;
+    min-height: 220px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    user-select: none;
+    perspective: 800px;
+  }
+  .flashcard:hover { background: rgba(255,255,255,.11); transform: translateY(-2px); }
+  .flashcard-front, .flashcard-back { text-align: center; }
+  .flashcard-front { display: block; }
+  .flashcard-back  { display: none; }
+  .flashcard.flipped .flashcard-front { display: none; }
+  .flashcard.flipped .flashcard-back  { display: block; }
+  .fc-verb {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--cream);
+    margin-bottom: .5rem;
+  }
+  .fc-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: .7;
+  }
+  .fc-forms {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    line-height: 2;
+    margin-bottom: .6rem;
+  }
+  .fc-forms span { color: var(--gold); font-weight: 600; }
+  .fc-tr {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    color: rgba(250,246,237,.5);
+    font-size: .95rem;
+  }
+  .fc-nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .fc-nav button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem;
+    padding: .5rem 1.4rem;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: transparent;
+    color: var(--cream);
+    cursor: pointer;
+    transition: var(--transition);
+    letter-spacing: .05em;
+  }
+  .fc-nav button:hover { background: rgba(255,255,255,.1); }
+  .fc-nav .fc-flip {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+    font-weight: 700;
+  }
+  .fc-nav .fc-flip:hover { background: var(--gold-l); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    width: 100%;
+    max-width: 480px;
+  }
+  .progress-track {
+    height: 4px;
+    background: rgba(255,255,255,.12);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 4px;
+    transition: width .3s ease;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(250,246,237,.25);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-sub">Marc Vasseur · Polytech Lille · Anglais</div>
+  <h1>Verbes <span>irréguliers</span> anglais</h1>
+</header>
+
+<nav class="batch-nav">
+  <button class="batch-btn active" data-b="1" onclick="showBatch(1)">Batch 1 · Les essentiels (1–20)</button>
+  <button class="batch-btn" data-b="2" onclick="showBatch(2)">Batch 2 · Courants (21–40)</button>
+  <button class="batch-btn" data-b="3" onclick="showBatch(3)">Batch 3 · Quotidien (41–60)</button>
+  <button class="batch-btn" data-b="4" onclick="showBatch(4)">Batch 4 · Action (61–80)</button>
+  <button class="batch-btn" data-b="5" onclick="showBatch(5)">Batch 5 · Avancé (81–100)</button>
+</nav>
+
+<main id="main"></main>
+
+<footer>Polytech Lille · Anglais pour ingénieurs · 100 verbes irréguliers</footer>
+
+<script>
+const VERBS = [
+  // Batch 1
+  [1,"be","was / were","been","être"],
+  [2,"have","had","had","avoir"],
+  [3,"do","did","done","faire"],
+  [4,"go","went","gone","aller"],
+  [5,"say","said","said","dire"],
+  [6,"get","got","got","obtenir"],
+  [7,"make","made","made","fabriquer / réaliser"],
+  [8,"know","knew","known","savoir / connaître"],
+  [9,"think","thought","thought","penser"],
+  [10,"take","took","taken","prendre"],
+  [11,"see","saw","seen","voir"],
+  [12,"come","came","come","venir"],
+  [13,"give","gave","given","donner"],
+  [14,"find","found","found","trouver"],
+  [15,"tell","told","told","raconter / dire"],
+  [16,"put","put","put","mettre / poser"],
+  [17,"feel","felt","felt","ressentir"],
+  [18,"become","became","become","devenir"],
+  [19,"leave","left","left","partir / laisser"],
+  [20,"keep","kept","kept","garder / maintenir"],
+  // Batch 2
+  [21,"let","let","let","laisser / permettre"],
+  [22,"begin","began","begun","commencer"],
+  [23,"show","showed","shown","montrer"],
+  [24,"bring","brought","brought","apporter"],
+  [25,"write","wrote","written","écrire"],
+  [26,"meet","met","met","rencontrer"],
+  [27,"speak","spoke","spoken","parler"],
+  [28,"hear","heard","heard","entendre"],
+  [29,"sit","sat","sat","s'asseoir"],
+  [30,"stand","stood","stood","se tenir debout"],
+  [31,"lose","lost","lost","perdre"],
+  [32,"pay","paid","paid","payer"],
+  [33,"read","read","read","lire"],
+  [34,"grow","grew","grown","grandir / pousser"],
+  [35,"run","ran","run","courir"],
+  [36,"drive","drove","driven","conduire"],
+  [37,"break","broke","broken","casser"],
+  [38,"buy","bought","bought","acheter"],
+  [39,"send","sent","sent","envoyer"],
+  [40,"build","built","built","construire"],
+  // Batch 3
+  [41,"fall","fell","fallen","tomber"],
+  [42,"cut","cut","cut","couper"],
+  [43,"eat","ate","eaten","manger"],
+  [44,"choose","chose","chosen","choisir"],
+  [45,"win","won","won","gagner"],
+  [46,"wear","wore","worn","porter (vêtements)"],
+  [47,"understand","understood","understood","comprendre"],
+  [48,"catch","caught","caught","attraper"],
+  [49,"sleep","slept","slept","dormir"],
+  [50,"hold","held","held","tenir"],
+  [51,"draw","drew","drawn","dessiner"],
+  [52,"fly","flew","flown","voler"],
+  [53,"ride","rode","ridden","chevaucher / faire du vélo"],
+  [54,"spend","spent","spent","dépenser / passer (du temps)"],
+  [55,"teach","taught","taught","enseigner"],
+  [56,"mean","meant","meant","signifier / vouloir dire"],
+  [57,"sell","sold","sold","vendre"],
+  [58,"lead","led","led","mener / diriger"],
+  [59,"throw","threw","thrown","lancer"],
+  [60,"forget","forgot","forgotten","oublier"],
+  // Batch 4
+  [61,"fight","fought","fought","se battre"],
+  [62,"hide","hid","hidden","cacher"],
+  [63,"hit","hit","hit","frapper / heurter"],
+  [64,"hurt","hurt","hurt","blesser"],
+  [65,"forgive","forgave","forgiven","pardonner"],
+  [66,"freeze","froze","frozen","geler"],
+  [67,"steal","stole","stolen","voler (dérober)"],
+  [68,"shake","shook","shaken","secouer"],
+  [69,"wake","woke","woken","se réveiller"],
+  [70,"sing","sang","sung","chanter"],
+  [71,"swim","swam","swum","nager"],
+  [72,"drink","drank","drunk","boire"],
+  [73,"ring","rang","rung","sonner"],
+  [74,"blow","blew","blown","souffler"],
+  [75,"bite","bit","bitten","mordre"],
+  [76,"bend","bent","bent","plier / courber"],
+  [77,"lend","lent","lent","prêter"],
+  [78,"deal","dealt","dealt","traiter / distribuer"],
+  [79,"feed","fed","fed","nourrir"],
+  [80,"shoot","shot","shot","tirer (arme / photo)"],
+  // Batch 5
+  [81,"hang","hung","hung","accrocher"],
+  [82,"swing","swung","swung","se balancer"],
+  [83,"sink","sank","sunk","couler / sombrer"],
+  [84,"spin","spun","spun","tourner / tournoyer"],
+  [85,"stick","stuck","stuck","coller / rester bloqué"],
+  [86,"sting","stung","stung","piquer"],
+  [87,"burst","burst","burst","éclater / exploser"],
+  [88,"shut","shut","shut","fermer"],
+  [89,"cast","cast","cast","lancer / projeter"],
+  [90,"set","set","set","régler / poser"],
+  [91,"spread","spread","spread","répandre / étaler"],
+  [92,"shed","shed","shed","verser / perdre (poils)"],
+  [93,"slide","slid","slid","glisser"],
+  [94,"strike","struck","struck","frapper / affecter"],
+  [95,"sweep","swept","swept","balayer"],
+  [96,"weep","wept","wept","pleurer"],
+  [97,"bind","bound","bound","lier / relier"],
+  [98,"grind","ground","ground","broyer / moudre"],
+  [99,"wind","wound","wound","enrouler / remonter"],
+  [100,"swear","swore","sworn","jurer"],
+];
+
+const BATCH_META = [
+  { title:"Les essentiels", sub:"verbes n° 1 – 20" },
+  { title:"Verbes courants", sub:"verbes n° 21 – 40" },
+  { title:"Vie quotidienne", sub:"verbes n° 41 – 60" },
+  { title:"Action & mouvement", sub:"verbes n° 61 – 80" },
+  { title:"Pour aller plus loin", sub:"verbes n° 81 – 100" },
+];
+
+const BATCH_COLORS = ["#5bb8d4","#6ec96e","#d47b8f","#d4a96a","#a97bd4"];
+const GROUP_NAMES = [
+  ["Groupe A","Groupe B","Groupe C","Groupe D"],
+];
+
+// state
+let currentMode = 'table'; // 'table' | 'quiz' | 'flashcard'
+let currentBatch = 1;
+let fcIndex = 0;
+let fcFlipped = false;
+let fcOrder = [];
+let quizData = {}; // {batchNum: [{...verb, input refs}]}
+
+function getBatchVerbs(b) {
+  return VERBS.slice((b-1)*20, b*20);
+}
+
+function getGroups(verbs) {
+  const groups = [];
+  for (let i = 0; i < verbs.length; i += 5) groups.push(verbs.slice(i, i+5));
+  return groups;
+}
+
+// ── RENDER ──
+function render() {
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  for (let b = 1; b <= 5; b++) {
+    const sec = document.createElement('section');
+    sec.className = 'batch-section' + (b === currentBatch ? ' visible' : '');
+    sec.dataset.batch = b;
+    sec.innerHTML = renderBatch(b);
+    main.appendChild(sec);
+  }
+  // re-attach events
+  document.querySelectorAll('.mode-toggle button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const b = +this.closest('[data-batch]').dataset.batch;
+      const m = this.dataset.mode;
+      currentMode = m;
+      renderSection(b);
+    });
+  });
+}
+
+function renderBatch(b) {
+  const meta = BATCH_META[b-1];
+  const color = BATCH_COLORS[b-1];
+  const verbs = getBatchVerbs(b);
+  const groups = getGroups(verbs);
+  const groupLabels = ["Groupe A · n°"+(1+(b-1)*20)+"–"+(5+(b-1)*20),
+    "Groupe B · n°"+(6+(b-1)*20)+"–"+(10+(b-1)*20),
+    "Groupe C · n°"+(11+(b-1)*20)+"–"+(15+(b-1)*20),
+    "Groupe D · n°"+(16+(b-1)*20)+"–"+(20+(b-1)*20)];
+
+  let inner = `
+    <div class="batch-header">
+      <div class="batch-title">${meta.title}</div>
+      <div class="batch-sub">${meta.sub}</div>
+    </div>
+    <div class="mode-bar">
+      <span class="mode-label">Mode :</span>
+      <div class="mode-toggle">
+        <button data-mode="table" class="${currentMode==='table'?'on':''}">📋 Tableau</button>
+        <button data-mode="quiz"  class="${currentMode==='quiz'?'on':''}">✏️ Quiz</button>
+        <button data-mode="flashcard" class="${currentMode==='flashcard'?'on':''}">🃏 Flashcards</button>
+      </div>
+      <button class="shuffle-btn" onclick="shuffleFC(${b})">🔀 Mélanger</button>
+    </div>`;
+
+  if (currentMode === 'table') {
+    inner += renderTable(b, groups, groupLabels, color, false);
+  } else if (currentMode === 'quiz') {
+    inner += renderTable(b, groups, groupLabels, color, true);
+    inner += renderScoreBar(b);
+  } else {
+    inner += renderFlashcards(b, verbs);
+  }
+  return inner;
+}
+
+function renderTable(b, groups, groupLabels, color, quiz) {
+  let html = '';
+  groups.forEach((grp, gi) => {
+    html += `<div class="group-label" style="color:${color}">${groupLabels[gi]}</div>`;
+    html += `<table class="verb-table">
+      <thead><tr>
+        <th>#</th><th>Infinitif</th><th>Prétérit</th><th>Participe passé</th><th>Traduction</th>
+      </tr></thead><tbody>`;
+    grp.forEach(v => {
+      if (quiz) {
+        html += `<tr>
+          <td><span class="verb-num">${v[0]}</span></td>
+          <td><span class="verb-inf">${v[1]}</span></td>
+          <td class="quiz-cell"><input class="quiz-input" data-ans="${v[2]}" data-id="${v[0]}-pret" placeholder="…" spellcheck="false" autocomplete="off"></td>
+          <td class="quiz-cell"><input class="quiz-input" data-ans="${v[3]}" data-id="${v[0]}-pp" placeholder="…" spellcheck="false" autocomplete="off"></td>
+          <td><span class="verb-tr">${v[4]}</span></td>
+        </tr>`;
+      } else {
+        html += `<tr>
+          <td><span class="verb-num">${v[0]}</span></td>
+          <td><span class="verb-inf">${v[1]}</span></td>
+          <td><span class="verb-form">${v[2]}</span></td>
+          <td><span class="verb-form">${v[3]}</span></td>
+          <td><span class="verb-tr">${v[4]}</span></td>
+        </tr>`;
+      }
+    });
+    html += `</tbody></table>`;
+  });
+  return html;
+}
+
+function renderScoreBar(b) {
+  return `<div class="score-bar" id="score-bar-${b}">
+    <span class="score-label">Score :</span>
+    <span class="score-val" id="score-val-${b}">—</span>
+    <button class="reset-btn" onclick="resetQuiz(${b})">Réinitialiser</button>
+    <button class="check-btn" onclick="checkQuiz(${b})">Corriger ✓</button>
+  </div>`;
+}
+
+function checkQuiz(b) {
+  const sec = document.querySelector(`[data-batch="${b}"]`);
+  const inputs = sec.querySelectorAll('.quiz-input');
+  let correct = 0, total = inputs.length;
+  inputs.forEach(inp => {
+    const ans = inp.dataset.ans.toLowerCase().trim();
+    const val = inp.value.toLowerCase().trim();
+    // accept any of the slash-separated answers
+    const options = ans.split('/').map(s=>s.trim());
+    if (options.includes(val)) {
+      inp.classList.remove('wrong'); inp.classList.add('correct');
+      correct++;
+    } else {
+      inp.classList.remove('correct'); inp.classList.add('wrong');
+    }
+  });
+  const pct = Math.round(correct/total*100);
+  document.getElementById(`score-val-${b}`).textContent = `${correct} / ${total} (${pct}%)`;
+}
+
+function resetQuiz(b) {
+  const sec = document.querySelector(`[data-batch="${b}"]`);
+  const inputs = sec.querySelectorAll('.quiz-input');
+  inputs.forEach(inp => { inp.value=''; inp.classList.remove('correct','wrong'); });
+  document.getElementById(`score-val-${b}`).textContent = '—';
+}
+
+// ── FLASHCARDS ──
+function initFC(b) {
+  const verbs = getBatchVerbs(b);
+  fcOrder = verbs.map((_,i)=>i);
+  fcIndex = 0;
+  fcFlipped = false;
+}
+
+function renderFlashcards(b, verbs) {
+  if (!fcOrder.length || fcOrder.length !== verbs.length) {
+    fcOrder = verbs.map((_,i)=>i);
+    fcIndex = 0; fcFlipped = false;
+  }
+  const idx = fcOrder[fcIndex];
+  const v = verbs[idx];
+  const total = verbs.length;
+  const pct = Math.round((fcIndex+1)/total*100);
+
+  return `<div class="flashcard-wrap">
+    <div class="flashcard-counter">Carte ${fcIndex+1} / ${total}</div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="flashcard${fcFlipped?' flipped':''}" onclick="flipFC(${b})" id="fc-card-${b}">
+      <div class="flashcard-front">
+        <div class="fc-verb">${v[1]}</div>
+        <div class="fc-hint">Cliquez pour voir les formes</div>
+      </div>
+      <div class="flashcard-back">
+        <div class="fc-forms">
+          <span>${v[2]}</span><br>
+          <span>${v[3]}</span>
+        </div>
+        <div class="fc-tr">${v[4]}</div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button onclick="prevFC(${b})">◀ Précédent</button>
+      <button class="fc-flip" onclick="flipFC(${b})">${fcFlipped?'Cacher':'Retourner 🃏'}</button>
+      <button onclick="nextFC(${b})">Suivant ▶</button>
+    </div>
+  </div>`;
+}
+
+function flipFC(b) {
+  fcFlipped = !fcFlipped;
+  renderSection(b);
+}
+function nextFC(b) {
+  const verbs = getBatchVerbs(b);
+  fcIndex = (fcIndex+1) % verbs.length;
+  fcFlipped = false;
+  renderSection(b);
+}
+function prevFC(b) {
+  const verbs = getBatchVerbs(b);
+  fcIndex = (fcIndex - 1 + verbs.length) % verbs.length;
+  fcFlipped = false;
+  renderSection(b);
+}
+function shuffleFC(b) {
+  const verbs = getBatchVerbs(b);
+  fcOrder = verbs.map((_,i)=>i).sort(()=>Math.random()-.5);
+  fcIndex = 0; fcFlipped = false;
+  renderSection(b);
+}
+
+function renderSection(b) {
+  const sec = document.querySelector(`[data-batch="${b}"]`);
+  if (!sec) return;
+  const verbs = getBatchVerbs(b);
+  const groups = getGroups(verbs);
+  const color = BATCH_COLORS[b-1];
+  const groupLabels = [
+    "Groupe A · n°"+(1+(b-1)*20)+"–"+(5+(b-1)*20),
+    "Groupe B · n°"+(6+(b-1)*20)+"–"+(10+(b-1)*20),
+    "Groupe C · n°"+(11+(b-1)*20)+"–"+(15+(b-1)*20),
+    "Groupe D · n°"+(16+(b-1)*20)+"–"+(20+(b-1)*20)
+  ];
+  sec.innerHTML = renderBatch(b);
+  // re-attach mode toggle
+  sec.querySelectorAll('.mode-toggle button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      currentMode = this.dataset.mode;
+      renderSection(b);
+    });
+  });
+}
+
+function showBatch(b) {
+  currentBatch = b;
+  document.querySelectorAll('.batch-section').forEach(s => s.classList.remove('visible'));
+  document.querySelector(`[data-batch="${b}"]`).classList.add('visible');
+  document.querySelectorAll('.batch-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`.batch-btn[data-b="${b}"]`).classList.add('active');
+}
+
+// INIT
+render();
+</script>
+</body>
+</html>

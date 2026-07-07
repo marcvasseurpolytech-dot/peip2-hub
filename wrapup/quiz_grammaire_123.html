@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Quiz Grammaire Anglais · Polytech Lille</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a; --gold:#C9A020; --gold-l:#e8b84b; --cream:#FAF6ED;
+  --teal:#06d6a0; --teal-l:#a8f0de; --red:#ef476f; --red-l:#ffb3c6;
+  --amber:#ffd166; --coral:#ff6b6b; --coral-l:#ffb3b3;
+  --blue:#3a86ff; --blue-l:#a8c8ff; --purple:#9b5de5; --purp-l:#d4a8ff;
+  --green:#2ecc71; --green-l:#a8f0c0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{
+  min-height:100%;background:var(--navy);color:var(--cream);
+  font-family:'Source Serif 4',serif;
+  padding:0 0 2rem;
+}
+
+/* ── HEADER ── */
+.header{
+  background:rgba(13,27,42,.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  padding:.7rem 1.2rem;
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.6rem;flex-wrap:wrap;
+}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+
+/* timer */
+.timer-wrap{display:flex;align-items:center;gap:.5rem}
+.timer{
+  font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;
+  color:var(--cream);min-width:4.5rem;text-align:center;
+  padding:.2rem .6rem;border-radius:8px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+}
+.timer.warn{color:var(--amber);animation:blink 1s infinite}
+.timer.danger{color:var(--red-l);animation:blink .5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* progress */
+.prog-wrap{flex:1;min-width:120px;max-width:220px}
+.prog-track{height:5px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s}
+.prog-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:rgba(250,246,237,.4);margin-top:.25rem;text-align:right}
+
+/* score pills */
+.score-pills{display:flex;gap:.35rem;flex-wrap:wrap}
+.spill{
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.06em;
+  padding:.22rem .6rem;border-radius:12px;
+  background:rgba(255,255,255,.06);color:rgba(250,246,237,.7);border:1px solid rgba(255,255,255,.15);
+}
+
+/* ── MAIN ── */
+main{max-width:640px;margin:0 auto;padding:1rem 1rem}
+
+/* SPLASH */
+.splash{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100vh - 60px);gap:1.4rem;text-align:center;padding:1rem;
+}
+.splash-title{font-family:'Source Serif 4',serif;font-size:clamp(1.8rem,6vw,2.8rem);font-weight:600;line-height:1.1}
+.splash-title span{color:var(--gold)}
+.splash-sub{font-size:.95rem;color:rgba(250,246,237,.55);max-width:38ch;line-height:1.65}
+.splash-pills{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.sp{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;padding:.35rem .9rem;border-radius:20px}
+.sp.b{background:rgba(58,134,255,.18);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)}
+.sp.c{background:rgba(255,107,107,.18);color:var(--coral-l);border:1px solid rgba(255,107,107,.32)}
+.sp.t{background:rgba(6,214,160,.18);color:var(--teal-l);border:1px solid rgba(6,214,160,.32)}
+.start-btn{
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.9rem;letter-spacing:.08em;
+  padding:.75rem 2.4rem;border-radius:30px;
+  background:var(--gold);color:var(--navy);border:none;cursor:pointer;
+  transition:.2s;margin-top:.5rem;
+}
+.start-btn:hover{background:var(--gold-l);transform:translateY(-1px)}
+
+/* QUESTION CARD */
+.q-card{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:18px;padding:1.4rem 1.4rem 1.2rem;
+  margin-bottom:1rem;
+  animation:slideUp .3s both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.q-meta{
+  display:flex;align-items:center;gap:.5rem;margin-bottom:.9rem;flex-wrap:wrap;
+}
+.q-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:rgba(250,246,237,.35);letter-spacing:.1em}
+.q-badge{
+  font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.18rem .55rem;border-radius:10px;
+}
+
+.q-sentence{
+  font-size:1.15rem;font-weight:600;line-height:1.6;color:var(--cream);
+  margin-bottom:1.1rem;
+}
+.q-sentence .blank{
+  display:inline-block;border-bottom:2px solid var(--gold);
+  min-width:5rem;text-align:center;color:rgba(250,246,237,.3);
+  font-style:italic;font-family:'JetBrains Mono',monospace;font-size:.95rem;
+  padding:0 .2rem;vertical-align:baseline;
+}
+
+/* MCQ */
+.mcq-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.mcq-btn{
+  font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:700;
+  padding:.7rem .8rem;border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.05);color:var(--cream);
+  cursor:pointer;transition:.18s;text-align:left;
+  display:flex;align-items:center;gap:.5rem;
+}
+.mcq-btn:hover{background:rgba(255,255,255,.12);border-color:var(--gold)}
+.mcq-btn.correct{background:rgba(46,204,113,.2);border-color:var(--green);color:var(--green-l)}
+.mcq-btn.wrong{background:rgba(239,71,111,.2);border-color:var(--red);color:var(--red-l)}
+.mcq-btn.reveal{background:rgba(46,204,113,.12);border-color:rgba(46,204,113,.4);color:var(--green-l);opacity:.7}
+.mcq-btn.disabled{pointer-events:none}
+.mcq-letter{
+  width:22px;height:22px;border-radius:6px;flex-shrink:0;
+  background:rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:700;
+}
+
+/* TYPE INPUT */
+.type-wrap{display:flex;gap:.6rem;align-items:center}
+.type-input{
+  flex:1;
+  font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.18);border-radius:10px;
+  color:var(--cream);padding:.65rem .9rem;outline:none;
+  transition:.18s;
+  -webkit-appearance:none;
+}
+.type-input:focus{border-color:var(--gold);background:rgba(255,255,255,.1)}
+.type-input.correct{border-color:var(--green);background:rgba(46,204,113,.15);color:var(--green-l)}
+.type-input.wrong{border-color:var(--red);background:rgba(239,71,111,.15);color:var(--red-l)}
+.type-input.near{border-color:var(--amber);background:rgba(255,209,102,.12);color:var(--amber)}
+.type-submit{
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;
+  padding:.65rem 1.2rem;border-radius:10px;
+  background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.18s;
+  flex-shrink:0;
+}
+.type-submit:hover{background:var(--gold-l)}
+.type-submit:disabled{opacity:.4;pointer-events:none}
+
+/* FEEDBACK */
+.feedback{
+  margin-top:.85rem;padding:.75rem 1rem;
+  border-radius:10px;font-size:.9rem;line-height:1.55;
+  animation:slideUp .25s both;
+}
+.feedback.ok{background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);color:var(--green-l)}
+.feedback.near-ok{background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.25);color:var(--amber)}
+.feedback.ko{background:rgba(239,71,111,.12);border:1px solid rgba(239,71,111,.25);color:var(--red-l)}
+.feedback strong{color:var(--cream)}
+.feedback .rule{
+  margin-top:.45rem;padding:.5rem .7rem;
+  background:rgba(255,255,255,.06);border-radius:8px;
+  font-size:.84rem;color:rgba(250,246,237,.65);
+  border-left:2px solid rgba(255,255,255,.2);
+}
+
+/* NEXT BUTTON */
+.next-btn{
+  width:100%;margin-top:.9rem;
+  font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;letter-spacing:.06em;
+  padding:.7rem;border-radius:12px;
+  background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.18s;
+  display:none;
+}
+.next-btn.show{display:block}
+.next-btn:hover{background:var(--gold-l)}
+
+/* RESULTS */
+.results{animation:slideUp .4s both;padding:1rem 0 3rem}
+.res-hero{text-align:center;margin-bottom:1.8rem}
+.res-score{font-family:'Source Serif 4',serif;font-size:3.5rem;font-weight:600;color:var(--gold);line-height:1}
+.res-label{font-size:.9rem;color:rgba(250,246,237,.5);margin-top:.3rem}
+.res-grade{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;margin-top:.6rem}
+
+.res-cards{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.4rem}
+.res-card{
+  border-radius:14px;padding:1rem 1.2rem;
+  border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
+}
+.res-card-title{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.6rem;opacity:.6}
+.res-bar-wrap{height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin:.4rem 0}
+.res-bar{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.2,1,.3,1);background:var(--gold)}
+.res-pct{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:var(--cream)}
+
+.restart-btn{
+  width:100%;font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;
+  padding:.8rem;border-radius:14px;
+  background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.18s;
+}
+.restart-btn:hover{background:var(--gold-l)}
+
+/* TIMEOUT */
+.timeout-msg{
+  text-align:center;padding:2rem 1rem;
+  font-size:1.1rem;color:var(--red-l);font-family:'JetBrains Mono',monospace;
+}
+</style>
+</head>
+<body>
+<div class="header" id="hdr" style="display:none">
+  <div class="brand">Marc Vasseur · Polytech Lille</div>
+  <div class="timer-wrap">
+    <div class="timer" id="timer">10:00</div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <div class="prog-label" id="prog-lbl">0 / 80</div>
+  </div>
+  <div class="score-pills">
+    <div class="spill" id="sc1">A: —</div>
+    <div class="spill" id="sc2">B: —</div>
+    <div class="spill" id="sc3">C: —</div>
+  </div>
+</div>
+
+<main id="main">
+  <!-- Splash -->
+  <div class="splash" id="splash">
+    <div class="splash-title">Quiz Grammaire<br><span>Anglais</span></div>
+    <div class="splash-sub">80 phrases · 10 minutes · 3 leçons mélangées</div>
+    <div class="splash-pills">
+      <span class="sp b">Partie A</span>
+      <span class="sp c">Partie B</span>
+      <span class="sp t">Partie C</span>
+    </div>
+    <div style="font-size:.85rem;color:rgba(250,246,237,.4);text-align:center;max-width:32ch;line-height:1.6">
+      L'ordre des questions est différent pour chaque partie.
+    </div>
+    <button class="start-btn" onclick="startQuiz()">▶ Commencer le quiz</button>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(250,246,237,.22);letter-spacing:.1em;text-transform:uppercase">Polytech Lille · PEIP2 Remédiation · S3</div>
+  </div>
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   QUESTION BANK — 80 questions, 3 lessons
+   lesson: 1=présents, 2=prétérit, 3=present perfect/for/since/ago
+   type: 'mcq' | 'type'
+   answer: correct answer(s) as array (all accepted)
+   distractors: for MCQ, 3 wrong answers
+   rule: short explanation shown on error
+═══════════════════════════════════════════════════════ */
+const BANK = [
+
+/* ══ LESSON 1 — LES DEUX PRÉSENTS ══ */
+// be+ing
+{l:1,type:'mcq',
+ s:"Look! She ___ her report right now.",
+ a:["is writing"],
+ d:["writes","wrote","has written"],
+ rule:"Action en cours maintenant (right now) → Present BE + -ING : is writing."},
+{l:1,type:'type',
+ s:"Listen! The students ___ (talk) in the hallway.",
+ a:["are talking"],
+ rule:"Listen! = indice d'action en cours → are talking (talk → doubler le L ? Non — CVC court : consonne-voyelle-consonne = t-a-l-k... le k termine, pas de doublement ici). Forme : are + talking."},
+{l:1,type:'mcq',
+ s:"He ___ to London next Monday — his flight is booked.",
+ a:["is flying"],
+ d:["flies","flew","has flown"],
+ rule:"Plan futur arrangé à l'avance → Present BE + -ING : is flying."},
+{l:1,type:'type',
+ s:"We ___ (do) a 6-month internship at the moment.",
+ a:["are doing"],
+ rule:"At the moment + situation temporaire → are doing."},
+{l:1,type:'mcq',
+ s:"___ you ___ (work) from home right now?",
+ a:["Are … working"],
+ d:["Do … work","Did … work","Have … worked"],
+ rule:"Right now → action en cours → interrogatif BE+ING : inversion BE + sujet. Pas de DO ici."},
+{l:1,type:'type',
+ s:"She ___ (not / listen) to the teacher right now.",
+ a:["isn't listening","is not listening"],
+ rule:"Négatif BE+ING : isn't / is not + verbe-ing."},
+{l:1,type:'mcq',
+ s:"Water ___ at 100°C.",
+ a:["boils"],
+ d:["is boiling","boiled","has boiled"],
+ rule:"Vérité générale → Present Simple : boils (he/she/it → +s)."},
+{l:1,type:'type',
+ s:"He ___ (take) the train every morning.",
+ a:["takes"],
+ rule:"Habitude régulière (every morning) → Present Simple. He/she/it → +s : takes."},
+{l:1,type:'mcq',
+ s:"___ she usually ___ (finish) work at 6 PM?",
+ a:["Does … finish"],
+ d:["Is … finishing","Did … finish","Has … finished"],
+ rule:"Interrogatif Present Simple → Does + sujet + base (pas de -s après does)."},
+{l:1,type:'type',
+ s:"They ___ (not / speak) French at home.",
+ a:["don't speak","do not speak"],
+ rule:"Négatif Present Simple, they → don't + base."},
+{l:1,type:'mcq',
+ s:"Shh! The baby ___ in the next room.",
+ a:["is sleeping"],
+ d:["sleeps","slept","has slept"],
+ rule:"Action en cours maintenant → Present BE + -ING : is sleeping."},
+{l:1,type:'type',
+ s:"The machine ___ (make) a strange noise at the moment.",
+ a:["is making"],
+ rule:"At the moment → BE+ING. make → -e muet : is making (pas is makeing)."},
+{l:1,type:'mcq',
+ s:"Steel ___ when heated.",
+ a:["expands"],
+ d:["is expanding","expanded","has expanded"],
+ rule:"Vérité scientifique permanente → Present Simple."},
+{l:1,type:'type',
+ s:"Why ___ he ___ (run) so fast?",
+ a:["is … running"],
+ rule:"Action en cours visible → BE+ING interrogatif. run → CVC → doubler le n : is running."},
+{l:1,type:'mcq',
+ s:"I love engineering — I ___ it every day.",
+ a:["enjoy"],
+ d:["am enjoying","enjoyed","have enjoyed"],
+ rule:"Goût / état permanent → Present Simple (verbes d'état : love, enjoy, know…)."},
+{l:1,type:'type',
+ s:"She ___ (write) three emails right now.",
+ a:["is writing"],
+ rule:"Right now → BE+ING. write → -e muet : is writing."},
+{l:1,type:'mcq',
+ s:"___ the team ___ a new prototype at the moment?",
+ a:["Is … building"],
+ d:["Does … build","Did … build","Has … built"],
+ rule:"At the moment → situation temporaire en cours → BE+ING interrogatif."},
+{l:1,type:'type',
+ s:"He ___ (swim) every morning before work.",
+ a:["swims"],
+ rule:"Routine (every morning) → Present Simple. swim → he/she/it : swims."},
+{l:1,type:'mcq',
+ s:"They ___ the client tomorrow — it's in the calendar.",
+ a:["are meeting"],
+ d:["meet","met","will meet"],
+ rule:"Plan futur arrangé → BE+ING."},
+{l:1,type:'type',
+ s:"It ___ (rain) — take your umbrella!",
+ a:["is raining"],
+ rule:"Action en cours maintenant → BE+ING : is raining."},
+
+/* ══ LESSON 2 — PRÉTÉRIT ══ */
+// réguliers + irréguliers
+{l:2,type:'mcq',
+ s:"She ___ the office at 5 PM yesterday.",
+ a:["left"],
+ d:["has left","was leaving","leaves"],
+ rule:"Date précise (yesterday) → Prétérit. leave est irrégulier : left."},
+{l:2,type:'type',
+ s:"He ___ (finish) his report at midnight last night.",
+ a:["finished"],
+ rule:"Prétérit régulier : finished (finish + ed)."},
+{l:2,type:'mcq',
+ s:"They ___ very tired after the 3-hour meeting yesterday.",
+ a:["were"],
+ d:["was","are","have been"],
+ rule:"They + BE au prétérit → were. (yesterday impose le prétérit)"},
+{l:2,type:'type',
+ s:"I ___ (write) an email to the client at 8 AM this morning.",
+ a:["wrote"],
+ rule:"Heure précise (at 8 AM) → Prétérit. write irrégulier → wrote."},
+{l:2,type:'mcq',
+ s:"The company ___ 50 engineers last year.",
+ a:["hired"],
+ d:["hire","has hired","hires"],
+ rule:"Last year = date précise → Prétérit. hire → +d (terminé en -e) : hired."},
+{l:2,type:'type',
+ s:"She ___ (study) all night before the exam last Monday.",
+ a:["studied"],
+ rule:"Last Monday → Prétérit. study régulier, y→ied : studied."},
+{l:2,type:'mcq',
+ s:"The alarms went off and he immediately ___ the experiment.",
+ a:["stopped"],
+ d:["has stopped","stops","was stopping"],
+ rule:"Succession d'actions passées → Prétérit. stop → CVC → doublement : stopped."},
+{l:2,type:'type',
+ s:"The team ___ (have) a breakthrough in March.",
+ a:["had"],
+ rule:"Prétérit de have (irrégulier) → had."},
+{l:2,type:'mcq',
+ s:"___ they ___ the problem in the end?",
+ a:["Did … solve"],
+ d:["Have … solved","Were … solving","Do … solve"],
+ rule:"Interrogatif prétérit → Did + sujet + base (pas de -ed ni -s)."},
+{l:2,type:'type',
+ s:"We ___ (spend) six months on this analysis.",
+ a:["spent"],
+ rule:"Prétérit de spend (irrégulier) → spent."},
+{l:2,type:'mcq',
+ s:"She ___ the error in time — the system crashed.",
+ a:["didn't notice"],
+ d:["hasn't noticed","don't notice","didn't noticed"],
+ rule:"Négatif prétérit → didn't + base. Jamais 'didn't noticed'."},
+{l:2,type:'type',
+ s:"___ he ___ (understand) the instructions?",
+ a:["Did … understand","did … understand"],
+ rule:"Interrogatif prétérit → Did + sujet + base."},
+{l:2,type:'mcq',
+ s:"They ___ present at last week's meeting.",
+ a:["weren't"],
+ d:["didn't be","haven't been","aren't"],
+ rule:"BE au prétérit → weren't (were not). Pas de 'didn't be' !"},
+{l:2,type:'type',
+ s:"The factory ___ (be) very small in 1950.",
+ a:["was"],
+ rule:"État passé, singulier → was."},
+{l:2,type:'mcq',
+ s:"Why ___ the experiment ___?",
+ a:["did … fail"],
+ d:["has … failed","was … failing","does … fail"],
+ rule:"Question au prétérit → Why + did + sujet + base."},
+{l:2,type:'type',
+ s:"I ___ (find) the solution after hours of work.",
+ a:["found"],
+ rule:"Prétérit de find (irrégulier) → found."},
+{l:2,type:'mcq',
+ s:"He ___ Python 5 years ago — now he's an expert.",
+ a:["learned"],
+ d:["has learned","learns","was learning"],
+ rule:"Ago → Prétérit obligatoire. learn régulier → learned."},
+{l:2,type:'type',
+ s:"___ she ___ (be) satisfied with the outcome?",
+ a:["Was … satisfied","was … satisfied"],
+ rule:"BE prétérit interrogatif : inversion directe. She → Was."},
+{l:2,type:'mcq',
+ s:"He woke up, ___ breakfast and left.",
+ a:["had"],
+ d:["has had","was having","would have"],
+ rule:"Succession d'actions passées → Prétérit. have (irrégulier) → had."},
+{l:2,type:'type',
+ s:"The engineer ___ (bring) his prototype to the meeting yesterday.",
+ a:["brought"],
+ rule:"Prétérit de bring (irrégulier) → brought."},
+{l:2,type:'mcq',
+ s:"The new system ___ energy consumption by 30%.",
+ a:["cut"],
+ d:["cutted","has cut","cuts"],
+ rule:"Prétérit de cut (invariable) → cut. Jamais 'cutted' !"},
+{l:2,type:'type',
+ s:"She ___ (not / study) for the certification test.",
+ a:["didn't study","did not study"],
+ rule:"Négatif prétérit → didn't + base (pas de -ied après didn't)."},
+{l:2,type:'mcq',
+ s:"___ the system ___ correctly during the demo?",
+ a:["Did … work"],
+ d:["Was … working","Has … worked","Does … work"],
+ rule:"Interrogatif prétérit → Did + sujet + base."},
+{l:2,type:'type',
+ s:"We ___ (visit) France every summer as children.",
+ a:["visited"],
+ rule:"Habitude passée révolue → Prétérit : visited."},
+{l:2,type:'mcq',
+ s:"He ___ (not / go) to the conference last year.",
+ a:["didn't go"],
+ d:["hasn't gone","didn't went","wasn't going"],
+ rule:"Négatif prétérit → didn't + base. Jamais 'didn't went' !"},
+{l:2,type:'type',
+ s:"The project ___ (take) eight months to complete.",
+ a:["took"],
+ rule:"Prétérit de take (irrégulier) → took."},
+{l:2,type:'mcq',
+ s:"She didn't ___ the report before the deadline.",
+ a:["submit"],
+ d:["submitted","submits","submitting"],
+ rule:"Après didn't → base verbale obligatoire. Jamais de -ed après didn't."},
+{l:2,type:'type',
+ s:"Why ___ the project ___ (take) so long?",
+ a:["did … take","Did … take"],
+ rule:"Question au prétérit → Why + did + sujet + base."},
+
+/* ══ LESSON 3 — PRESENT PERFECT / FOR / SINCE / AGO ══ */
+{l:3,type:'mcq',
+ s:"I ___ just ___ my keys — I can't get in.",
+ a:["have … lost"],
+ d:["lost","lose","had lost"],
+ rule:"just + résultat présent visible → Present Perfect : have lost."},
+{l:3,type:'type',
+ s:"She ___ just ___ (finish) her report.",
+ a:["has … finished","has just finished"],
+ rule:"just → Present Perfect. She → has + finished."},
+{l:3,type:'mcq',
+ s:"___ you ever ___ to Japan?",
+ a:["Have … been"],
+ d:["Did … go","Are … going","Were … going"],
+ rule:"Expérience de vie (ever) → Present Perfect."},
+{l:3,type:'type',
+ s:"He ___ (work) here for two years. (il y travaille encore)",
+ a:["has worked","has been working"],
+ rule:"For + durée encore en cours → Present Perfect : has worked (ou has been working)."},
+{l:3,type:'mcq',
+ s:"He ___ called yet.",
+ a:["hasn't"],
+ d:["didn't","don't","wasn't"],
+ rule:"yet → Present Perfect négatif : hasn't."},
+{l:3,type:'type',
+ s:"The lab ___ just ___ (buy) new equipment.",
+ a:["has … bought","has just bought"],
+ rule:"just → Present Perfect. buy → participe passé irrégulier : bought."},
+{l:3,type:'mcq',
+ s:"I have worked here ___ 3 years.",
+ a:["for"],
+ d:["since","ago","during"],
+ rule:"For + durée totale (3 years = durée) → Present Perfect."},
+{l:3,type:'type',
+ s:"She has been in Lille ___ September.",
+ a:["since"],
+ rule:"Since + point de départ (September) → Present Perfect."},
+{l:3,type:'mcq',
+ s:"He started this project three months ___.",
+ a:["ago"],
+ d:["before","since","for"],
+ rule:"Il y a = ago. Se place après la durée. Prétérit obligatoire avec ago."},
+{l:3,type:'type',
+ s:"She ___ (call) me an hour ago.",
+ a:["called"],
+ rule:"ago → Prétérit : called. 'She has called me an hour ago' est FAUX."},
+{l:3,type:'mcq',
+ s:"We ___ him since last Monday.",
+ a:["haven't seen"],
+ d:["didn't see","don't see","weren't seeing"],
+ rule:"Since → Present Perfect négatif : haven't seen."},
+{l:3,type:'type',
+ s:"The company ___ (grow) a lot since 2018. (toujours en croissance)",
+ a:["has grown"],
+ rule:"Since + toujours en cours → Present Perfect. grow → participe passé : grown."},
+{l:3,type:'mcq',
+ s:"'I have seen him yesterday.' Cette phrase est ___",
+ a:["incorrecte — yesterday impose le prétérit : I saw him"],
+ d:["correcte","correcte si c'est récent","incorrecte car have seen est trop formel"],
+ rule:"yesterday = date précise → Prétérit obligatoire. 'I have seen him yesterday' est FAUX."},
+{l:3,type:'type',
+ s:"___ you ever ___ (hear) of this technology?",
+ a:["Have … heard","have … heard"],
+ rule:"ever + expérience → Present Perfect : Have you heard (hear → heard irrég.)."},
+{l:3,type:'mcq',
+ s:"She ___ here since 2021. (elle y vit encore)",
+ a:["has lived"],
+ d:["lived","lives","was living"],
+ rule:"Since + durée en cours → Present Perfect : has lived."},
+{l:3,type:'type',
+ s:"I ___ (recently / read) an article on AI.",
+ a:["have recently read","have read recently"],
+ rule:"recently → Present Perfect. read → participe passé : read (même forme)."},
+{l:3,type:'mcq',
+ s:"They ___ the lab five years ago.",
+ a:["set up"],
+ d:["have set up","sets up","had set up"],
+ rule:"ago → Prétérit. set up → irrégulier invariable : set up."},
+{l:3,type:'type',
+ s:"He ___ (graduate) in June 2022.",
+ a:["graduated"],
+ rule:"Date précise (June 2022) → Prétérit : graduated."},
+{l:3,type:'mcq',
+ s:"We have worked on this problem ___ six weeks now.",
+ a:["for"],
+ d:["since","ago","from"],
+ rule:"For + durée totale (six weeks). Since serait pour un point de départ."},
+{l:3,type:'type',
+ s:"I ___ never ___ (fail) an exam.",
+ a:["have … never failed","have never failed"],
+ rule:"never + bilan de vie → Present Perfect : have never failed."},
+{l:3,type:'mcq',
+ s:"The team ___ just ___ the critical bug — the app is running again.",
+ a:["has … fixed"],
+ d:["had … fixed","did … fix","was … fixing"],
+ rule:"just + résultat présent visible → Present Perfect : has fixed."},
+{l:3,type:'type',
+ s:"She ___ (live) in Paris for 2 years — she knows the city well. (elle y est encore)",
+ a:["has lived","has been living"],
+ rule:"Lien présent (she knows…) → Present Perfect : has lived (ou has been living)."},
+{l:3,type:'mcq',
+ s:"The results ___ back yesterday afternoon.",
+ a:["came"],
+ d:["have come","come","were coming"],
+ rule:"yesterday afternoon = date/heure précise → Prétérit : came."},
+{l:3,type:'type',
+ s:"We ___ just ___ (receive) the results — they're excellent!",
+ a:["have … received","have just received"],
+ rule:"just → Present Perfect : have received. receive → +d : received."},
+{l:3,type:'mcq',
+ s:"He ___ a student here ___ three years.",
+ a:["has been … for"],
+ d:["was … for","is … since","has been … since"],
+ rule:"Durée en cours → Present Perfect has been + for (durée totale)."},
+
+/* ── Extra mix questions ── */
+{l:1,type:'mcq',
+ s:"She ___ for the TOEIC exam — she's been at her desk all afternoon.",
+ a:["is preparing"],
+ d:["prepares","prepared","has prepared"],
+ rule:"Action visible en cours maintenant → BE+ING : is preparing."},
+{l:2,type:'type',
+ s:"He ___ (run) several tests on the prototype last week.",
+ a:["ran"],
+ rule:"Last week → Prétérit. run → irrégulier : ran."},
+{l:3,type:'mcq',
+ s:"I ___ never ___ that type of error before in my career.",
+ a:["have … made"],
+ d:["did … make","am … making","was … making"],
+ rule:"never + bilan de vie → Present Perfect : have never made."},
+{l:1,type:'type',
+ s:"___ the team ___ (not / work) on the new algorithm right now?",
+ a:["Isn't the team working","Is the team not working"],
+ rule:"Négatif interrogatif BE+ING → Isn't the team working?"},
+{l:2,type:'mcq',
+ s:"The machine ___ down during the live demo.",
+ a:["broke"],
+ d:["has broken","breaks","was breaking"],
+ rule:"Événement ponctuel passé → Prétérit. break → broke."},
+{l:3,type:'type',
+ s:"He ___ (publish) five papers since joining the lab.",
+ a:["has published"],
+ rule:"Since + toujours en cours → Present Perfect : has published."},
+{l:1,type:'mcq',
+ s:"I ___ engineering. I find it fascinating.",
+ a:["love"],
+ d:["am loving","loved","have loved"],
+ rule:"Verbe d'état (love) → toujours Present Simple, jamais BE+ING."},
+{l:3,type:'type',
+ s:"She ___ (complete) her PhD three months ago.",
+ a:["completed"],
+ rule:"ago → Prétérit : completed. 'She has completed… ago' est FAUX."},
+{l:2,type:'mcq',
+ s:"I ___ (not / expect) the results to be so accurate when we ran the test.",
+ a:["didn't expect"],
+ d:["haven't expected","wasn't expecting","don't expect"],
+ rule:"Passé révolu avec marqueur (when we ran) → Prétérit négatif : didn't expect."},
+{l:1,type:'type',
+ s:"They ___ (currently / develop) a new algorithm.",
+ a:["are currently developing","are developing"],
+ rule:"Currently → BE+ING : are developing. develop → pas de doublement (consonnes finales p précédé de deux voyelles)."},
+{l:3,type:'mcq',
+ s:"She ___ her TOEIC certification last March.",
+ a:["passed"],
+ d:["has passed","was passing","passes"],
+ rule:"Last March = date précise → Prétérit : passed."},
+{l:2,type:'type',
+ s:"The CEO ___ (give) a presentation to the board last Tuesday.",
+ a:["gave"],
+ rule:"Last Tuesday → Prétérit. give irrégulier → gave."},
+{l:3,type:'mcq',
+ s:"We ___ finalize the report yet — still working on it.",
+ a:["haven't"],
+ d:["didn't","don't","aren't"],
+ rule:"yet (dans négatif) → Present Perfect : haven't. 'We didn't finalize yet' est incorrect."},
+{l:1,type:'type',
+ s:"He ___ (not / use) Python — he prefers Java.",
+ a:["doesn't use","does not use"],
+ rule:"Vérité générale / habitude → Present Simple négatif. He → doesn't + base."},
+{l:2,type:'mcq',
+ s:"She ___ the experiment three times last week before getting the right results.",
+ a:["repeated"],
+ d:["has repeated","repeats","was repeating"],
+ rule:"Last week → Prétérit : repeated."},
+{l:3,type:'type',
+ s:"___ they ever ___ (visit) the manufacturing plant?",
+ a:["Have … visited","have … visited"],
+ rule:"ever + expérience → Present Perfect : Have they visited?"},
+{l:1,type:'mcq',
+ s:"The software ___ every time we update it. (habitude)",
+ a:["crashes"],
+ d:["is crashing","crashed","has crashed"],
+ rule:"Habitude répétée → Present Simple. crash → he/she/it : crashes."},
+{l:2,type:'type',
+ s:"She ___ (not / show) up at the meeting — everyone was surprised.",
+ a:["didn't show","did not show"],
+ rule:"Prétérit négatif → didn't + base. Jamais 'didn't showed'."},
+{l:3,type:'mcq',
+ s:"How long ___ you ___ English?",
+ a:["have … studied"],
+ d:["did … study","are … studying","were … studying"],
+ rule:"How long + durée en cours → Present Perfect."},
+{l:1,type:'type',
+ s:"___ he ___ (come) to the lab session every week?",
+ a:["Does … come","does … come"],
+ rule:"Habitude (every week) → Present Simple interrogatif : Does + base (pas de -s après does)."},
+{l:2,type:'mcq',
+ s:"She usually submits on Friday. → Last week, ___",
+ a:["she submitted"],
+ d:["she has submitted","she was submitting","she submits"],
+ rule:"Last week → Prétérit : she submitted."},
+{l:3,type:'type',
+ s:"I ___ (not / see) this error before in my career.",
+ a:["have never seen","haven't seen","have not seen"],
+ rule:"Expérience de vie (jamais jusqu'à maintenant) → Present Perfect : have never seen."},
+{l:1,type:'mcq',
+ s:"Why ___ the server ___ so slowly right now?",
+ a:["is … running"],
+ d:["does … run","did … run","has … run"],
+ rule:"Right now → BE+ING interrogatif."},
+{l:2,type:'type',
+ s:"He ___ (not / know) about the change until yesterday.",
+ a:["didn't know","did not know"],
+ rule:"Until yesterday → Prétérit négatif : didn't know."},
+{l:3,type:'mcq',
+ s:"I ___ here since 2020 — I love this city.",
+ a:["have lived"],
+ d:["lived","live","was living"],
+ rule:"Since + durée encore en cours → Present Perfect : have lived."},
+
+];
+
+/* ═══════════════════════════════════════════
+   QUIZ ENGINE
+═══════════════════════════════════════════ */
+const TOTAL = 80;
+const TIME  = 10 * 60; // 600 seconds
+
+let questions = [];
+let current   = 0;
+let answered  = 0;
+let scores    = {1:{ok:0,tot:0}, 2:{ok:0,tot:0}, 3:{ok:0,tot:0}};
+let timerInt  = null;
+let secondsLeft = TIME;
+let done      = false;
+
+/* Fisher-Yates shuffle */
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function startQuiz(){
+  // Pick TOTAL questions — sample across lessons proportionally
+  const l1=BANK.filter(q=>q.l===1);
+  const l2=BANK.filter(q=>q.l===2);
+  const l3=BANK.filter(q=>q.l===3);
+  // roughly 26-27 each, total 80
+  const pick=(arr,n)=>shuffle(arr).slice(0,Math.min(n,arr.length));
+  questions = shuffle([...pick(l1,27),...pick(l2,27),...pick(l3,26)]).slice(0,TOTAL);
+
+  document.getElementById('splash').style.display='none';
+  document.getElementById('hdr').style.display='flex';
+  scores={1:{ok:0,tot:0},2:{ok:0,tot:0},3:{ok:0,tot:0}};
+  current=0; answered=0; done=false; secondsLeft=TIME;
+  startTimer();
+  renderQuestion();
+}
+
+function startTimer(){
+  updateTimer();
+  timerInt=setInterval(()=>{
+    secondsLeft--;
+    updateTimer();
+    if(secondsLeft<=0){ clearInterval(timerInt); showTimeout(); }
+  },1000);
+}
+
+function updateTimer(){
+  const m=Math.floor(secondsLeft/60);
+  const s=secondsLeft%60;
+  const el=document.getElementById('timer');
+  el.textContent=(m+':')+(s<10?'0':'')+s;
+  el.className='timer'+(secondsLeft<=60?' danger':secondsLeft<=120?' warn':'');
+}
+
+function showTimeout(){
+  if(done)return;
+  done=true;
+  showResults(true);
+}
+
+/* ── Normalise for comparison ── */
+function norm(s){
+  return s.toLowerCase()
+    .trim()
+    .replace(/['']/g,"'")
+    .replace(/[…]/g,' ')
+    .replace(/\.\.\./g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+/* Check near-miss: only 1 char different (missing, extra, swapped) */
+function nearMiss(user, correct){
+  const a=norm(user), b=norm(correct);
+  if(a===b)return false;
+  if(Math.abs(a.length-b.length)>2)return false;
+  // levenshtein simple
+  const dp=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);
+  for(let j=1;j<=b.length;j++)dp[0][j]=j;
+  for(let i=1;i<=a.length;i++)
+    for(let j=1;j<=b.length;j++)
+      dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[a.length][b.length]<=2;
+}
+
+function checkType(userRaw, q){
+  const user=norm(userRaw);
+  for(const ans of q.a){
+    if(user===norm(ans))return 'correct';
+  }
+  for(const ans of q.a){
+    if(nearMiss(user,norm(ans)))return 'near';
+  }
+  return 'wrong';
+}
+
+/* ── RENDER ── */
+function renderQuestion(){
+  if(current>=questions.length){clearInterval(timerInt);done=true;showResults(false);return;}
+  const q=questions[current];
+  const qNum=current+1;
+
+  // Split sentence at ___
+  const sentHtml=q.s.replace(/___/g,'<span class="blank">___</span>');
+
+  let inputHtml='';
+  if(q.type==='mcq'){
+    const opts=shuffle([...q.a.slice(0,1),...q.d]);
+    const letters=['A','B','C','D'];
+    inputHtml=`<div class="mcq-grid">`+
+      opts.map((o,i)=>`<button class="mcq-btn" data-val="${encodeURIComponent(o)}" onclick="answerMCQ(this,'${encodeURIComponent(q.a[0])}')">
+        <span class="mcq-letter">${letters[i]}</span>${o}
+      </button>`).join('')+
+    `</div>`;
+  } else {
+    inputHtml=`<div class="type-wrap">
+      <input class="type-input" id="ti" type="text" placeholder="Ta réponse…" autocorrect="off" autocapitalize="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter')submitType()">
+      <button class="type-submit" id="ts" onclick="submitType()">OK</button>
+    </div>`;
+  }
+
+  document.getElementById('main').innerHTML=`
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q${qNum} / ${TOTAL}</span>
+    </div>
+    <div class="q-sentence">${sentHtml}</div>
+    ${inputHtml}
+    <div id="fb"></div>
+    <button class="next-btn" id="nxt" onclick="nextQ()">Question suivante →</button>
+  </div>`;
+
+  // progress
+  document.getElementById('prog').style.width=(qNum/TOTAL*100)+'%';
+  document.getElementById('prog-lbl').textContent=qNum+' / '+TOTAL;
+  updateScorePills();
+
+  // auto-focus type input
+  if(q.type==='type'){
+    setTimeout(()=>{const el=document.getElementById('ti');if(el)el.focus();},120);
+  }
+}
+
+function answerMCQ(btn, encodedCorrect){
+  const correct=decodeURIComponent(encodedCorrect);
+  const val=decodeURIComponent(btn.dataset.val);
+  // disable all
+  document.querySelectorAll('.mcq-btn').forEach(b=>{b.classList.add('disabled')});
+  const q=questions[current];
+  scores[q.l].tot++;
+
+  let isOk=norm(val)===norm(correct);
+  btn.classList.add(isOk?'correct':'wrong');
+  if(!isOk){
+    // reveal correct
+    document.querySelectorAll('.mcq-btn').forEach(b=>{
+      if(norm(decodeURIComponent(b.dataset.val))===norm(correct))b.classList.add('reveal');
+    });
+  } else {
+    scores[q.l].ok++;
+  }
+  showFeedback(isOk?'correct':'wrong', q, correct, val);
+  updateScorePills();
+  document.getElementById('nxt').classList.add('show');
+}
+
+function submitType(){
+  const inp=document.getElementById('ti');
+  const btn=document.getElementById('ts');
+  if(!inp||btn.disabled)return;
+  const val=inp.value.trim();
+  if(!val)return;
+  btn.disabled=true;inp.disabled=true;
+  const q=questions[current];
+  scores[q.l].tot++;
+  const res=checkType(val,q);
+  inp.className='type-input '+({'correct':'correct','near':'near','wrong':'wrong'}[res]);
+  if(res==='correct'||res==='near') scores[q.l].ok++;
+  showFeedback(res,q,q.a[0],val);
+  updateScorePills();
+  document.getElementById('nxt').classList.add('show');
+}
+
+function showFeedback(res, q, correct, user){
+  const fb=document.getElementById('fb');
+  if(!fb)return;
+  let cls='', msg='';
+  if(res==='correct'){
+    cls='ok';
+    msg=`✓ <strong>Correct !</strong> <em>${correct}</em>`;
+  } else if(res==='near'){
+    cls='near-ok';
+    msg=`~ <strong>Presque !</strong> La bonne réponse est <strong style="color:var(--cream)">${correct}</strong> — attention à l'orthographe.
+    <div class="rule">${q.rule}</div>`;
+  } else {
+    cls='ko';
+    msg=`✗ <strong>Pas tout à fait.</strong> La bonne réponse est <strong style="color:var(--cream)">${correct}</strong>
+    <div class="rule">${q.rule}</div>`;
+  }
+  fb.innerHTML=`<div class="feedback ${cls}">${msg}</div>`;
+}
+
+function nextQ(){
+  current++;
+  answered=current;
+  renderQuestion();
+}
+
+function updateScorePills(){
+  [1,2,3].forEach(l=>{
+    const {ok,tot}=scores[l];
+    const pct=tot>0?Math.round(ok/tot*100):null;
+    const label=['','A','B','C'][l];
+    const el=document.getElementById('sc'+l);
+    if(!el)return;
+    el.textContent=label+': '+(pct!==null?pct+'%':'—');
+  });
+}
+
+/* ── RESULTS ── */
+function showResults(timeout){
+  clearInterval(timerInt);
+  const totalOk=scores[1].ok+scores[2].ok+scores[3].ok;
+  const totalDone=scores[1].tot+scores[2].tot+scores[3].tot;
+  const pct=totalDone>0?Math.round(totalOk/totalDone*100):0;
+  const grade=pct>=90?'🏆 Excellent':pct>=75?'✅ Bien':pct>=55?'📚 Assez bien':' À revoir';
+
+  const lessonNames=['','Partie A','Partie B','Partie C'];
+  const lessonColors=['','rgba(250,246,237,.8)','rgba(250,246,237,.8)','rgba(250,246,237,.8)'];
+
+  let barsHtml='';
+  [1,2,3].forEach(l=>{
+    const {ok,tot}=scores[l];
+    if(!tot){barsHtml+=`<div class="res-card"><div class="res-card-title">${lessonNames[l]}</div><div style="font-size:.85rem;color:rgba(250,246,237,.35)">Non évalué</div></div>`;return;}
+    const p=Math.round(ok/tot*100);
+    barsHtml+=`<div class="res-card">
+      <div class="res-card-title">${lessonNames[l]}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.9rem;color:rgba(250,246,237,.55)">${ok} / ${tot} correctes</div>
+        <div class="res-pct">${p}%</div>
+      </div>
+      <div class="res-bar-wrap">
+        <div class="res-bar" id="rb${l}" style="width:0%"></div>
+      </div>
+      <div style="font-size:.82rem;color:rgba(250,246,237,.4)">
+        
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('hdr').style.display='none';
+  document.getElementById('main').innerHTML=`
+  <div class="results">
+    <div class="res-hero">
+      ${timeout?'<div class="timeout-msg" style="margin-bottom:.8rem">⏱ Temps écoulé !</div>':''}
+      <div class="res-score">${pct}%</div>
+      <div class="res-label">${totalOk} / ${totalDone} questions correctes</div>
+      <div class="res-grade">${grade}</div>
+    </div>
+    <div class="res-cards">${barsHtml}</div>
+    <button class="restart-btn" onclick="location.reload()">↺ Recommencer (ordre différent)</button>
+  </div>`;
+
+  // animate bars after short delay
+  setTimeout(()=>{
+    [1,2,3].forEach(l=>{
+      const {ok,tot}=scores[l];
+      if(!tot)return;
+      const bar=document.getElementById('rb'+l);
+      if(bar)bar.style.width=Math.round(ok/tot*100)+'%';
+    });
+  },200);
+}
+
+</script>
+</body>
+</html>

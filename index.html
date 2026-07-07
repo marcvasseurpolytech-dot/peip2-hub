@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEIP2 · Hub Anglais · Polytech Lille</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a; --gold:#C9A020; --gold-l:#e8b84b; --cream:#FAF6ED;
+  --blue:#3a86ff; --blue-l:#a8c8ff; --teal:#06d6a0; --teal-l:#a8f0de;
+  --red:#ef476f; --red-l:#ffb3c6; --amber:#ffd166; --purple:#9b5de5;
+  --t:.25s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:'Source Serif 4',Georgia,serif;background:var(--navy);color:var(--cream)}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift 22s ease-in-out infinite alternate}
+.orb1{width:600px;height:600px;background:rgba(58,134,255,.09);top:-200px;left:-150px}
+.orb2{width:500px;height:500px;background:rgba(6,214,160,.07);bottom:-150px;right:-100px;animation-delay:-8s}
+.orb3{width:350px;height:350px;background:rgba(201,160,32,.06);top:35%;left:45%;animation-delay:-15s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(50px,35px)}}
+
+#app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem;
+  padding:.9rem 2.2rem;background:rgba(13,27,42,.94);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand-block{display:flex;flex-direction:column;gap:.1rem}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:'Playfair Display',serif;font-weight:900;font-size:1.35rem;letter-spacing:.01em}
+
+.tab-nav{display:flex;gap:.4rem;flex-wrap:wrap}
+.tab-btn{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.05em;
+  padding:.42rem 1rem;border-radius:22px;border:1px solid rgba(255,255,255,.14);
+  background:transparent;color:rgba(250,246,237,.55);cursor:pointer;transition:var(--t);white-space:nowrap;
+}
+.tab-btn:hover{background:rgba(255,255,255,.08);color:var(--cream)}
+.tab-btn.active{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+
+main{flex:1;padding:2rem 2.2rem 4rem;max-width:1180px;margin:0 auto;width:100%}
+.section-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;margin-bottom:.3rem}
+.section-sub{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.06em;color:rgba(250,246,237,.45);margin-bottom:1.6rem}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+
+.card{
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:14px;
+  padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:.65rem;transition:var(--t);
+}
+.card:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18)}
+.card-head{display:flex;align-items:center;gap:.6rem}
+.badge{
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.72rem;
+  background:var(--blue);color:#fff;padding:.2rem .55rem;border-radius:6px;letter-spacing:.03em;flex-shrink:0;
+}
+.badge.v{background:var(--teal);color:var(--navy)}
+.badge.irr{background:var(--purple);color:#fff}
+.badge.wh{background:var(--amber);color:var(--navy)}
+.card-title{font-weight:600;font-size:.95rem;line-height:1.25}
+
+.btn-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.15rem}
+.btn{
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.03em;
+  padding:.34rem .68rem;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;
+  border:1px solid rgba(255,255,255,.15);color:var(--cream);background:rgba(255,255,255,.05);transition:var(--t);cursor:pointer;
+}
+.btn:hover{background:rgba(255,255,255,.14)}
+.btn.cours{border-color:var(--blue);color:var(--blue-l)}
+.btn.fiche{border-color:var(--teal);color:var(--teal-l)}
+.btn.murphy{border-color:var(--gold);color:var(--gold-l)}
+.btn.prof{border-color:var(--red);color:var(--red-l)}
+.btn.wa{background:#25D366;border-color:#25D366;color:#04210f;font-weight:700;margin-left:auto}
+.btn.wa:hover{background:#1ebe57}
+
+.list-row{
+  display:flex;align-items:center;gap:.8rem;padding:.6rem .9rem;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+}
+.list-row .card-title{flex:1}
+
+footer{
+  text-align:center;padding:1.6rem 1rem 2rem;font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;letter-spacing:.05em;color:rgba(250,246,237,.35);border-top:1px solid rgba(255,255,255,.06);
+}
+footer a{color:var(--gold-l);text-decoration:none}
+
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:640px){
+  .topbar{padding:.8rem 1.1rem}
+  main{padding:1.4rem 1.1rem 3rem}
+  h1{font-size:1.1rem}
+}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand-block">
+      <span class="brand">Polytech Lille · PEIP2</span>
+      <h1>Hub Anglais — Cours &amp; Exercices</h1>
+    </div>
+    <div class="tab-nav" id="tabNav"></div>
+  </div>
+
+  <main>
+    <div class="tab-panel active" data-panel="grammaire">
+      <div class="section-title">Grammaire — G01 à G21</div>
+      <div class="section-sub">Progression Murphy-style, A2 → B2+</div>
+      <div class="grid" id="grammaireGrid"></div>
+    </div>
+
+    <div class="tab-panel" data-panel="vocabulaire">
+      <div class="section-title">Vocabulaire — V01 à V05</div>
+      <div class="section-sub">Vocabulaire thématique avancé</div>
+      <div class="grid" id="vocabGrid"></div>
+    </div>
+
+    <div class="tab-panel" data-panel="verbes">
+      <div class="section-title">Verbes irréguliers</div>
+      <div class="section-sub">Fiches, Q&amp;A et tests par lots</div>
+      <div class="grid" id="verbesGrid"></div>
+    </div>
+
+    <div class="tab-panel" data-panel="wh">
+      <div class="section-title">WH Questions</div>
+      <div class="section-sub">Cours + 10 exercices sur la structure interrogative</div>
+      <div class="grid" id="whGrid" style="margin-bottom:1rem"></div>
+      <div id="whList" style="display:flex;flex-direction:column;gap:.5rem"></div>
+    </div>
+
+    <div class="tab-panel" data-panel="vocabbase">
+      <div class="section-title">Vocabulaire de base</div>
+      <div class="section-sub">Petit vocabulaire illustré + quiz</div>
+      <div class="grid" id="vocabBaseGrid"></div>
+    </div>
+
+    <div class="tab-panel" data-panel="wrapup">
+      <div class="section-title">Wrap-up</div>
+      <div class="section-sub">Quiz de synthèse — Grammaire 1, 2 &amp; 3</div>
+      <div class="grid" id="wrapupGrid"></div>
+    </div>
+  </main>
+
+  <footer>
+    Marc Vasseur · Polytech Lille · <a href="mailto:marc.vasseur@polytech-lille.fr">marc.vasseur@polytech-lille.fr</a>
+  </footer>
+</div>
+
+<script>
+/* ==== À METTRE À JOUR une fois le dépôt GitHub Pages en ligne ==== */
+const BASE_URL = "https://marcvasseurpolytech-dot.github.io/peip2-hub"; // repo: marcvasseurpolytech-dot/peip2-hub
+
+const TABS = [
+  {id:"grammaire", label:"Grammaire"},
+  {id:"vocabulaire", label:"Vocabulaire"},
+  {id:"verbes", label:"Verbes irr."},
+  {id:"wh", label:"WH Questions"},
+  {id:"vocabbase", label:"Vocab. de base"},
+  {id:"wrapup", label:"Wrap-up"},
+];
+
+const GRAMMAIRE = [
+  {n:"G01", title:"Present Simple &amp; Present Continuous", cours:"cours/G01_cours.html"},
+  {n:"G02", title:"The Past Simple", cours:"cours/G02_cours.html"},
+  {n:"G03", title:"Present Perfect &amp; For / Since / Ago", cours:"cours/G03_cours.html"},
+  {n:"G04", title:"All Tenses — Complete Review", cours:"cours/G04_cours.html"},
+  {n:"G05", title:"The Passive Voice"},
+  {n:"G06", title:"Reported Speech"},
+  {n:"G07", title:"Conditionals — If Clauses"},
+  {n:"G08", title:"Modal Verbs"},
+  {n:"G09", title:"Causatives — Have / Get / Make / Let"},
+  {n:"G10", title:"Question Tags"},
+  {n:"G11", title:"Irregular Verbs — The 3 Forms"},
+  {n:"G12", title:"Comparatives &amp; Superlatives"},
+  {n:"G13", title:"Quantifiers"},
+  {n:"G14", title:"Adverbs — Formation &amp; Position"},
+  {n:"G15", title:"Phrasal Verbs — Professional Context"},
+  {n:"G16", title:"The Interrogative Pattern"},
+  {n:"G17", title:"Verb + ING or TO Infinitive"},
+  {n:"G18", title:"Adjectives — Derived Forms &amp; Word Building"},
+  {n:"G19", title:"I wish / If only / It's (high) time / Would rather"},
+  {n:"G20", title:"Agreement — So / Neither / Nor"},
+  {n:"G21", title:"False Friends &amp; Confusing Words"},
+];
+
+const VOCAB = [
+  {n:"V01", title:"Academic &amp; University Vocabulary"},
+  {n:"V02", title:"Technical &amp; Engineering Vocabulary"},
+  {n:"V03", title:"Professional &amp; Business Vocabulary"},
+  {n:"V04", title:"Connectors &amp; Discourse Markers"},
+  {n:"V05", title:"Word Formation — Prefixes &amp; Suffixes"},
+];
+
+function waLink(text, url){
+  return "https://wa.me/?text=" + encodeURIComponent(text + " " + BASE_URL + "/" + url);
+}
+
+function grammaireCard(g){
+  const fiche = `cours/${g.n}_ETUDIANT.docx`;
+  const prof = `cours/${g.n}_PROF_CORRIGE.docx`;
+  const murphy = `cours/${g.n}_MURPHY.docx`;
+  const waTarget = g.cours || fiche;
+  return `
+  <div class="card">
+    <div class="card-head">
+      <span class="badge">${g.n}</span>
+      <span class="card-title">${g.title}</span>
+    </div>
+    <div class="btn-row">
+      ${g.cours ? `<a class="btn cours" href="${g.cours}" target="_blank">▶ Cours</a>` : ""}
+      <a class="btn fiche" href="${fiche}" target="_blank">📄 Fiche</a>
+      <a class="btn murphy" href="${murphy}" target="_blank">＋ Murphy</a>
+      <a class="btn prof" href="${prof}" target="_blank">🔒 Corrigé prof</a>
+      <a class="btn wa" href="${waLink('PEIP2 — ' + g.n + ' : ' + g.title.replace(/&amp;/g,'&'), waTarget)}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>`;
+}
+
+function vocabCard(v){
+  const doc = `vocabulaire/${v.n}_VOCABULAIRE.docx`;
+  return `
+  <div class="card">
+    <div class="card-head">
+      <span class="badge v">${v.n}</span>
+      <span class="card-title">${v.title}</span>
+    </div>
+    <div class="btn-row">
+      <a class="btn fiche" href="${doc}" target="_blank">📄 Fiche</a>
+      <a class="btn wa" href="${waLink('PEIP2 — ' + v.n + ' : ' + v.title.replace(/&amp;/g,'&'), doc)}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>`;
+}
+
+document.getElementById("grammaireGrid").innerHTML = GRAMMAIRE.map(grammaireCard).join("");
+document.getElementById("vocabGrid").innerHTML = VOCAB.map(vocabCard).join("");
+
+/* Verbes irréguliers */
+const verbesItems = [
+  {badge:"IRR", title:"Fiches — Verbes irréguliers (référence)", file:"verbes-irreguliers/verbes_irreguliers_fiches.docx"},
+  {badge:"IRR", title:"Q&amp;A — Partie 2 verbes irréguliers", file:"verbes-irreguliers/partie2_verbes_irreguliers.docx"},
+  {badge:"IRR", title:"Test interactif — Verbes irréguliers", file:"verbes-irreguliers/verbes_irreguliers.html", isHtml:true},
+  {badge:"B1", title:"Test — Batch 1", file:"verbes-irreguliers/batch1_test.html", isHtml:true},
+  {badge:"B2", title:"Test — Batch 2", file:"verbes-irreguliers/batch2_test.html", isHtml:true},
+  {badge:"B3", title:"Test — Batch 3", file:"verbes-irreguliers/batch3_test.html", isHtml:true},
+  {badge:"B4", title:"Test — Batch 4", file:"verbes-irreguliers/batch4_test.html", isHtml:true},
+  {badge:"B5", title:"Test — Batch 5", file:"verbes-irreguliers/batch5_test.html", isHtml:true},
+];
+document.getElementById("verbesGrid").innerHTML = verbesItems.map(it => `
+  <div class="card">
+    <div class="card-head">
+      <span class="badge irr">${it.badge}</span>
+      <span class="card-title">${it.title}</span>
+    </div>
+    <div class="btn-row">
+      <a class="btn ${it.isHtml ? 'cours' : 'fiche'}" href="${it.file}" target="_blank">${it.isHtml ? "▶ Ouvrir" : "📄 Fiche"}</a>
+      <a class="btn wa" href="${waLink(it.title.replace(/&amp;/g,'&'), it.file)}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>`).join("");
+
+/* WH Questions */
+document.getElementById("whGrid").innerHTML = `
+  <div class="card">
+    <div class="card-head"><span class="badge wh">WH</span><span class="card-title">Cours — La structure interrogative</span></div>
+    <div class="btn-row">
+      <a class="btn cours" href="wh-questions/WH_cours.html" target="_blank">▶ Cours</a>
+      <a class="btn fiche" href="wh-questions/partie1_wh_questions.docx" target="_blank">📄 Fiche</a>
+      <a class="btn murphy" href="wh-questions/WH_questions_correction.pdf" target="_blank">✓ Correction</a>
+      <a class="btn wa" href="${waLink('PEIP2 — WH Questions : cours', 'wh-questions/WH_cours.html')}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>`;
+let whRows = "";
+for(let i=1;i<=10;i++){
+  const num = String(i).padStart(2,"0");
+  const file = `wh-questions/WH_exercice_${num}.html`;
+  whRows += `
+  <div class="list-row">
+    <span class="badge wh">Ex. ${num}</span>
+    <span class="card-title">Exercice WH Questions n°${i}</span>
+    <div class="btn-row">
+      <a class="btn cours" href="${file}" target="_blank">▶ Ouvrir</a>
+      <a class="btn wa" href="${waLink('PEIP2 — WH Questions, exercice ' + i, file)}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>`;
+}
+document.getElementById("whList").innerHTML = whRows;
+
+/* Vocabulaire de base */
+document.getElementById("vocabBaseGrid").innerHTML = `
+  <div class="card">
+    <div class="card-head"><span class="badge v">VOC</span><span class="card-title">Petit vocabulaire anglais illustré</span></div>
+    <div class="btn-row">
+      <a class="btn cours" href="vocabulaire-base/petit_vocabulaire_anglais.html" target="_blank">▶ Ouvrir</a>
+      <a class="btn wa" href="${waLink('PEIP2 — Petit vocabulaire anglais', 'vocabulaire-base/petit_vocabulaire_anglais.html')}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><span class="badge v">QUIZ</span><span class="card-title">Quiz de vocabulaire</span></div>
+    <div class="btn-row">
+      <a class="btn cours" href="vocabulaire-base/quiz_vocabulaire.html" target="_blank">▶ Ouvrir</a>
+      <a class="btn wa" href="${waLink('PEIP2 — Quiz de vocabulaire', 'vocabulaire-base/quiz_vocabulaire.html')}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>`;
+
+/* Wrap-up */
+document.getElementById("wrapupGrid").innerHTML = `
+  <div class="card">
+    <div class="card-head"><span class="badge">✓</span><span class="card-title">Quiz de synthèse — Grammaire 1, 2 &amp; 3</span></div>
+    <div class="btn-row">
+      <a class="btn cours" href="wrapup/quiz_grammaire_123.html" target="_blank">▶ Ouvrir</a>
+      <a class="btn wa" href="${waLink('PEIP2 — Quiz de synthèse Grammaire 1-2-3', 'wrapup/quiz_grammaire_123.html')}" target="_blank">💬 Envoyer</a>
+    </div>
+  </div>`;
+
+/* Tabs */
+const tabNav = document.getElementById("tabNav");
+tabNav.innerHTML = TABS.map((t,i) => `<button class="tab-btn${i===0?' active':''}" data-tab="${t.id}">${t.label}</button>`).join("");
+tabNav.addEventListener("click", e => {
+  const btn = e.target.closest(".tab-btn");
+  if(!btn) return;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b===btn));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.dataset.panel===btn.dataset.tab));
+});
+</script>
+</body>
+</html>

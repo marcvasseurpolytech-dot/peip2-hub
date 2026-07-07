@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G03 — Present Perfect · Polytech Lille</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #0d1b2a;
+  --gold:   #C9A020;
+  --gold-l: #e8b84b;
+  --cream:  #FAF6ED;
+  --teal:   #06d6a0;
+  --teal-l: #a8f0de;
+  --red:    #ef476f;
+  --red-l:  #ffb3c6;
+  --amber:  #ffd166;
+  --coral:  #ff6b6b;
+  --coral-l:#ffb3b3;
+  --blue:   #3a86ff;
+  --blue-l: #a8c8ff;
+  --pp:     #06d6a0;   /* present perfect = teal */
+  --pp-l:   #a8f0de;
+  --ps:     #ff6b6b;   /* preterit = coral/red */
+  --ps-l:   #ffb3b3;
+  --t: .34s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Source Serif 4',Georgia,serif;background:var(--navy);color:var(--cream)}
+
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift 22s ease-in-out infinite alternate}
+.orb1{width:650px;height:650px;background:rgba(6,214,160,.09);top:-200px;left:-160px}
+.orb2{width:500px;height:500px;background:rgba(255,107,107,.07);bottom:-140px;right:-100px;animation-delay:-9s}
+.orb3{width:380px;height:380px;background:rgba(201,160,32,.06);top:30%;left:42%;animation-delay:-17s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(48px,32px)}}
+
+#app{width:100vw;height:100vh;display:flex;flex-direction:column;position:relative;z-index:1}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.65rem 2.8rem;background:rgba(13,27,42,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;z-index:20}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.pill{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;padding:.3rem .9rem;border-radius:20px;background:rgba(6,214,160,.18);color:var(--teal-l);border:1px solid rgba(6,214,160,.3)}
+.sc{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:rgba(250,246,237,.3)}
+
+.sa{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:2.2rem 3.8rem 1.4rem;overflow-y:auto;opacity:0;transform:translateX(70px);transition:opacity .36s var(--t),transform .36s var(--t);pointer-events:none}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-70px)}
+
+.bnav{display:flex;align-items:center;justify-content:center;gap:1rem;padding:.9rem 2rem;background:rgba(13,27,42,.92);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.07);flex-shrink:0;z-index:20}
+.nb{font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:.06em;padding:.55rem 2rem;border-radius:30px;border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--cream);cursor:pointer;transition:var(--t)}
+.nb:hover{background:rgba(255,255,255,.09)}
+.nb.prim{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+.nb.prim:hover{background:var(--gold-l)}
+.dots{display:flex;gap:.45rem;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:var(--t)}
+.dot.on{background:var(--gold);transform:scale(1.4)}
+
+/* TYPOGRAPHY */
+.stag{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.55rem;animation:fuA .5s both}
+.stag.pp{color:var(--teal-l)}.stag.ps{color:var(--coral-l)}.stag.g{color:var(--gold)}.stag.a{color:var(--amber)}
+.stitle{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.8vw,3rem);font-weight:900;line-height:1.1;margin-bottom:.85rem;animation:fuA .5s .07s both}
+.slead{font-size:1.05rem;color:rgba(250,246,237,.68);line-height:1.65;margin-bottom:1rem;max-width:80ch;animation:fuA .5s .12s both}
+
+@keyframes fuA{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* FORMULA BOXES */
+.fbox{border-radius:14px;padding:1.1rem 1.6rem;font-family:'JetBrains Mono',monospace;font-size:1.05rem;line-height:2.1;border-left:5px solid;margin-bottom:1rem;animation:fuA .5s .14s both}
+.fbox.pp{background:rgba(6,214,160,.12);border-color:var(--teal)}
+.fbox.ps{background:rgba(255,107,107,.11);border-color:var(--coral)}
+.fbox.r{background:rgba(239,71,111,.11);border-color:var(--red)}
+.fbox.g{background:rgba(201,160,32,.12);border-color:var(--gold)}
+.fp{display:inline-block;border-radius:7px;padding:.05rem .55rem;margin:0 .12rem;font-weight:700;font-size:1rem}
+.fp-hv{background:rgba(6,214,160,.28);color:var(--teal-l)}
+.fp-pp{background:rgba(255,209,102,.3);color:var(--amber)}
+.fp-no{background:rgba(239,71,111,.28);color:var(--red-l)}
+.fp-su{background:rgba(255,255,255,.12);color:#ccc}
+.fp-fo{background:rgba(58,134,255,.28);color:var(--blue-l)}
+.fp-si{background:rgba(6,214,160,.28);color:var(--teal-l)}
+.fp-ag{background:rgba(255,107,107,.28);color:var(--coral-l)}
+
+/* EXAMPLES */
+.exlist{display:flex;flex-direction:column;gap:.52rem}
+.ex{border-radius:10px;padding:.72rem 1.1rem;border-left:3px solid;animation:fuA .45s both}
+.ex.pp{background:rgba(6,214,160,.09);border-color:var(--teal)}
+.ex.ps{background:rgba(255,107,107,.09);border-color:var(--coral)}
+.ex.r{background:rgba(239,71,111,.09);border-color:var(--red)}
+.ex.g{background:rgba(201,160,32,.09);border-color:var(--gold)}
+.ex.a{background:rgba(255,209,102,.09);border-color:var(--amber)}
+.ex:nth-child(1){animation-delay:.08s}.ex:nth-child(2){animation-delay:.15s}
+.ex:nth-child(3){animation-delay:.22s}.ex:nth-child(4){animation-delay:.29s}.ex:nth-child(5){animation-delay:.36s}
+.en{font-size:1.05rem;font-weight:600;color:var(--cream);margin-bottom:.18rem}
+.ht{color:var(--teal-l);font-style:italic}
+.hc{color:var(--coral-l);font-style:italic}
+.hg{color:var(--amber);font-style:italic}
+.hr{color:var(--red-l);font-style:italic}
+.hb{color:var(--blue-l);font-style:italic}
+.fr{font-size:.88rem;color:rgba(250,246,237,.42);font-style:italic}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;padding:.38rem 1rem;border-radius:24px;animation:pop .4s both}
+.chip.pp{background:rgba(6,214,160,.18);color:var(--teal-l);border:1px solid rgba(6,214,160,.33)}
+.chip.ps{background:rgba(255,107,107,.18);color:var(--coral-l);border:1px solid rgba(255,107,107,.3)}
+.chip.g{background:rgba(201,160,32,.18);color:var(--amber);border:1px solid rgba(201,160,32,.3)}
+.chip:nth-child(1){animation-delay:.05s}.chip:nth-child(2){animation-delay:.1s}
+.chip:nth-child(3){animation-delay:.15s}.chip:nth-child(4){animation-delay:.2s}
+.chip:nth-child(5){animation-delay:.25s}.chip:nth-child(6){animation-delay:.3s}
+.chip:nth-child(7){animation-delay:.35s}.chip:nth-child(8){animation-delay:.4s}
+.chip:nth-child(9){animation-delay:.45s}.chip:nth-child(10){animation-delay:.5s}
+
+/* BAND */
+.band{border-radius:12px;padding:.9rem 1.4rem;font-size:.98rem;line-height:1.6;margin-bottom:.8rem;animation:fuA .5s .2s both}
+.band.pp{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.22)}
+.band.ps{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.22)}
+.band.r{background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.22)}
+.band.g{background:rgba(201,160,32,.1);border:1px solid rgba(201,160,32,.22)}
+.band.a{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.22)}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1.1rem 1.3rem;animation:fuA .5s both}
+.card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.12s}
+.card:nth-child(3){animation-delay:.19s}.card:nth-child(4){animation-delay:.26s}
+.clabel{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;opacity:.55;margin-bottom:.45rem}
+
+/* TABLES */
+.ftbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin:.5rem 0}
+.ftbl th{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;text-align:left;color:rgba(250,246,237,.38)}
+.ftbl td{padding:.65rem .9rem;font-size:.93rem;background:rgba(255,255,255,.045)}
+.ftbl tr td:first-child{border-radius:9px 0 0 9px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700}
+.ftbl tr td:last-child{border-radius:0 9px 9px 0;font-size:.86rem;font-style:italic;color:rgba(250,246,237,.45)}
+.ftbl tr:hover td{background:rgba(255,255,255,.08)}
+
+/* TIMELINE VISUAL */
+.timeline-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  padding:1rem 0 .5rem;
+  animation:fuA .6s .15s both;
+}
+.tl-row{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;gap:0;margin-bottom:.3rem;
+  position:relative;
+}
+/* the line */
+.tl-line{
+  flex:1;height:3px;position:relative;
+}
+.tl-line.pp-line{background:linear-gradient(90deg,rgba(255,107,107,.7) 0%,rgba(6,214,160,.9) 100%)}
+.tl-line.ps-line{background:rgba(255,107,107,.7)}
+/* dots on the line */
+.tl-dot{
+  width:14px;height:14px;border-radius:50%;border:2px solid;flex-shrink:0;
+  position:relative;z-index:2;
+}
+.tl-dot.past{background:rgba(255,107,107,.3);border-color:var(--coral)}
+.tl-dot.now{background:rgba(6,214,160,.4);border-color:var(--teal);box-shadow:0 0 0 4px rgba(6,214,160,.2);animation:pulse 2s infinite}
+/* labels */
+.tl-label{font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.06em;margin-top:.4rem;color:rgba(250,246,237,.5)}
+.tl-label.accent-pp{color:var(--teal-l);font-weight:700}
+.tl-label.accent-ps{color:var(--coral-l);font-weight:700}
+/* bridge arrow */
+.tl-bridge{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.82rem;
+  position:absolute;
+  top:-1.4rem;
+  left:50%;transform:translateX(-50%);
+  white-space:nowrap;
+  color:var(--teal-l);
+}
+.tl-event-label{
+  position:absolute;bottom:.6rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;color:rgba(250,246,237,.45);
+  white-space:nowrap;
+}
+.tl-event-label.left{left:.5rem}
+.tl-event-label.right{right:.5rem}
+.tl-event-label.center{left:50%;transform:translateX(-50%)}
+
+/* FOR / SINCE / AGO visual */
+.fsa-cards{display:flex;gap:.9rem;margin-top:.4rem;animation:fuA .5s .1s both}
+.fsa-card{
+  flex:1;border-radius:14px;padding:1rem 1.1rem;
+  border:1px solid;
+  display:flex;flex-direction:column;gap:.5rem;
+}
+.fsa-card.for-c{background:rgba(58,134,255,.11);border-color:rgba(58,134,255,.3)}
+.fsa-card.since-c{background:rgba(6,214,160,.1);border-color:rgba(6,214,160,.25)}
+.fsa-card.ago-c{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.25)}
+.fsa-word{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900}
+.fsa-word.for-w{color:var(--blue-l)}
+.fsa-word.since-w{color:var(--teal-l)}
+.fsa-word.ago-w{color:var(--coral-l)}
+.fsa-def{font-size:.88rem;color:rgba(250,246,237,.65);line-height:1.5}
+.fsa-tense{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .6rem;border-radius:12px;display:inline-block;margin-top:.2rem}
+.fsa-tense.pp-t{background:rgba(6,214,160,.18);color:var(--teal-l);border:1px solid rgba(6,214,160,.3)}
+.fsa-tense.ps-t{background:rgba(255,107,107,.18);color:var(--coral-l);border:1px solid rgba(255,107,107,.3)}
+.fsa-ex{font-size:.88rem;font-style:italic;color:rgba(250,246,237,.5);border-left:2px solid rgba(255,255,255,.15);padding-left:.6rem;margin-top:.2rem}
+
+/* CMP TABLE */
+.ctbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin:.5rem 0}
+.ctbl th{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:.42rem .9rem;text-align:left}
+.ctbl th:nth-child(2){color:var(--teal-l)}.ctbl th:nth-child(3){color:var(--coral-l)}
+.ctbl td{padding:.68rem .9rem;font-size:.93rem;background:rgba(255,255,255,.04)}
+.ctbl tr td:first-child{border-radius:9px 0 0 9px;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.07em;color:rgba(250,246,237,.4)}
+.ctbl tr td:nth-child(2){color:var(--teal-l)}
+.ctbl tr td:last-child{border-radius:0 9px 9px 0;color:var(--coral-l)}
+
+.mt{margin-top:.7rem}.mb{margin-bottom:.7rem}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+
+  <div class="topbar">
+    <div class="brand">Marc Vasseur · Polytech Lille · Anglais</div>
+    <div class="pill">G03 · PEIP2 Remédiation · S3 — Cours 3 · B1</div>
+    <div class="sc" id="sc">1 / 8</div>
+  </div>
+
+  <div class="sa" id="sa"></div>
+
+  <div class="bnav">
+    <button class="nb" onclick="go(-1)">◀ Précédent</button>
+    <div class="dots" id="dots"></div>
+    <button class="nb prim" onclick="go(1)">Suivant ▶</button>
+  </div>
+</div>
+
+<script>
+const SLIDES = [
+
+/* ── 0 TITRE ── */
+{html:`
+<div style="display:flex;flex-direction:column;justify-content:center;height:100%;gap:1.6rem">
+  <div class="stag pp" style="font-size:.85rem">G03 · Present Perfect</div>
+  <div class="stitle" style="font-size:clamp(2.4rem,5vw,4rem)">
+    Le temps qui<br><span style="color:var(--teal)">relie le passé</span>
+    <span style="color:rgba(250,246,237,.4)"> au </span>
+    <span style="color:var(--coral)">présent</span>
+  </div>
+  <div class="slead" style="font-size:1.1rem">
+    Le Present Perfect n'est ni le passé composé français, ni le prétérit anglais.<br>
+    C'est un temps <strong style="color:var(--cream)">hybride</strong> : l'action est <strong style="color:var(--teal-l)">dans le passé</strong>, mais sa conséquence ou son lien est <strong style="color:var(--coral-l)">dans le présent</strong>.
+  </div>
+
+  <!-- MINI TIMELINE VISUELLE -->
+  <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:1.2rem 1.8rem;border:1px solid rgba(255,255,255,.08);animation:fuA .6s .3s both">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(250,246,237,.38);margin-bottom:.8rem">Visualisation</div>
+    <div style="display:flex;align-items:center;gap:0;position:relative;height:2.8rem">
+      <!-- past zone -->
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:rgba(250,246,237,.35);margin-right:.8rem;min-width:5rem;text-align:right">PASSÉ</div>
+      <!-- dot past event -->
+      <div style="width:14px;height:14px;border-radius:50%;background:rgba(255,107,107,.3);border:2px solid var(--coral);flex-shrink:0;z-index:2"></div>
+      <!-- bridge line PP -->
+      <div style="flex:1;height:3px;background:linear-gradient(90deg,var(--coral) 0%,var(--teal) 100%);position:relative">
+        <div style="position:absolute;top:-1.3rem;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--teal-l);white-space:nowrap">← Present Perfect →</div>
+      </div>
+      <!-- dot NOW -->
+      <div style="width:18px;height:18px;border-radius:50%;background:rgba(6,214,160,.4);border:2px solid var(--teal);flex-shrink:0;z-index:2;box-shadow:0 0 0 5px rgba(6,214,160,.15);animation:pulse 2s infinite"></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.88rem;color:var(--teal-l);font-weight:700;margin-left:.7rem">MAINTENANT</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:.8rem;font-size:.9rem">
+      <div style="color:var(--coral-l);font-style:italic">"I <strong>lost</strong> my keys…"</div>
+      <div style="color:var(--teal-l);font-style:italic;text-align:right">"…je n'ai <strong>toujours pas</strong> mes clés"</div>
+    </div>
+  </div>
+
+  <div class="band pp" style="font-size:.98rem;animation-delay:.4s">
+    🧠 <strong style="color:var(--teal-l)">Present Perfect</strong> = le passé a une conséquence <strong style="color:var(--cream)">maintenant</strong>.<br>
+    <strong style="color:var(--coral-l)">Prétérit</strong> = c'est fini, point. Aucun lien avec le présent.
+  </div>
+</div>`},
+
+/* ── 1 FORMATION ── */
+{html:`
+<div class="stag pp">Present Perfect · Étape 1</div>
+<div class="stitle">Formation : <span style="color:var(--teal)">HAVE / HAS</span> + <span style="color:var(--amber)">participe passé</span></div>
+<div class="slead">Deux éléments obligatoires — le premier varie selon le sujet, le second est la 3ᵉ forme du verbe.</div>
+<div class="fbox pp">
+  <span class="fp fp-su">I / you / we / they</span> → <span class="fp fp-hv">have</span> + <span class="fp fp-pp">participe passé</span><br>
+  <span class="fp fp-su">he / she / it</span> → <span class="fp fp-hv">has</span> + <span class="fp fp-pp">participe passé</span>
+</div>
+<div class="g2">
+  <div>
+    <table class="ftbl">
+      <thead><tr><th>Structure</th><th>Forme</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--teal-l)">Affirmatif</td><td style="font-family:'JetBrains Mono',monospace">I <strong>have</strong> worked / He <strong>has</strong> worked</td></tr>
+        <tr><td style="color:var(--red-l)">Négatif</td><td style="font-family:'JetBrains Mono',monospace">I <strong>haven't</strong> / He <strong>hasn't</strong> + PP</td></tr>
+        <tr><td style="color:var(--amber)">Interrogatif</td><td style="font-family:'JetBrains Mono',monospace"><strong>Have</strong> you + PP ? — <strong>Has</strong> she + PP ?</td></tr>
+      </tbody>
+    </table>
+    <div class="band pp mt" style="font-size:.9rem">
+      <strong>Contractions :</strong> I<strong style="color:var(--teal-l)">'ve</strong> · you<strong style="color:var(--teal-l)">'ve</strong> · he<strong style="color:var(--teal-l)">'s</strong> · she<strong style="color:var(--teal-l)">'s</strong> · we<strong style="color:var(--teal-l)">'ve</strong> · they<strong style="color:var(--teal-l)">'ve</strong><br>
+      ⚠ <strong style="color:var(--amber)">he's</strong> = he <strong>HAS</strong> (ici) — pas toujours he IS !
+    </div>
+  </div>
+  <div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,246,237,.38);margin-bottom:.55rem">Participe passé</div>
+    <div class="band pp" style="font-size:.92rem;animation-delay:.1s">
+      <strong style="color:var(--teal-l)">Verbes réguliers :</strong> identique au prétérit<br>
+      work → work<strong style="color:var(--amber)">ed</strong> · finish → finish<strong style="color:var(--amber)">ed</strong>
+    </div>
+    <div class="band ps mt" style="font-size:.92rem;animation-delay:.2s">
+      <strong style="color:var(--coral-l)">Verbes irréguliers :</strong> 3ᵉ colonne<br>
+      go → went → <strong style="color:var(--amber)">gone</strong><br>
+      write → wrote → <strong style="color:var(--amber)">written</strong><br>
+      have → had → <strong style="color:var(--amber)">had</strong>
+    </div>
+  </div>
+</div>`},
+
+/* ── 2 POURQUOI L'UTILISER — LA RÈGLE DU LIEN ── */
+{html:`
+<div class="stag pp">Present Perfect · Le lien passé–présent</div>
+<div class="stitle">Pourquoi ce temps ?<br><span style="color:var(--teal)">Le passé a des conséquences maintenant</span></div>
+
+<div style="background:rgba(255,255,255,.04);border-radius:16px;padding:1.3rem 1.6rem;border:1px solid rgba(6,214,160,.2);margin-bottom:1rem;animation:fuA .5s .1s both">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(250,246,237,.35);margin-bottom:.7rem">Test mental avant de choisir</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div style="padding:.8rem 1rem;background:rgba(6,214,160,.1);border-radius:10px;border-left:3px solid var(--teal)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--teal-l);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">→ Present Perfect</div>
+      <div style="font-size:.95rem;line-height:1.6">Y a-t-il un <strong style="color:var(--teal-l)">résultat visible maintenant</strong> ?<br>Peut-on dire <em>"et du coup, aujourd'hui…"</em> ?</div>
+    </div>
+    <div style="padding:.8rem 1rem;background:rgba(255,107,107,.09);border-radius:10px;border-left:3px solid var(--coral)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--coral-l);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">→ Prétérit</div>
+      <div style="font-size:.95rem;line-height:1.6">L'action est <strong style="color:var(--coral-l)">terminée, classée</strong>.<br>Il y a une <strong style="color:var(--coral-l)">date ou heure précise</strong> ?</div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="exlist">
+    <div class="ex pp"><div class="en">I<span class="ht">'ve lost</span> my keys.</div><div class="fr">J'ai perdu mes clés — <em>et du coup je n'entre pas.</em></div></div>
+    <div class="ex pp"><div class="en">She<span class="ht">'s just arrived</span>.</div><div class="fr">Elle vient d'arriver — <em>elle est là maintenant.</em></div></div>
+    <div class="ex pp"><div class="en">I<span class="ht">'ve broken</span> my arm.</div><div class="fr">Je me suis cassé le bras — <em>il est cassé maintenant.</em></div></div>
+    <div class="ex pp"><div class="en"><span class="ht">Have</span> you ever <span class="ht">been</span> to Japan?</div><div class="fr">Expérience de vie — <em>as-tu ce vécu jusqu'à maintenant ?</em></div></div>
+  </div>
+  <div class="exlist">
+    <div class="ex ps"><div class="en">I <span class="hc">lost</span> my keys <span class="hc">yesterday</span>.</div><div class="fr">Date précise → prétérit.</div></div>
+    <div class="ex ps"><div class="en">She <span class="hc">arrived</span> <span class="hc">at 9 AM</span>.</div><div class="fr">Heure précise → prétérit.</div></div>
+    <div class="ex ps"><div class="en">I <span class="hc">broke</span> my arm <span class="hc">last year</span>.</div><div class="fr">Passé révolu, plus de conséquence directe.</div></div>
+    <div class="ex ps"><div class="en">I <span class="hc">visited</span> Japan <span class="hc">in 2019</span>.</div><div class="fr">Moment précis → prétérit.</div></div>
+  </div>
+</div>`},
+
+/* ── 3 USAGES DÉTAILLÉS ── */
+{html:`
+<div class="stag pp">Present Perfect · 5 usages</div>
+<div class="stitle">Les <span style="color:var(--teal)">5 cas d'emploi</span></div>
+<div class="g2">
+  <div>
+    <div class="card" style="border-color:rgba(6,214,160,.28);margin-bottom:.85rem">
+      <div class="clabel" style="color:var(--teal-l)">✔ Résultat présent</div>
+      <div style="font-size:.92rem;margin-bottom:.5rem;color:rgba(250,246,237,.65)">Action passée dont l'effet est <strong style="color:var(--cream)">visible maintenant</strong></div>
+      <div class="ex pp" style="animation:none"><div class="en">I<span class="ht">'ve lost</span> my keys. <em style="color:rgba(250,246,237,.4)">(je n'ai toujours pas mes clés)</em></div></div>
+    </div>
+    <div class="card" style="border-color:rgba(6,214,160,.28);margin-bottom:.85rem">
+      <div class="clabel" style="color:var(--teal-l)">✔ Expérience de vie</div>
+      <div style="font-size:.92rem;margin-bottom:.5rem;color:rgba(250,246,237,.65)">Ce qu'on a fait / jamais fait dans sa vie, sans date</div>
+      <div class="ex pp" style="animation:none"><div class="en"><span class="ht">Have</span> you ever <span class="ht">been</span> to Japan?</div></div>
+    </div>
+    <div class="card" style="border-color:rgba(6,214,160,.28)">
+      <div class="clabel" style="color:var(--teal-l)">✔ Action récente avec <em>just</em></div>
+      <div style="font-size:.92rem;margin-bottom:.5rem;color:rgba(250,246,237,.65)">Vient de se passer — très récent</div>
+      <div class="ex pp" style="animation:none"><div class="en">She <span class="ht">has just arrived</span>.</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="border-color:rgba(6,214,160,.28);margin-bottom:.85rem">
+      <div class="clabel" style="color:var(--teal-l)">✔ Durée non terminée (for / since)</div>
+      <div style="font-size:.92rem;margin-bottom:.5rem;color:rgba(250,246,237,.65)">Action commencée dans le passé, <strong style="color:var(--cream)">toujours en cours</strong></div>
+      <div class="ex pp" style="animation:none"><div class="en">I <span class="ht">have lived</span> here <span class="ht">for 5 years</span>. <em style="color:rgba(250,246,237,.35)">(j'y vis encore)</em></div></div>
+    </div>
+    <div class="card" style="border-color:rgba(6,214,160,.28)">
+      <div class="clabel" style="color:var(--teal-l)">✔ already / yet</div>
+      <div style="font-size:.92rem;margin-bottom:.5rem;color:rgba(250,246,237,.65)"><strong>already</strong> = déjà · <strong>yet</strong> = encore / déjà (questions/négatif)</div>
+      <div class="ex pp" style="animation:none;margin-bottom:.4rem"><div class="en">He <span class="ht">hasn't called</span> yet.</div></div>
+      <div class="ex pp" style="animation:none"><div class="en"><span class="ht">Have</span> you <span class="ht">finished</span> already?</div></div>
+    </div>
+  </div>
+</div>
+<div class="band pp mt">
+  🔑 <strong>Marqueurs → Present Perfect :</strong>
+  <div class="chips" style="margin-top:.4rem">
+    <span class="chip pp">already</span><span class="chip pp">yet</span><span class="chip pp">just</span>
+    <span class="chip pp">ever</span><span class="chip pp">never</span><span class="chip pp">recently</span>
+    <span class="chip pp">lately</span><span class="chip pp">so far</span>
+    <span class="chip pp">for + durée</span><span class="chip pp">since + point</span>
+  </div>
+</div>`},
+
+/* ── 4 FOR / SINCE / AGO ── */
+{html:`
+<div class="stag pp">Present Perfect · Marqueurs de durée</div>
+<div class="stitle"><span style="color:var(--blue-l)">FOR</span> · <span style="color:var(--teal-l)">SINCE</span> · <span style="color:var(--coral-l)">AGO</span></div>
+<div class="slead">Ces trois marqueurs sont souvent confondus — ils répondent à des questions différentes.</div>
+
+<div class="fsa-cards">
+  <div class="fsa-card for-c">
+    <div class="fsa-word for-w">FOR</div>
+    <div class="fsa-def"><strong>pendant</strong> (durée totale)<br>Répond à : <em>combien de temps ?</em></div>
+    <div><span class="fsa-tense pp-t">Present Perfect</span></div>
+    <div class="fsa-ex">I have worked here <strong>for 3 years</strong>.<br>She has been ill <strong>for two weeks</strong>.</div>
+  </div>
+  <div class="fsa-card since-c">
+    <div class="fsa-word since-w">SINCE</div>
+    <div class="fsa-def"><strong>depuis</strong> (point de départ)<br>Répond à : <em>depuis quand ?</em></div>
+    <div><span class="fsa-tense pp-t">Present Perfect</span></div>
+    <div class="fsa-ex">She has been ill <strong>since Monday</strong>.<br>I've lived here <strong>since 2019</strong>.</div>
+  </div>
+  <div class="fsa-card ago-c">
+    <div class="fsa-word ago-w">AGO</div>
+    <div class="fsa-def"><strong>il y a</strong> (révolu)<br>Se place <em>après</em> la durée</div>
+    <div><span class="fsa-tense ps-t">Prétérit UNIQUEMENT</span></div>
+    <div class="fsa-ex">He left <strong>two hours ago</strong>.<br>She called <strong>an hour ago</strong>.</div>
+  </div>
+</div>
+
+<!-- TIMELINE TRIO -->
+<div style="background:rgba(255,255,255,.04);border-radius:14px;padding:1.1rem 1.8rem;border:1px solid rgba(255,255,255,.08);margin-top:.9rem;animation:fuA .5s .25s both">
+  <div style="display:flex;align-items:center;gap:0;position:relative;height:2.4rem;margin-bottom:.8rem">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(250,246,237,.3);min-width:3.5rem;text-align:right;margin-right:.6rem">passé</div>
+    <div style="width:12px;height:12px;border-radius:50%;background:rgba(255,107,107,.3);border:2px solid var(--coral);flex-shrink:0"></div>
+    <div style="flex:1;height:3px;background:linear-gradient(90deg,rgba(255,107,107,.6) 0%,rgba(6,214,160,.8) 100%);position:relative">
+      <div style="position:absolute;top:-1.2rem;left:18%;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--blue-l)">←— FOR —→</div>
+      <div style="position:absolute;top:-1.2rem;left:60%;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--teal-l)">SINCE →</div>
+    </div>
+    <div style="width:16px;height:16px;border-radius:50%;background:rgba(6,214,160,.4);border:2px solid var(--teal);flex-shrink:0;box-shadow:0 0 0 4px rgba(6,214,160,.15);animation:pulse 2s infinite"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--teal-l);font-weight:700;margin-left:.6rem">NOW</div>
+  </div>
+  <div style="display:flex;justify-content:flex-start;gap:2rem;font-size:.85rem">
+    <div><span style="color:var(--coral-l);font-family:'JetBrains Mono',monospace;font-weight:700">AGO</span> <span style="color:rgba(250,246,237,.45)">→ prétérit, point fermé dans le passé</span></div>
+    <div><span style="color:var(--red-l)">⚠</span> <span style="color:rgba(250,246,237,.45)"><em>He <strong style="color:var(--red-l)">has left</strong> an hour ago</em> = <strong style="color:var(--red-l)">FAUX</strong></span></div>
+  </div>
+</div>`},
+
+/* ── 5 PP vs PRÉTÉRIT ── */
+{html:`
+<div class="stag g">Present Perfect vs Prétérit</div>
+<div class="stitle">Choisir le bon temps</div>
+<div class="slead" style="margin-bottom:.6rem">La même idée, deux temps — mais des sens radicalement différents.</div>
+
+<table class="ctbl">
+  <thead><tr><th></th><th>🟢 Present Perfect</th><th>🔴 Prétérit</th></tr></thead>
+  <tbody>
+    <tr><td>Lien présent</td><td>Oui — conséquence visible maintenant</td><td>Non — révolu, terminé</td></tr>
+    <tr><td>Date précise</td><td>Non — jamais avec yesterday, in 2010…</td><td>Oui — yesterday, last week, in 2019…</td></tr>
+    <tr><td>Expérience</td><td>I've visited Paris. <em>(bilan de vie)</em></td><td>I visited Paris in 2019. <em>(moment précis)</em></td></tr>
+    <tr><td>Résultat</td><td>I've broken my arm. <em>(il est cassé)</em></td><td>I broke it last year. <em>(c'est du passé)</em></td></tr>
+    <tr><td>Durée en cours</td><td>I've lived here for 5 years. <em>(j'y suis)</em></td><td>I lived there for 5 years. <em>(j'y suis plus)</em></td></tr>
+  </tbody>
+</table>
+
+<div class="band g mt">
+  🧠 La paire fatale : <em>Did you speak</em> vs <em>Have you spoken</em><br>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.6rem">
+    <div class="ex ps" style="animation:none"><div class="en"><span class="hc">Did</span> you speak to the director?</div><div class="fr">→ conversation précise, terminée, dans le passé</div></div>
+    <div class="ex pp" style="animation:none"><div class="en"><span class="ht">Have</span> you spoken to the director?</div><div class="fr">→ es-tu en mesure d'agir maintenant ? tu lui as parlé ?</div></div>
+    <div class="ex ps" style="animation:none"><div class="en">She <span class="hc">lived</span> in Paris for 2 years.</div><div class="fr">→ elle n'y vit plus</div></div>
+    <div class="ex pp" style="animation:none"><div class="en">She <span class="ht">has lived</span> in Paris for 2 years.</div><div class="fr">→ elle y vit encore</div></div>
+  </div>
+</div>`},
+
+/* ── 6 PIÈGES FRÉQUENTS ── */
+{html:`
+<div class="stag a">Present Perfect · Erreurs fréquentes</div>
+<div class="stitle">Les <span style="color:var(--amber)">pièges</span> à éviter</div>
+
+<div class="g2">
+  <div class="exlist" style="gap:.65rem">
+
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(250,246,237,.38);margin-bottom:.2rem">Erreurs classiques</div>
+
+    <div class="ex r">
+      <div class="en"><span class="hr">✗</span> I have seen him <span class="hr">yesterday</span>.</div>
+      <div class="fr">yesterday = date précise → prétérit obligatoire</div>
+    </div>
+    <div class="ex pp">
+      <div class="en"><span class="ht">✓</span> I <span class="ht">saw</span> him yesterday.</div>
+    </div>
+
+    <div class="ex r" style="margin-top:.4rem">
+      <div class="en"><span class="hr">✗</span> She <span class="hr">lives</span> here <span class="hr">since</span> three years.</div>
+      <div class="fr">since → Present Perfect, pas présent simple</div>
+    </div>
+    <div class="ex pp">
+      <div class="en"><span class="ht">✓</span> She <span class="ht">has lived</span> here since 2021.</div>
+    </div>
+
+    <div class="ex r" style="margin-top:.4rem">
+      <div class="en"><span class="hr">✗</span> He <span class="hr">has called</span> me an hour <span class="hr">ago</span>.</div>
+      <div class="fr">ago → TOUJOURS prétérit, sans exception</div>
+    </div>
+    <div class="ex pp">
+      <div class="en"><span class="ht">✓</span> He <span class="ht">called</span> me an hour ago.</div>
+    </div>
+  </div>
+
+  <div class="exlist" style="gap:.65rem">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(250,246,237,.38);margin-bottom:.2rem">Autres erreurs</div>
+
+    <div class="ex r">
+      <div class="en"><span class="hr">✗</span> Have you finished the report <span class="hr">last night</span>?</div>
+      <div class="fr">last night = date précise → Did you finish…?</div>
+    </div>
+    <div class="ex pp">
+      <div class="en"><span class="ht">✓</span> Did you finish the report last night?</div>
+    </div>
+
+    <div class="ex r" style="margin-top:.4rem">
+      <div class="en"><span class="hr">✗</span> We didn't receive any feedback <span class="hr">yet</span>.</div>
+      <div class="fr">yet → Present Perfect, pas prétérit</div>
+    </div>
+    <div class="ex pp">
+      <div class="en"><span class="ht">✓</span> We <span class="ht">haven't received</span> any feedback yet.</div>
+    </div>
+
+    <div class="band a mt" style="font-size:.9rem">
+      <strong>Règle absolue :</strong><br>
+      <span style="color:var(--coral-l)">yesterday / last… / in [année] / at [heure]</span> → <strong>Prétérit</strong><br>
+      <span style="color:var(--teal-l)">already / yet / just / ever / never / for / since</span> → <strong>Present Perfect</strong>
+    </div>
+  </div>
+</div>`},
+
+/* ── 7 SYNTHÈSE ── */
+{html:`
+<div class="stag g">G03 · Synthèse complète</div>
+<div class="stitle">Récapitulatif</div>
+
+<div class="g2" style="margin-bottom:.9rem">
+  <div>
+    <div class="fbox pp" style="font-size:.95rem">
+      <strong style="color:var(--teal-l)">Present Perfect</strong><br>
+      <span class="fp fp-hv">have / has</span> + <span class="fp fp-pp">participe passé</span><br>
+      Négatif : <span class="fp fp-no">haven't / hasn't</span> + PP<br>
+      Interro : <span class="fp fp-hv">Have / Has</span> + sujet + PP ?
+    </div>
+  </div>
+  <div>
+    <div class="fbox ps" style="font-size:.95rem">
+      <strong style="color:var(--coral-l)">Prétérit</strong><br>
+      verbe <span class="fp fp-pp">+ed</span> ou <span class="fp fp-pp">forme 2</span><br>
+      Négatif : <span class="fp fp-no">didn't</span> + base<br>
+      Interro : <span class="fp fp-ag">Did</span> + sujet + base ?
+    </div>
+  </div>
+</div>
+
+<table class="ctbl" style="margin-bottom:.8rem">
+  <thead><tr><th></th><th>🟢 Present Perfect</th><th>🔴 Prétérit</th></tr></thead>
+  <tbody>
+    <tr><td>Usage</td><td>Passé lié au présent</td><td>Passé révolu, fermé</td></tr>
+    <tr><td>Date précise</td><td>Jamais</td><td>Obligatoire si mentionnée</td></tr>
+    <tr><td>FOR / SINCE</td><td>Durée encore en cours</td><td>Durée terminée</td></tr>
+    <tr><td>AGO</td><td>Jamais</td><td>Toujours</td></tr>
+    <tr><td>Marqueurs clés</td><td>already · yet · just · ever · never</td><td>yesterday · last… · ago · in [année]</td></tr>
+  </tbody>
+</table>
+
+<div class="exlist">
+  <div class="ex pp"><div class="en">The company <span class="ht">has grown</span> a lot <span class="ht">since</span> 2018. <em style="color:rgba(250,246,237,.35)">(toujours en croissance)</em></div><div class="fr">L'entreprise a beaucoup grandi depuis 2018.</div></div>
+  <div class="ex ps"><div class="en">The company <span class="hc">invested</span> €50M in R&D <span class="hc">between</span> 2015 and 2019. <em style="color:rgba(250,246,237,.35)">(période fermée)</em></div><div class="fr">L'entreprise a investi 50M€ entre 2015 et 2019.</div></div>
+  <div class="ex pp"><div class="en">We <span class="ht">have just received</span> the results — they're excellent!</div><div class="fr">Nous venons de recevoir les résultats — ils sont excellents !</div></div>
+  <div class="ex ps"><div class="en">He <span class="hc">learned</span> Python 5 years <span class="hc">ago</span> — now he's an expert.</div><div class="fr">Il a appris Python il y a 5 ans — c'est révolu, mais il en est le résultat.</div></div>
+</div>`},
+
+];
+
+/* ENGINE */
+let cur=0;
+function build(){
+  const sa=document.getElementById('sa');sa.innerHTML='';
+  SLIDES.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='slide'+(i===0?' active':'');
+    d.id='sl'+i;d.innerHTML=s.html;sa.appendChild(d);
+  });
+  buildDots();updateUI();
+}
+function buildDots(){
+  const nd=document.getElementById('dots');nd.innerHTML='';
+  SLIDES.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i===0?' on':'');
+    d.onclick=()=>goTo(i);nd.appendChild(d);
+  });
+}
+function goTo(idx){
+  if(idx<0||idx>=SLIDES.length)return;
+  const all=document.querySelectorAll('.slide');
+  all[cur].classList.remove('active');all[cur].classList.add('out');
+  const prev=cur;setTimeout(()=>{all[prev].classList.remove('out');},380);
+  cur=idx;all[cur].classList.add('active');updateUI();
+}
+function updateUI(){
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  document.getElementById('sc').textContent=(cur+1)+' / '+SLIDES.length;
+}
+function go(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(1);
+  if(e.key==='ArrowLeft')go(-1);
+});
+build();
+</script>
+</body>
+</html>

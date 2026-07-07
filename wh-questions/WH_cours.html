@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WH-Questions · Polytech Lille</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a;--gold:#C9A020;--gold-l:#e8b84b;--cream:#FAF6ED;
+  --blue:#3a86ff;--blue-l:#a8c8ff;--teal:#06d6a0;--teal-l:#a8f0de;
+  --red:#ef476f;--red-l:#ffb3c6;--amber:#ffd166;
+  --coral:#ff6b6b;--coral-l:#ffb3b3;--green:#2ecc71;--green-l:#a8f0c0;
+  --purple:#9b5de5;--purp-l:#d4a8ff;
+  --t:.34s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Source Serif 4',serif;background:var(--navy);color:var(--cream)}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift 22s ease-in-out infinite alternate}
+.orb1{width:600px;height:600px;background:rgba(58,134,255,.08);top:-200px;left:-150px}
+.orb2{width:500px;height:500px;background:rgba(6,214,160,.06);bottom:-150px;right:-100px;animation-delay:-9s}
+.orb3{width:380px;height:380px;background:rgba(201,160,32,.05);top:30%;left:42%;animation-delay:-17s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(50px,35px)}}
+#app{width:100vw;height:100vh;display:flex;flex-direction:column;position:relative;z-index:1}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.65rem 2.8rem;background:rgba(13,27,42,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;z-index:20}
+.brand{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.pill{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;padding:.3rem .9rem;border-radius:20px;background:rgba(58,134,255,.18);color:var(--blue-l);border:1px solid rgba(58,134,255,.3)}
+.sc{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:rgba(250,246,237,.3)}
+.sa{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:2rem 3.8rem 1.2rem;overflow-y:auto;opacity:0;transform:translateX(70px);transition:opacity .36s var(--t),transform .36s var(--t);pointer-events:none}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-70px)}
+.bnav{display:flex;align-items:center;justify-content:center;gap:1rem;padding:.9rem 2rem;background:rgba(13,27,42,.92);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.07);flex-shrink:0;z-index:20}
+.nb{font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:.06em;padding:.55rem 2rem;border-radius:30px;border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--cream);cursor:pointer;transition:var(--t)}
+.nb:hover{background:rgba(255,255,255,.09)}
+.nb.prim{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+.nb.prim:hover{background:var(--gold-l)}
+.dots{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;justify-content:center;max-width:500px}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:var(--t);flex-shrink:0}
+.dot.on{background:var(--gold);transform:scale(1.4)}
+
+.stag{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.55rem;color:var(--blue-l);animation:fuA .5s both}
+.stitle{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.6vw,2.9rem);font-weight:900;line-height:1.1;margin-bottom:.8rem;animation:fuA .5s .07s both}
+.slead{font-size:1.02rem;color:rgba(250,246,237,.68);line-height:1.65;margin-bottom:.9rem;max-width:82ch;animation:fuA .5s .12s both}
+@keyframes fuA{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1rem 1.2rem;animation:fuA .5s both}
+.card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.1s}
+.card:nth-child(3){animation-delay:.16s}.card:nth-child(4){animation-delay:.22s}
+.clabel{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;opacity:.5;margin-bottom:.4rem}
+.band{border-radius:12px;padding:.85rem 1.3rem;font-size:.95rem;line-height:1.6;margin-bottom:.75rem;animation:fuA .5s .2s both}
+.band.b{background:rgba(58,134,255,.1);border:1px solid rgba(58,134,255,.22)}
+.band.r{background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.22)}
+.band.g{background:rgba(201,160,32,.1);border:1px solid rgba(201,160,32,.22)}
+.band.t{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.22)}
+.band.p{background:rgba(155,93,229,.1);border:1px solid rgba(155,93,229,.22)}
+.exlist{display:flex;flex-direction:column;gap:.5rem}
+.ex{border-radius:9px;padding:.65rem 1rem;border-left:3px solid;animation:fuA .4s both}
+.ex:nth-child(1){animation-delay:.08s}.ex:nth-child(2){animation-delay:.15s}
+.ex:nth-child(3){animation-delay:.22s}.ex:nth-child(4){animation-delay:.29s}
+.en{font-size:1rem;font-weight:600;color:var(--cream);margin-bottom:.15rem}
+.fr{font-size:.85rem;color:rgba(250,246,237,.4);font-style:italic}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;padding:.32rem .85rem;border-radius:22px;animation:pop .4s both}
+.chip:nth-child(1){animation-delay:.04s}.chip:nth-child(2){animation-delay:.09s}
+.chip:nth-child(3){animation-delay:.14s}.chip:nth-child(4){animation-delay:.19s}
+.chip:nth-child(5){animation-delay:.24s}.chip:nth-child(6){animation-delay:.29s}
+.chip:nth-child(7){animation-delay:.34s}
+.tbl{width:100%;border-collapse:separate;border-spacing:0 4px}
+.tbl th{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;padding:.38rem .8rem;text-align:left;color:rgba(250,246,237,.35)}
+.tbl td{padding:.58rem .8rem;font-size:.88rem;background:rgba(255,255,255,.04)}
+.tbl tr td:first-child{border-radius:8px 0 0 8px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;color:var(--blue-l)}
+.tbl tr td:last-child{border-radius:0 8px 8px 0}
+.tbl tr:hover td{background:rgba(255,255,255,.07)}
+.mt{margin-top:.65rem}
+
+/* ═══ ANIMATED FORMULA BUILD ═══ */
+.formula-builder{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.6rem;font-weight:700;
+  display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;
+  padding:1.2rem 1.5rem;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:16px;margin:.6rem 0;
+  min-height:5rem;
+}
+.fb-tok{
+  display:inline-block;padding:.18rem .6rem;border-radius:8px;
+  opacity:0;transform:translateY(18px) scale(.85);
+  transition:opacity .42s cubic-bezier(.34,1.56,.64,1),
+             transform .42s cubic-bezier(.34,1.56,.64,1);
+}
+.fb-tok.show{opacity:1;transform:translateY(0) scale(1)}
+.fb-tok.wh{background:rgba(58,134,255,.28);color:var(--blue-l)}
+.fb-tok.aux{background:rgba(6,214,160,.25);color:var(--teal-l)}
+.fb-tok.subj{background:rgba(255,255,255,.12);color:#ccc}
+.fb-tok.vb{background:rgba(255,209,102,.25);color:var(--amber)}
+.fb-tok.comp{background:rgba(155,93,229,.25);color:var(--purp-l)}
+.fb-tok.qm{color:var(--gold);background:transparent;font-size:2rem}
+.fb-sep{color:rgba(250,246,237,.2);font-size:1.2rem}
+
+.formula-label{
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(250,246,237,.35);margin-bottom:.3rem;
+}
+
+/* ═══ WRONG vs RIGHT ANIMATION ═══ */
+.wrbox{
+  border-radius:12px;padding:1rem 1.2rem;
+  font-size:1.1rem;font-weight:600;
+  display:flex;align-items:center;gap:.8rem;
+  transition:all .4s ease;
+}
+.wrbox.wrong-box{
+  background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.28);
+  color:var(--red-l);
+}
+.wrbox.right-box{
+  background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.28);
+  color:var(--green-l);
+}
+.wr-icon{font-size:1.3rem;flex-shrink:0}
+.wr-word{
+  display:inline-block;
+  transition:all .5s cubic-bezier(.34,1.56,.64,1);
+}
+/* shake */
+@keyframes shake{
+  10%,90%{transform:translate(-3px,0) rotate(-1deg)}
+  20%,80%{transform:translate(4px,0) rotate(1deg)}
+  30%,50%,70%{transform:translate(-5px,0) rotate(-1deg)}
+  40%,60%{transform:translate(5px,0) rotate(1deg)}
+  100%{transform:translate(0,0)}
+}
+.shake{animation:shake .55s cubic-bezier(.36,.07,.19,.97)}
+/* word migration: the word moves via JS absolute positioning */
+.migrating{
+  position:relative;
+  display:inline-block;
+  transition:all .7s cubic-bezier(.4,0,.2,1);
+}
+
+/* demo box */
+.demo-box{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;padding:1.4rem 1.8rem;margin:.5rem 0;
+}
+.demo-sent{
+  font-size:1.5rem;font-weight:600;font-family:'Source Serif 4',serif;
+  line-height:1.5;margin-bottom:.8rem;color:var(--cream);
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem;
+}
+.demo-sent .w{display:inline-block}
+.demo-sent .sig{color:var(--amber);display:inline-block}
+.demo-sent .sig.shake{animation:shake .55s}
+.demo-sent .sig.glow{text-shadow:0 0 18px rgba(255,209,102,.9),0 0 40px rgba(255,209,102,.4)}
+.demo-sent .verb-hl{
+  color:var(--teal-l);display:inline-block;
+  opacity:0;transform:scale(.7);
+  transition:opacity .45s .05s cubic-bezier(.34,1.56,.64,1),
+             transform .45s .05s cubic-bezier(.34,1.56,.64,1);
+}
+.demo-sent .verb-hl.boom{opacity:1;transform:scale(1)}
+.demo-tl{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:.25rem .8rem;border-radius:18px;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .38s .1s,transform .38s .1s;
+  display:inline-block;
+}
+.demo-tl.show{opacity:1;transform:translateY(0)}
+.anno{
+  font-family:'JetBrains Mono',monospace;font-size:.75rem;
+  color:rgba(250,246,237,.45);opacity:0;transition:opacity .38s .18s;
+  display:flex;align-items:center;gap:.4rem;margin-top:.4rem;
+}
+.anno.show{opacity:1}
+.anno-a{color:var(--gold)}
+.steps{display:flex;gap:.5rem;margin-top:.6rem}
+.step{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:.3s}
+.step.done{background:var(--gold)}.step.active{background:var(--gold);transform:scale(1.4)}
+.play-btn{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.08em;padding:.42rem 1.2rem;border-radius:22px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:var(--t);align-self:flex-start}
+.play-btn:hover{background:rgba(201,160,32,.14)}
+.play-btn.busy{opacity:.3;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="topbar">
+    <div class="brand">Marc Vasseur · Polytech Lille · Anglais</div>
+    <div class="pill">WH-Questions · PEIP2 · B1–B2</div>
+    <div class="sc" id="sc">1 / 10</div>
+  </div>
+  <div class="sa" id="sa"></div>
+  <div class="bnav">
+    <button class="nb" onclick="go(-1)">◀ Précédent</button>
+    <div class="dots" id="dots"></div>
+    <button class="nb prim" onclick="go(1)">Suivant ▶</button>
+  </div>
+</div>
+
+<script>
+const DEMOS = {};
+function reg(id,steps){DEMOS[id]={steps,cur:-1}}
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+async function animSig(sel){
+  const el=document.querySelector(sel);if(!el)return;
+  el.classList.add('shake');await delay(580);el.classList.remove('shake');el.classList.add('glow');
+}
+function showEl(sel){const el=document.querySelector(sel);if(el)el.classList.add('show')}
+function boomEl(sel){const el=document.querySelector(sel);if(el)el.classList.add('boom')}
+function showTok(sel){const el=document.querySelector(sel);if(el)el.classList.add('show')}
+
+function runDemo(id){
+  if(!DEMOS[id])return;
+  const d=DEMOS[id];
+  d.cur++;
+  if(d.cur>=d.steps.length){resetDemo(id);d.cur=0;}
+  d.steps[d.cur]();
+  document.querySelectorAll(`#dsteps-${id} .step`).forEach((s,i)=>{
+    s.classList.toggle('done',i<d.cur);s.classList.toggle('active',i===d.cur);
+  });
+  const btn=document.getElementById(`dbtn-${id}`);
+  if(btn)btn.textContent=d.cur>=d.steps.length-1?'↺ Recommencer':'▶ Étape suivante';
+}
+function resetDemo(id){
+  if(!DEMOS[id])return;DEMOS[id].cur=-1;
+  document.querySelectorAll(`[data-demo="${id}"]`).forEach(el=>el.classList.remove('shake','glow','show','boom'));
+  document.querySelectorAll(`#dsteps-${id} .step`).forEach(s=>s.classList.remove('done','active'));
+  const btn=document.getElementById(`dbtn-${id}`);if(btn)btn.textContent='▶ Démarrer';
+}
+
+/* Formula builder tokens show one by one */
+function buildFormula(id,tokenIds,delays){
+  tokenIds.forEach((tid,i)=>{
+    setTimeout(()=>{
+      const el=document.getElementById(tid);if(el)el.classList.add('show');
+    }, delays[i]||i*220);
+  });
+}
+
+const SLIDES = [
+
+/* 0 — TITRE */
+{html:`
+<div style="display:flex;flex-direction:column;justify-content:center;height:100%;gap:1.6rem">
+  <div class="stag">WH-Questions</div>
+  <div class="stitle" style="font-size:clamp(2.4rem,5vw,4rem)">Poser les questions<br><span style="color:var(--blue)">en anglais</span></div>
+  <div class="slead" style="font-size:1.1rem">
+    Les questions en anglais suivent une <strong style="color:var(--cream)">structure fixe</strong> — très différente du français.<br>
+    L'erreur la plus fréquente : poser la question <strong style="color:var(--red-l)">à la française</strong>.
+  </div>
+  <div class="g2" style="max-width:700px">
+    <div style="padding:1rem 1.2rem;background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.25);border-radius:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red-l);margin-bottom:.5rem">✗ À la française (FAUX)</div>
+      <div style="font-size:1.05rem;color:var(--red-l)">"You are coming tomorrow?"</div>
+      <div style="font-size:.85rem;color:rgba(250,246,237,.4);margin-top:.3rem;font-style:italic">Intonation montante = pas une vraie question grammaticale en anglais</div>
+    </div>
+    <div style="padding:1rem 1.2rem;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.25);border-radius:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green-l);margin-bottom:.5rem">✓ En anglais (JUSTE)</div>
+      <div style="font-size:1.05rem;color:var(--green-l)">"Are you coming tomorrow?"</div>
+      <div style="font-size:.85rem;color:rgba(250,246,237,.4);margin-top:.3rem;font-style:italic">Inversion obligatoire : auxiliaire avant le sujet</div>
+    </div>
+  </div>
+  <div class="chips">
+    <span class="chip" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)">Who</span>
+    <span class="chip" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)">What</span>
+    <span class="chip" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)">Where</span>
+    <span class="chip" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)">When</span>
+    <span class="chip" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)">Why</span>
+    <span class="chip" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)">How</span>
+    <span class="chip" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.32)">How much/many/long…</span>
+  </div>
+</div>`},
+
+/* 1 — LA FORMULE */
+{id:'formula',html:`
+<div class="stag">La formule de base</div>
+<div class="stitle">WH + <span style="color:var(--teal)">AUX</span> + <span style="color:rgba(200,200,200,.7)">SUJ</span> + <span style="color:var(--amber)">VERBE</span> + <span style="color:var(--purp-l)">COMP</span> + ?</div>
+<div class="slead">Chaque élément arrive dans l'ordre — clique ▶ pour voir la formule se construire.</div>
+
+<div class="demo-box">
+  <div class="formula-label">Construction pas à pas</div>
+  <div class="formula-builder" id="fb-main">
+    <span class="fb-tok wh" id="fbt-wh">Where</span>
+    <span class="fb-sep">+</span>
+    <span class="fb-tok aux" id="fbt-aux">does</span>
+    <span class="fb-sep">+</span>
+    <span class="fb-tok subj" id="fbt-subj">she</span>
+    <span class="fb-sep">+</span>
+    <span class="fb-tok vb" id="fbt-vb">work</span>
+    <span class="fb-tok qm" id="fbt-qm">?</span>
+  </div>
+  <div id="fb-result" style="font-size:.9rem;color:rgba(250,246,237,.45);font-style:italic;opacity:0;transition:opacity .4s .2s;margin-top:.3rem">
+    → "Où est-ce qu'elle travaille ?"
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.7rem">
+    <div class="steps" id="dsteps-formula">
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+      <div class="step"></div><div class="step"></div>
+    </div>
+    <button class="play-btn" id="dbtn-formula" onclick="runDemo('formula')">▶ Démarrer</button>
+  </div>
+</div>
+
+<div class="g2 mt">
+  <div class="band b" style="font-size:.9rem;margin-bottom:0">
+    <strong style="color:var(--blue-l)">Temps simples :</strong><br>
+    Do/Does (présent) · Did (prétérit)<br>
+    <em style="color:rgba(250,246,237,.5)">Where does she work? / Where did he go?</em>
+  </div>
+  <div class="band t" style="font-size:.9rem;margin-bottom:0">
+    <strong style="color:var(--teal-l)">Temps composés :</strong><br>
+    L'auxiliaire existant se déplace<br>
+    <em style="color:rgba(250,246,237,.5)">Where has she gone? / Where will he be?</em>
+  </div>
+</div>
+`,
+onEnter:()=>{
+  reg('formula',[
+    ()=>{ showTok('#fbt-wh'); },
+    ()=>{ showTok('#fbt-aux'); },
+    ()=>{ showTok('#fbt-subj'); },
+    ()=>{ showTok('#fbt-vb'); },
+    ()=>{
+      showTok('#fbt-qm');
+      const r=document.getElementById('fb-result');
+      if(r){setTimeout(()=>r.style.opacity='1',300);}
+    },
+  ]);
+}},
+
+/* 2 — LES MOTS WH */
+{html:`
+<div class="stag">Les mots interrogatifs</div>
+<div class="stitle">Les <span style="color:var(--blue)">WH-words</span> — et <span style="color:var(--blue)">HOW</span></div>
+<table class="tbl">
+  <thead><tr><th>Mot</th><th>Question sur…</th><th>Exemple</th></tr></thead>
+  <tbody>
+    <tr><td>Who</td><td>une personne</td><td style="font-style:italic;color:rgba(250,246,237,.6)">Who is she talking to?</td></tr>
+    <tr><td>What</td><td>une chose / action</td><td style="font-style:italic;color:rgba(250,246,237,.6)">What does he study?</td></tr>
+    <tr><td>Where</td><td>un lieu</td><td style="font-style:italic;color:rgba(250,246,237,.6)">Where does she work?</td></tr>
+    <tr><td>When</td><td>un moment</td><td style="font-style:italic;color:rgba(250,246,237,.6)">When did they leave?</td></tr>
+    <tr><td>Why</td><td>une raison</td><td style="font-style:italic;color:rgba(250,246,237,.6)">Why did he resign?</td></tr>
+    <tr><td>How</td><td>la manière</td><td style="font-style:italic;color:rgba(250,246,237,.6)">How does it work?</td></tr>
+    <tr><td>How long</td><td>une durée</td><td style="font-style:italic;color:rgba(250,246,237,.6)">How long has she lived here?</td></tr>
+    <tr><td>How many</td><td>quantité dénombrable</td><td style="font-style:italic;color:rgba(250,246,237,.6)">How many languages does he speak?</td></tr>
+    <tr><td>How much</td><td>quantité indénombrable / prix</td><td style="font-style:italic;color:rgba(250,246,237,.6)">How much does it cost?</td></tr>
+    <tr><td>How often</td><td>une fréquence</td><td style="font-style:italic;color:rgba(250,246,237,.6)">How often do they meet?</td></tr>
+    <tr><td>How far</td><td>une distance</td><td style="font-style:italic;color:rgba(250,246,237,.6)">How far did she drive?</td></tr>
+  </tbody>
+</table>
+<div class="band b mt" style="font-size:.9rem">
+  💡 <strong>How</strong> s'associe toujours à un adjectif ou adverbe pour préciser : <strong style="color:var(--blue-l)">how fast · how quickly · how well · how often…</strong>
+</div>`},
+
+/* 3 — WHO/WHAT SUJET vs OBJET (point clé) */
+{id:'who',html:`
+<div class="stag">Point clé</div>
+<div class="stitle"><span style="color:var(--amber)">Who</span> sujet vs <span style="color:var(--blue)">Who</span> objet</div>
+<div class="slead">C'est le point le plus délicat. Quand <strong>Who</strong> ou <strong>What</strong> est le <strong style="color:var(--cream)">sujet</strong> de la phrase, il n'y a pas d'auxiliaire.</div>
+
+<div class="g2">
+  <div>
+    <div class="demo-box" id="demo-who">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(250,246,237,.3);margin-bottom:.5rem">Démonstration</div>
+
+      <!-- Sentence A: who = object -->
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--blue-l);margin-bottom:.3rem;opacity:0;transition:opacity .4s" id="who-labelA">Who = OBJET</div>
+      <div class="demo-sent" style="font-size:1.35rem;margin-bottom:.5rem">
+        <span class="w">She</span>
+        <span class="w">saw</span>
+        <span class="w sig" id="who-sigA"><em>him</em></span>.
+      </div>
+      <div style="opacity:0;transition:opacity .4s;font-size:.9rem;margin-bottom:.3rem" id="who-qA">
+        <span style="color:var(--blue-l)">→</span>
+        <span class="verb-hl" id="who-didA" style="color:var(--teal-l);display:inline-block;opacity:0;transition:opacity .4s .1s">Who did she see?</span>
+      </div>
+      <div class="anno" id="who-annoA"><span class="anno-a">↑</span> him = objet → <strong style="color:var(--blue-l)">Who + did + she + see?</strong></div>
+
+      <!-- Sentence B: who = subject -->
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:.3rem;margin-top:.7rem;opacity:0;transition:opacity .4s" id="who-labelB">Who = SUJET</div>
+      <div class="demo-sent" style="font-size:1.35rem;margin-bottom:.5rem">
+        <span class="w sig" id="who-sigB"><em>She</em></span>
+        <span class="w">sent</span>
+        <span class="w">the letter.</span>
+      </div>
+      <div style="opacity:0;transition:opacity .4s;font-size:.9rem;margin-bottom:.3rem" id="who-qB">
+        <span style="color:var(--amber)">→</span>
+        <span class="verb-hl" id="who-sentB" style="color:var(--amber);display:inline-block;opacity:0;transition:opacity .4s .1s">Who sent the letter?</span>
+      </div>
+      <div class="anno" id="who-annoB"><span class="anno-a">↑</span> she = sujet → <strong style="color:var(--amber)">Who + sent? — PAS DE DID !</strong></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.7rem">
+        <div class="steps" id="dsteps-who">
+          <div class="step"></div><div class="step"></div><div class="step"></div>
+          <div class="step"></div><div class="step"></div><div class="step"></div>
+        </div>
+        <button class="play-btn" id="dbtn-who" onclick="runDemo('who')">▶ Démarrer</button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="band b" style="font-size:.92rem;margin-bottom:.8rem">
+      <strong style="color:var(--blue-l)">Who = OBJET</strong><br>
+      → formule normale : <strong>Who + AUX + sujet + base ?</strong><br>
+      <em style="color:rgba(250,246,237,.5)">Who did you see? · Who does she love?</em>
+    </div>
+    <div class="band" style="background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.25);font-size:.92rem;margin-bottom:.8rem">
+      <strong style="color:var(--amber)">Who / What = SUJET</strong><br>
+      → <strong style="color:var(--red-l)">PAS d'auxiliaire</strong> : <strong>Who + verbe conjugué ?</strong><br>
+      <em style="color:rgba(250,246,237,.5)">Who runs the meeting? · What happened?</em>
+    </div>
+    <div class="exlist">
+      <div class="ex" style="background:rgba(58,134,255,.09);border-color:var(--blue)">
+        <div class="en"><strong style="color:var(--blue-l)">Who</strong> did you call? <em style="color:rgba(250,246,237,.4)">(you called someone)</em></div>
+        <div class="fr">Qui as-tu appelé ? — who = objet</div>
+      </div>
+      <div class="ex" style="background:rgba(255,209,102,.09);border-color:var(--amber)">
+        <div class="en"><strong style="color:var(--amber)">Who</strong> called you? <em style="color:rgba(250,246,237,.4)">(someone called you)</em></div>
+        <div class="fr">Qui t'a appelé ? — who = sujet</div>
+      </div>
+      <div class="ex" style="background:rgba(255,209,102,.09);border-color:var(--amber)">
+        <div class="en"><strong style="color:var(--amber)">What</strong> caused the problem? <em style="color:rgba(250,246,237,.4)">(something caused it)</em></div>
+        <div class="fr">Qu'est-ce qui a causé le problème ? — what = sujet</div>
+      </div>
+    </div>
+  </div>
+</div>
+`,
+onEnter:()=>{
+  reg('who',[
+    async()=>{ await animSig('#who-sigA'); },
+    ()=>{
+      const la=document.getElementById('who-labelA');if(la)la.style.opacity='1';
+      const qa=document.getElementById('who-qA');if(qa)qa.style.opacity='1';
+      setTimeout(()=>{const d=document.getElementById('who-didA');if(d)d.style.opacity='1';},150);
+      showEl('#who-annoA');
+    },
+    async()=>{ await animSig('#who-sigB'); },
+    ()=>{
+      const lb=document.getElementById('who-labelB');if(lb)lb.style.opacity='1';
+    },
+    ()=>{
+      const qb=document.getElementById('who-qB');if(qb)qb.style.opacity='1';
+      setTimeout(()=>{const d=document.getElementById('who-sentB');if(d)d.style.opacity='1';},150);
+    },
+    ()=>{ showEl('#who-annoB'); },
+  ]);
+}},
+
+/* 4 — LA QUESTION À LA FRANÇAISE CORRIGÉE (animation) */
+{id:'migr',html:`
+<div class="stag">Erreur classique</div>
+<div class="stitle">La question <span style="color:var(--red)">à la française</span></div>
+<div class="slead">En français on peut mettre le mot interrogatif <em>après</em> le verbe. En anglais il doit être <strong style="color:var(--cream)">en tête de phrase</strong>, avec inversion.</div>
+
+<div class="demo-box">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(250,246,237,.3);margin-bottom:.7rem">Correction animée</div>
+
+  <!-- Wrong version -->
+  <div style="margin-bottom:.5rem">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--red-l);margin-bottom:.3rem">Version française (FAUX)</div>
+    <div style="font-size:1.5rem;font-weight:600;color:var(--red-l);font-family:'Source Serif 4',serif;display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem">
+      <span id="m-she">She</span>
+      <span id="m-works">works</span>
+      <span id="m-where" style="text-decoration:underline;text-decoration-color:var(--amber);color:var(--amber)">where</span>
+      <span>?</span>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div id="migr-arrow" style="font-size:1.4rem;color:var(--gold);margin:.4rem 0;opacity:0;transition:opacity .4s">↓ correction</div>
+
+  <!-- Right version builds -->
+  <div id="migr-right" style="opacity:0;transition:opacity .4s">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--green-l);margin-bottom:.3rem">Version correcte (JUSTE)</div>
+    <div class="formula-builder" style="font-size:1.4rem;min-height:3.5rem;padding:.8rem 1.2rem">
+      <span class="fb-tok wh" id="mgb-wh">Where</span>
+      <span class="fb-sep">+</span>
+      <span class="fb-tok aux" id="mgb-aux">does</span>
+      <span class="fb-sep">+</span>
+      <span class="fb-tok subj" id="mgb-subj">she</span>
+      <span class="fb-sep">+</span>
+      <span class="fb-tok vb" id="mgb-vb">work</span>
+      <span class="fb-tok qm" id="mgb-qm">?</span>
+    </div>
+  </div>
+
+  <div id="migr-note" style="font-size:.88rem;color:rgba(250,246,237,.45);font-style:italic;margin-top:.5rem;opacity:0;transition:opacity .4s">
+    → Le mot WH migre en tête · does est inséré · le verbe revient à la base
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem">
+    <div class="steps" id="dsteps-migr">
+      <div class="step"></div><div class="step"></div><div class="step"></div><div class="step"></div>
+    </div>
+    <button class="play-btn" id="dbtn-migr" onclick="runDemo('migr')">▶ Démarrer</button>
+  </div>
+</div>
+
+<div class="g2 mt">
+  <div class="exlist">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red-l);margin-bottom:.3rem">✗ FAUX</div>
+    <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)"><div class="en" style="color:var(--red-l)">"He studies what?"</div></div>
+    <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)"><div class="en" style="color:var(--red-l)">"They live where?"</div></div>
+    <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)"><div class="en" style="color:var(--red-l)">"You are coming tomorrow?"</div></div>
+  </div>
+  <div class="exlist">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green-l);margin-bottom:.3rem">✓ JUSTE</div>
+    <div class="ex" style="background:rgba(46,204,113,.09);border-color:var(--green)"><div class="en" style="color:var(--green-l)">"What does he study?"</div></div>
+    <div class="ex" style="background:rgba(46,204,113,.09);border-color:var(--green)"><div class="en" style="color:var(--green-l)">"Where do they live?"</div></div>
+    <div class="ex" style="background:rgba(46,204,113,.09);border-color:var(--green)"><div class="en" style="color:var(--green-l)">"Are you coming tomorrow?"</div></div>
+  </div>
+</div>
+`,
+onEnter:()=>{
+  reg('migr',[
+    // step 0: where shakes
+    async()=>{ 
+      const w=document.getElementById('m-where');
+      if(w){w.classList.add('shake');}
+      await delay(600);
+    },
+    // step 1: arrow appears
+    ()=>{
+      const a=document.getElementById('migr-arrow');if(a)a.style.opacity='1';
+      const r=document.getElementById('migr-right');if(r)r.style.opacity='1';
+    },
+    // step 2: build formula tokens
+    ()=>{
+      ['mgb-wh','mgb-aux','mgb-subj','mgb-vb','mgb-qm'].forEach((id,i)=>{
+        setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*200);
+      });
+    },
+    // step 3: note
+    ()=>{
+      const n=document.getElementById('migr-note');if(n)n.style.opacity='1';
+    },
+  ]);
+}},
+
+/* 5 — TEMPS ET AUXILIAIRES */
+{html:`
+<div class="stag">Formules par temps</div>
+<div class="stitle">Quel <span style="color:var(--teal)">auxiliaire</span> choisir ?</div>
+<div class="slead">L'auxiliaire dans la question dépend du temps de la phrase de départ.</div>
+<table class="tbl">
+  <thead><tr><th>Temps</th><th>Auxiliaire</th><th>Exemple</th></tr></thead>
+  <tbody>
+    <tr><td>Present Simple</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--teal-l)">do / does</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">Where does she work?</td></tr>
+    <tr><td>Past Simple</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--coral-l)">did</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">When did he leave?</td></tr>
+    <tr><td>Present Continuous</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--blue-l)">am / is / are</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">What is she doing?</td></tr>
+    <tr><td>Past Continuous</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--blue-l)">was / were</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">Where were they going?</td></tr>
+    <tr><td>Present Perfect</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--teal-l)">have / has</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">How long has she lived here?</td></tr>
+    <tr><td>Past Perfect</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--purp-l)">had</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">By when had they finished?</td></tr>
+    <tr><td>Future Simple</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--amber)">will</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">When will she arrive?</td></tr>
+    <tr><td>be going to</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--green-l)">am / is / are</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">Where is he going to work?</td></tr>
+    <tr><td>Future Continuous</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--amber)">will</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">What will she be doing?</td></tr>
+    <tr><td>Future Perfect</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--amber)">will</td>
+      <td style="font-style:italic;color:rgba(250,246,237,.6)">When will he have finished?</td></tr>
+  </tbody>
+</table>
+<div class="band r mt" style="font-size:.9rem">
+  ⚠ BE (présent et passé) : <strong style="color:var(--red-l)">inversion directe, pas de do/does/did</strong><br>
+  <em style="color:rgba(250,246,237,.5)">She is tired. → How is she? · He was happy. → Why was he happy?</em>
+</div>`},
+
+/* 6 — HOW : combinaisons */
+{id:'how',html:`
+<div class="stag">HOW — Combinaisons</div>
+<div class="stitle"><span style="color:var(--blue)">How</span> + adjectif / adverbe</div>
+<div class="slead">HOW seul demande la manière. HOW + adjectif / adverbe cible une caractéristique précise.</div>
+
+<div class="g2">
+  <div>
+    <div class="demo-box" id="demo-how">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(250,246,237,.3);margin-bottom:.5rem">Démonstration</div>
+      <div class="demo-sent" style="font-size:1.4rem">
+        <span class="w">The system processes data</span>
+        <span class="w sig" id="how-sig"><em>very quickly</em></span>.
+      </div>
+      <div class="demo-tl" id="how-tl" style="background:rgba(58,134,255,.2);color:var(--blue-l);border:1px solid rgba(58,134,255,.35);margin-top:.4rem">
+        → How quickly does the system process data?
+      </div>
+      <div class="anno" id="how-anno">
+        <span class="anno-a">↑</span> quickly → <strong style="color:var(--blue-l)">How quickly</strong> + does + système + base ?
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.5rem">
+        <div class="steps" id="dsteps-how"><div class="step"></div><div class="step"></div></div>
+        <button class="play-btn" id="dbtn-how" onclick="runDemo('how')">▶ Démarrer</button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <table class="tbl">
+      <thead><tr><th>Combinaison</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td>How long</td><td style="font-style:italic;color:rgba(250,246,237,.55)">How long does it take?</td></tr>
+        <tr><td>How much</td><td style="font-style:italic;color:rgba(250,246,237,.55)">How much does it cost?</td></tr>
+        <tr><td>How many</td><td style="font-style:italic;color:rgba(250,246,237,.55)">How many people work here?</td></tr>
+        <tr><td>How often</td><td style="font-style:italic;color:rgba(250,246,237,.55)">How often does she travel?</td></tr>
+        <tr><td>How far</td><td style="font-style:italic;color:rgba(250,246,ййях,50)">How far did she drive?</td></tr>
+        <tr><td>How fast</td><td style="font-style:italic;color:rgba(250,246,237,.55)">How fast does it go?</td></tr>
+        <tr><td>How well</td><td style="font-style:italic;color:rgba(250,246,237,.55)">How well does he speak French?</td></tr>
+        <tr><td>Since when</td><td style="font-style:italic;color:rgba(250,246,237,.55)">Since when has she worked here?</td></tr>
+        <tr><td>When</td><td style="font-style:italic;color:rgba(250,246,237,.55)">By when will he finish?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`,
+onEnter:()=>{
+  reg('how',[
+    async()=>{ await animSig('#how-sig'); },
+    ()=>{ showEl('#how-tl'); showEl('#how-anno'); },
+  ]);
+}},
+
+/* 7 — EXEMPLES PAR TEMPS (animé, 2 phrases) */
+{id:'extime',html:`
+<div class="stag">Exemples par temps</div>
+<div class="stitle">La formule <span style="color:var(--teal)">en action</span></div>
+
+<div class="demo-box" id="demo-extime" style="margin-bottom:.8rem">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(250,246,237,.3);margin-bottom:.6rem">Du statement à la question — étape par étape</div>
+
+  <!-- statement -->
+  <div style="font-size:.85rem;color:rgba(250,246,237,.4);margin-bottom:.3rem" id="ext-stlabel">Phrase de départ :</div>
+  <div class="demo-sent" style="font-size:1.4rem;margin-bottom:.6rem" id="ext-st">
+    <span>She has lived in Lille</span>
+    <span class="sig" id="ext-sig"><em style="color:var(--amber)">since 2019</em></span>.
+  </div>
+
+  <!-- question builds -->
+  <div style="font-size:.85rem;color:rgba(250,246,237,.4);margin-bottom:.3rem;opacity:0;transition:opacity .3s" id="ext-qlabel">Question :</div>
+  <div class="formula-builder" style="font-size:1.35rem;min-height:3.5rem;padding:.8rem 1.2rem" id="ext-fb">
+    <span class="fb-tok wh" id="ext-wh">Since when</span>
+    <span class="fb-tok aux" id="ext-aux">has</span>
+    <span class="fb-tok subj" id="ext-subj">she</span>
+    <span class="fb-tok vb" id="ext-vb">lived</span>
+    <span class="fb-tok comp" id="ext-comp">in Lille</span>
+    <span class="fb-tok qm" id="ext-qm">?</span>
+  </div>
+  <div class="anno" id="ext-anno" style="margin-top:.4rem">
+    <span class="anno-a">↑</span> since 2019 → <strong style="color:var(--blue-l)">Since when</strong> · has (PP) · she · lived · in Lille ?
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem">
+    <div class="steps" id="dsteps-extime">
+      <div class="step"></div><div class="step"></div><div class="step"></div>
+    </div>
+    <button class="play-btn" id="dbtn-extime" onclick="runDemo('extime')">▶ Démarrer</button>
+  </div>
+</div>
+
+<div class="exlist">
+  <div class="ex" style="background:rgba(255,107,107,.09);border-color:var(--coral)">
+    <div class="en">He left <em style="color:var(--amber)">yesterday at 5 PM</em>. → <strong style="color:var(--coral-l)">When did he leave?</strong></div>
+    <div class="fr">When + did + he + leave ?</div>
+  </div>
+  <div class="ex" style="background:rgba(58,134,255,.09);border-color:var(--blue)">
+    <div class="en">They are working <em style="color:var(--amber)">in the lab</em>. → <strong style="color:var(--blue-l)">Where are they working?</strong></div>
+    <div class="fr">Where + are + they + working ?</div>
+  </div>
+  <div class="ex" style="background:rgba(255,209,102,.09);border-color:var(--amber)">
+    <div class="en">She will finish <em style="color:var(--amber)">by Friday</em>. → <strong style="color:var(--amber)">When will she finish?</strong></div>
+    <div class="fr">When + will + she + finish ?</div>
+  </div>
+  <div class="ex" style="background:rgba(155,93,229,.09);border-color:var(--purple)">
+    <div class="en"><em style="color:var(--amber)">The CEO</em> announced the decision. → <strong style="color:var(--purp-l)">Who announced the decision?</strong></div>
+    <div class="fr">Who = sujet → verbe conjugué directement, pas de did !</div>
+  </div>
+</div>
+`,
+onEnter:()=>{
+  reg('extime',[
+    async()=>{ await animSig('#ext-sig'); },
+    ()=>{
+      const ql=document.getElementById('ext-qlabel');if(ql)ql.style.opacity='1';
+      ['ext-wh','ext-aux','ext-subj','ext-vb','ext-comp','ext-qm'].forEach((id,i)=>{
+        setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*200);
+      });
+    },
+    ()=>{ showEl('#ext-anno'); },
+  ]);
+}},
+
+/* 8 — PIÈGES */
+{html:`
+<div class="stag">Pièges fréquents</div>
+<div class="stitle">Les erreurs <span style="color:var(--red)">à éviter</span></div>
+<div class="exlist" style="gap:.65rem">
+  <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)">
+    <div class="en" style="color:var(--red-l)">✗ "Where she works?"</div>
+    <div class="en" style="color:var(--green-l)">✓ "Where does she work?"</div>
+    <div class="fr">Pas d'inversion seule sans auxiliaire au présent simple → do/does obligatoire.</div>
+  </div>
+  <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)">
+    <div class="en" style="color:var(--red-l)">✗ "What did he said?"</div>
+    <div class="en" style="color:var(--green-l)">✓ "What did he say?"</div>
+    <div class="fr">Après did → base verbale obligatoire (jamais de -ed / -s).</div>
+  </div>
+  <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)">
+    <div class="en" style="color:var(--red-l)">✗ "Who did sent the email?"</div>
+    <div class="en" style="color:var(--green-l)">✓ "Who sent the email?"</div>
+    <div class="fr">Who = sujet → pas de did. Le verbe garde sa forme passée directement.</div>
+  </div>
+  <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)">
+    <div class="en" style="color:var(--red-l)">✗ "How many did they hired?"</div>
+    <div class="en" style="color:var(--green-l)">✓ "How many did they hire?"</div>
+    <div class="fr">Après did → base verbale. Jamais de -ed.</div>
+  </div>
+  <div class="ex" style="background:rgba(239,71,111,.09);border-color:var(--red)">
+    <div class="en" style="color:var(--red-l)">✗ "Since how long has she worked here?"</div>
+    <div class="en" style="color:var(--green-l)">✓ "How long has she worked here?"</div>
+    <div class="fr">How long (pas "since how long") = calque du français "depuis combien de temps".</div>
+  </div>
+</div>`},
+
+/* 9 — SYNTHÈSE */
+{html:`
+<div class="stag">Synthèse</div>
+<div class="stitle">Récapitulatif complet</div>
+<div class="g2" style="margin-bottom:.8rem">
+  <div>
+    <div class="formula-label">Formule générale</div>
+    <div class="formula-builder" style="font-size:1.3rem;min-height:4rem;flex-wrap:wrap">
+      <span class="fb-tok wh show" style="transition:none">WH</span>
+      <span class="fb-sep">+</span>
+      <span class="fb-tok aux show" style="transition:none">AUX</span>
+      <span class="fb-sep">+</span>
+      <span class="fb-tok subj show" style="transition:none">SUJET</span>
+      <span class="fb-sep">+</span>
+      <span class="fb-tok vb show" style="transition:none">BASE</span>
+      <span class="fb-sep">+</span>
+      <span class="fb-tok comp show" style="transition:none">COMP</span>
+      <span class="fb-tok qm show" style="transition:none">?</span>
+    </div>
+    <div class="band r mt" style="font-size:.88rem">
+      ⚠ <strong style="color:var(--red-l)">Exception : Who / What = SUJET</strong><br>
+      Who + <strong>verbe conjugué</strong> + ? (pas d'auxiliaire)<br>
+      <em style="color:rgba(250,246,237,.45)">Who runs the meeting? · What caused it?</em>
+    </div>
+    <div class="band g mt" style="font-size:.88rem">
+      ⚠ <strong style="color:var(--amber)">BE : inversion directe</strong><br>
+      Where is he? · Why was she late?<br>
+      <em style="color:rgba(250,246,237,.45)">Pas de do/does/did avec BE.</em>
+    </div>
+  </div>
+  <div>
+    <div class="formula-label">Test rapide — Quel mot WH ?</div>
+    <table class="tbl" style="font-size:.85rem">
+      <thead><tr><th>Tu questionnes…</th><th>Tu utilises…</th></tr></thead>
+      <tbody>
+        <tr><td>une personne</td><td style="color:var(--blue-l)">Who</td></tr>
+        <tr><td>une chose</td><td style="color:var(--blue-l)">What</td></tr>
+        <tr><td>un lieu</td><td style="color:var(--blue-l)">Where</td></tr>
+        <tr><td>un moment</td><td style="color:var(--blue-l)">When</td></tr>
+        <tr><td>une raison</td><td style="color:var(--blue-l)">Why</td></tr>
+        <tr><td>la manière</td><td style="color:var(--blue-l)">How</td></tr>
+        <tr><td>une durée</td><td style="color:var(--blue-l)">How long</td></tr>
+        <tr><td>une quantité</td><td style="color:var(--blue-l)">How much/many</td></tr>
+        <tr><td>une fréquence</td><td style="color:var(--blue-l)">How often</td></tr>
+        <tr><td>une distance</td><td style="color:var(--blue-l)">How far</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>`},
+];
+
+/* ENGINE */
+let cur=0;
+function build(){
+  const sa=document.getElementById('sa');sa.innerHTML='';
+  SLIDES.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='slide'+(i===0?' active':'');
+    d.id='sl'+i;d.innerHTML=s.html;sa.appendChild(d);
+  });
+  buildDots();updateUI();
+  if(SLIDES[0].onEnter)setTimeout(()=>SLIDES[0].onEnter(),100);
+}
+function buildDots(){
+  const nd=document.getElementById('dots');nd.innerHTML='';
+  SLIDES.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i===0?' on':'');
+    d.onclick=()=>goTo(i);nd.appendChild(d);
+  });
+}
+function goTo(idx){
+  if(idx<0||idx>=SLIDES.length)return;
+  const all=document.querySelectorAll('.slide');
+  all[cur].classList.remove('active');all[cur].classList.add('out');
+  const prev=cur;setTimeout(()=>{all[prev].classList.remove('out');},380);
+  cur=idx;all[cur].classList.add('active');updateUI();
+  setTimeout(()=>{if(SLIDES[cur].onEnter)SLIDES[cur].onEnter();},120);
+}
+function updateUI(){
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  document.getElementById('sc').textContent=(cur+1)+' / '+SLIDES.length;
+}
+function go(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(1);
+  if(e.key==='ArrowLeft')go(-1);
+});
+build();
+</script>
+</body>
+</html>

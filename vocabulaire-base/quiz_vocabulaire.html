@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Petit Vocabulaire Anglais · Jean Rey</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;--bg2:#171614;--bg3:#1e1c19;
+  --gold:#c9a84c;--gold2:#e8c96a;--cream:#f0ead8;
+  --muted:#7a7060;--border:#2a2820;--sw:280px;
+  --ok:#5a9e52;--ok-bg:#1a2e18;--ok-border:#3a6e34;
+  --bad:#c0574a;--bad-bg:#2e1614;--bad-border:#7a3028;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;display:flex}
+
+/* ── Sidebar ── */
+#sidebar{width:var(--sw);min-width:var(--sw);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sb-head{padding:18px 16px 12px;border-bottom:1px solid var(--border)}
+.sb-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--gold)}
+.sb-sub{font-size:.65rem;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.sb-score{padding:12px 16px;border-bottom:1px solid var(--border)}
+.sb-score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sb-score-label{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em}
+.sb-score-val{font-size:.8rem;font-family:'JetBrains Mono',monospace;color:var(--gold2)}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s}
+.nav-scroll{flex:1;overflow-y:auto;padding:8px 0}
+.nav-scroll::-webkit-scrollbar{width:3px}.nav-scroll::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-group{padding:8px 16px 4px;font-size:.6rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em}
+.nav-item{display:flex;align-items:center;gap:8px;padding:5px 16px;cursor:pointer;transition:background .12s;font-size:.7rem;color:var(--cream);font-family:'JetBrains Mono',monospace;line-height:1.3}
+.nav-item:hover{background:var(--bg3)}
+.nav-item.active{background:var(--bg3);color:var(--gold2)}
+.nav-item.active::before{content:'';display:inline-block;width:2px;height:100%;background:var(--gold);position:absolute;left:0}
+.nav-item{position:relative}
+.nav-num{font-size:.6rem;color:var(--muted);min-width:34px}
+.nav-badge{margin-left:auto;font-size:.58rem;padding:1px 5px;border-radius:10px;font-family:'JetBrains Mono',monospace}
+.badge-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border)}
+.badge-pending{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+
+/* ── Main ── */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:40px 24px 60px}
+#main::-webkit-scrollbar{width:4px}.#main::-webkit-scrollbar-thumb{background:var(--border)}
+
+.lesson-header{text-align:center;margin-bottom:32px;max-width:620px;width:100%}
+.lesson-num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.lesson-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.lesson-sub{font-size:.85rem;color:var(--muted);font-style:italic}
+.lesson-progress{display:flex;align-items:center;gap:10px;margin-top:12px;justify-content:center}
+.lp-bar{width:120px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.lp-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.lp-text{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;max-width:920px;width:100%}
+
+/* ── Word card ── */
+.wcard{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .2s}
+.wcard.state-ok{border-color:var(--ok-border);background:var(--ok-bg)}
+.wcard.state-bad{border-color:var(--bad-border);background:var(--bad-bg)}
+.wcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.wcard-fr{font-size:1rem;font-weight:600;color:var(--cream);line-height:1.3}
+.wcard-hint{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px}
+.wcard-status{font-size:1rem;min-width:20px;text-align:right}
+.wcard-input-row{display:flex;gap:6px}
+.wcard-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:.82rem;color:var(--cream);font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s}
+.wcard-input:focus{border-color:var(--gold)}
+.wcard-input.inp-ok{border-color:var(--ok);background:rgba(90,158,82,.08)}
+.wcard-input.inp-bad{border-color:var(--bad);background:rgba(192,87,74,.08)}
+.wcard-input:disabled{opacity:.7}
+.wcard-btn{background:transparent;border:1px solid var(--border);border-radius:6px;padding:7px 11px;color:var(--muted);cursor:pointer;font-size:.72rem;font-family:'JetBrains Mono',monospace;transition:all .15s;white-space:nowrap}
+.wcard-btn:hover{border-color:var(--gold);color:var(--gold)}
+.wcard-feedback{font-size:.7rem;margin-top:7px;font-family:'JetBrains Mono',monospace;min-height:16px}
+.fb-ok{color:var(--ok)}.fb-bad{color:var(--bad)}
+.wcard-answer{font-size:.75rem;color:var(--gold2);margin-top:4px;font-style:italic;display:none}
+
+.lesson-done-banner{max-width:920px;width:100%;background:var(--bg2);border:1px solid var(--ok-border);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:8px;display:none}
+.ldb-text{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--ok)}
+.ldb-score{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold2)}
+.next-btn{background:var(--gold);color:var(--bg);border:none;border-radius:6px;padding:8px 18px;font-size:.75rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:500;transition:opacity .15s}
+.next-btn:hover{opacity:.85}
+.try-again-btn{background:transparent;border:2px solid var(--gold);border-radius:8px;padding:10px 32px;font-size:.82rem;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--gold);font-weight:500;letter-spacing:.04em;transition:all .2s}
+.try-again-btn:hover{background:var(--gold);color:var(--bg)}
+.batch-btn{background:transparent;border:1px solid var(--gold);border-radius:6px;padding:8px 16px;font-size:.75rem;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--gold);transition:all .15s}
+.batch-btn:hover{background:var(--gold);color:var(--bg)}
+
+
+
+
+
+
+
+.footer-credit{max-width:920px;width:100%;text-align:center;padding:20px 0 4px;font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;border-top:1px solid var(--border);margin-top:32px}
+
+.welcome{text-align:center;max-width:500px;padding:40px 20px}
+.welcome-logo{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;color:var(--gold);margin-bottom:8px}
+.welcome-sub{font-size:.9rem;color:var(--muted);margin-bottom:32px;font-style:italic}
+.welcome-rule{font-size:.8rem;color:var(--cream);line-height:1.8;margin-bottom:24px}
+.start-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:12px 32px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:500;transition:opacity .15s}
+.start-btn:hover{opacity:.85}
+
+@media(max-width:680px){
+  #sidebar{display:none}
+  .cards-grid{grid-template-columns:1fr}
+  .lesson-title{font-size:1.4rem}
+}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Petit Vocabulaire</div>
+    <div class="sb-sub">Jean Rey · Ophrys · Quiz</div>
+    <div style="margin-top:8px"><label style="display:flex;align-items:center;gap:4px;font-size:.62rem;color:var(--muted);cursor:pointer;font-family:'JetBrains Mono',monospace"><input type="checkbox" id="chk-shuffle-words" style="accent-color:var(--gold);cursor:pointer" checked> mots aléatoires</label></div>
+  </div>
+  <div class="sb-score">
+    <div class="sb-score-row">
+      <span class="sb-score-label">Score global</span>
+      <span class="sb-score-val" id="g-score">0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="g-bar" style="width:0%"></div></div>
+  </div>
+  <div class="nav-scroll" id="nav-list"></div>
+</nav>
+
+<main id="main">
+  <div class="welcome" id="welcome-screen">
+    <div class="welcome-logo">Quiz</div>
+    <div class="welcome-sub">Petit Vocabulaire Anglais — Jean Rey</div>
+    <div class="welcome-rule">
+      Un mot français est affiché.<br>
+      Tapez sa traduction anglaise et appuyez sur <strong>Entrée</strong>.<br>
+      20 mots par leçon · 34 leçons + appendices.
+    </div>
+    <button class="start-btn" onclick="startQuiz()">Commencer →</button>
+  </div>
+  <div id="quiz-area" style="display:none;width:100%;flex-direction:column;align-items:center;gap:0"></div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DONNÉES — 20 mots par leçon, toutes les leçons
+// ═══════════════════════════════════════════════════
+const LESSONS = [
+  {id:'ch1', num:'I', title:'The Body and Health', fr:'Le corps et la santé', words:[
+    {fr:'la tête',en:['head']},{fr:'le visage',en:['face']},{fr:'l\'œil / les yeux',en:['eye','eyes']},
+    {fr:'la bouche',en:['mouth']},{fr:'le nez',en:['nose']},{fr:'l\'oreille',en:['ear']},
+    {fr:'le cou',en:['neck']},{fr:'l\'épaule',en:['shoulder']},{fr:'le bras',en:['arm']},
+    {fr:'la main',en:['hand']},{fr:'le doigt',en:['finger']},{fr:'la jambe',en:['leg']},
+    {fr:'le genou',en:['knee']},{fr:'le pied',en:['foot']},{fr:'le dos',en:['back']},
+    {fr:'le cœur',en:['heart']},{fr:'le sang',en:['blood']},{fr:'une blessure',en:['wound','injury']},
+    {fr:'la douleur',en:['pain','ache']},{fr:'la fièvre',en:['fever']}
+  ]},
+  {id:'ch2', num:'II', title:'The Senses and Speech', fr:'Les sens et la parole', words:[
+    {fr:'la vue',en:['sight']},{fr:'l\'ouïe',en:['hearing']},{fr:'l\'odorat',en:['smell']},
+    {fr:'le goût',en:['taste']},{fr:'le toucher',en:['touch']},{fr:'regarder',en:['look','watch']},
+    {fr:'écouter',en:['listen']},{fr:'sentir',en:['smell','feel']},{fr:'parler',en:['speak','talk']},
+    {fr:'crier',en:['shout','cry']},{fr:'chuchoter',en:['whisper']},{fr:'murmurer',en:['murmur']},
+    {fr:'soupirer',en:['sigh']},{fr:'une voix',en:['voice']},{fr:'un bruit',en:['noise','sound']},
+    {fr:'le silence',en:['silence']},{fr:'un accent',en:['accent']},{fr:'un mot',en:['word']},
+    {fr:'une phrase',en:['sentence']},{fr:'une question',en:['question']}
+  ]},
+  {id:'ch3', num:'III', title:'Bodily Activity', fr:'L\'activité corporelle', words:[
+    {fr:'marcher',en:['walk']},{fr:'ramper',en:['crawl','creep']},{fr:'grimper',en:['climb']},
+    {fr:'plonger',en:['dive']},{fr:'tomber',en:['fall']},{fr:'se lever',en:['get up','rise']},
+    {fr:'s\'asseoir',en:['sit','sit down']},{fr:'dormir',en:['sleep']},{fr:'se réveiller',en:['wake up']},
+    {fr:'avaler',en:['swallow']},{fr:'boire',en:['drink']},{fr:'respirer',en:['breathe']},
+    {fr:'travailler',en:['work']},{fr:'se battre',en:['fight','struggle']},{fr:'soulever',en:['lift','raise']},
+    {fr:'lancer',en:['throw']},{fr:'attraper',en:['catch']},{fr:'pousser',en:['push']},
+    {fr:'frapper (qqn)',en:['hit','strike','beat']},{fr:'frapper',en:['hit','strike']}
+  ]},
+  {id:'ch4', num:'IV', title:'The House', fr:'La maison', words:[
+    {fr:'une maison',en:['house']},{fr:'un appartement',en:['flat','apartment']},
+    {fr:'une pièce',en:['room']},{fr:'la cuisine',en:['kitchen']},{fr:'la salle à manger',en:['dining room','dining-room']},
+    {fr:'le salon',en:['drawing room','drawing-room','lounge']},{fr:'la chambre',en:['bedroom','bed-room']},
+    {fr:'la salle de bain',en:['bathroom','bath-room']},{fr:'le toit',en:['roof']},
+    {fr:'le mur',en:['wall']},{fr:'le sol',en:['floor']},{fr:'le plafond',en:['ceiling']},
+    {fr:'une porte',en:['door']},{fr:'une fenêtre',en:['window']},{fr:'l\'escalier',en:['stairs','staircase']},
+    {fr:'la cave',en:['cellar']},{fr:'le grenier',en:['loft','attic']},{fr:'un rideau',en:['curtain']},
+    {fr:'une chaise',en:['chair']},{fr:'une table',en:['table']}
+  ]},
+  {id:'ch5', num:'V', title:'Home-Life', fr:'La vie domestique', words:[
+    {fr:'le réveil',en:['waking up']},{fr:'se laver',en:['wash']},{fr:'se raser',en:['shave']},
+    {fr:'le savon',en:['soap']},{fr:'une serviette',en:['towel']},{fr:'un miroir',en:['mirror','looking-glass']},
+    {fr:'balayer',en:['sweep']},{fr:'nettoyer',en:['clean']},{fr:'allumer',en:['light']},
+    {fr:'éteindre',en:['put out']},{fr:'un balai',en:['broom']},{fr:'un aspirateur',en:['vacuum cleaner','vacuum-cleaner']},
+    {fr:'cuisiner',en:['cook']},{fr:'le four',en:['oven']},{fr:'une casserole',en:['saucepan']},
+    {fr:'le robinet',en:['tap']},{fr:'l\'évier',en:['sink']},{fr:'la poubelle',en:['dustbin','dust-bin']},
+    {fr:'se coucher',en:['lie down']},{fr:'rêver',en:['dream']}
+  ]},
+  {id:'ch6', num:'VI', title:'Clothing', fr:'Les vêtements', words:[
+    {fr:'un vêtement',en:['garment']},{fr:'la mode',en:['fashion']},{fr:'un tissu',en:['material','cloth']},
+    {fr:'la laine',en:['wool']},{fr:'la soie',en:['silk']},{fr:'le cuir',en:['leather']},
+    {fr:'une chemise',en:['shirt']},{fr:'un pantalon',en:['trousers']},{fr:'une veste',en:['jacket']},
+    {fr:'un manteau',en:['overcoat','coat']},{fr:'une robe',en:['dress','frock']},
+    {fr:'une jupe',en:['skirt']},{fr:'une chaussure',en:['shoe']},{fr:'un chapeau',en:['hat']},
+    {fr:'des gants',en:['gloves']},{fr:'un bouton',en:['button']},{fr:'une poche',en:['pocket']},
+    {fr:'s\'habiller',en:['dress','get dressed']},{fr:'essayer (un vêtement)',en:['try on']},{fr:'porter',en:['wear']}
+  ]},
+  {id:'ch7', num:'VII', title:'The Meals', fr:'Les repas', words:[
+    {fr:'le petit déjeuner',en:['breakfast']},{fr:'le déjeuner',en:['lunch']},{fr:'le dîner',en:['dinner']},
+    {fr:'une fourchette',en:['fork']},{fr:'un couteau',en:['knife']},{fr:'une cuiller',en:['spoon']},
+    {fr:'une assiette',en:['plate']},{fr:'un verre',en:['glass']},{fr:'une tasse',en:['cup']},
+    {fr:'du pain',en:['bread']},{fr:'du beurre',en:['butter']},{fr:'du lait',en:['milk']},
+    {fr:'du sucre',en:['sugar']},{fr:'un œuf',en:['egg']},{fr:'la viande',en:['meat']},
+    {fr:'le légume',en:['vegetable']},{fr:'la soupe',en:['soup']},{fr:'le fromage',en:['cheese']},
+    {fr:'un gâteau',en:['cake']},{fr:'manger',en:['eat']}
+  ]},
+  {id:'ch8', num:'VIII', title:'The Family', fr:'La famille', words:[
+    {fr:'le père',en:['father']},{fr:'la mère',en:['mother']},{fr:'le mari',en:['husband']},
+    {fr:'la femme (épouse)',en:['wife']},{fr:'le fils',en:['son']},{fr:'la fille',en:['daughter']},
+    {fr:'le frère',en:['brother']},{fr:'la sœur',en:['sister']},{fr:'l\'oncle',en:['uncle']},
+    {fr:'la tante',en:['aunt']},{fr:'le cousin',en:['cousin']},{fr:'le grand-père',en:['grandfather']},
+    {fr:'la grand-mère',en:['grandmother']},{fr:'un enfant',en:['child']},{fr:'un bébé',en:['baby']},
+    {fr:'se marier',en:['marry','get married']},{fr:'naître',en:['be born']},{fr:'mourir',en:['die']},
+    {fr:'enterrer',en:['bury']},{fr:'un orphelin',en:['orphan']}
+  ]},
+  {id:'ch9', num:'IX', title:'At School', fr:'À l\'école', words:[
+    {fr:'un professeur',en:['teacher','master','mistress']},{fr:'un élève',en:['pupil']},
+    {fr:'un livre',en:['book']},{fr:'un cahier',en:['exercise book','copybook']},
+    {fr:'un crayon',en:['pencil']},{fr:'un stylo',en:['pen','fountain pen']},
+    {fr:'le tableau',en:['blackboard']},{fr:'la craie',en:['chalk']},{fr:'la gomme',en:['rubber']},
+    {fr:'un devoir',en:['homework','task']},{fr:'un examen',en:['examination','exam']},
+    {fr:'une note',en:['mark']},{fr:'une faute',en:['mistake']},{fr:'apprendre',en:['learn']},
+    {fr:'enseigner',en:['teach']},{fr:'réciter',en:['recite']},{fr:'s\'excuser',en:['apologize','apologise']},
+    {fr:'écrire',en:['write']},{fr:'épeler',en:['spell']},{fr:'les vacances',en:['holidays']}
+  ]},
+  {id:'ch10', num:'X', title:'Reckonings and Measures', fr:'Comptes et mesures', words:[
+    {fr:'compter',en:['count']},{fr:'additionner',en:['add up']},{fr:'soustraire',en:['subtract']},
+    {fr:'multiplier',en:['multiply']},{fr:'diviser',en:['divide']},{fr:'peser',en:['weigh']},
+    {fr:'mesurer',en:['measure']},{fr:'un chiffre',en:['figure']},{fr:'un nombre',en:['number']},
+    {fr:'la longueur',en:['length']},{fr:'la largeur',en:['breadth','width']},{fr:'la hauteur',en:['height']},
+    {fr:'la profondeur',en:['depth']},{fr:'le poids',en:['weight']},{fr:'la somme',en:['amount']},
+    {fr:'la monnaie rendue',en:['change']},{fr:'la valeur',en:['value']},{fr:'la monnaie',en:['change','money']},
+    {fr:'coûter',en:['cost']},{fr:'dépenser',en:['spend']}
+  ]},
+  {id:'ch11', num:'XI', title:'Games, Sports and Leisure', fr:'Les jeux, les sports et les loisirs', words:[
+    {fr:'un jeu',en:['game']},{fr:'un jouet',en:['toy']},{fr:'jouer',en:['play']},
+    {fr:'gagner',en:['win']},{fr:'perdre',en:['lose']},{fr:'un match',en:['match']},
+    {fr:'une équipe',en:['team']},{fr:'l\'arbitre',en:['referee']},{fr:'courir',en:['run']},
+    {fr:'nager',en:['swim']},{fr:'sauter',en:['jump']},{fr:'marquer',en:['score']},
+    {fr:'le football',en:['football','soccer']},{fr:'le tennis',en:['tennis']},{fr:'la natation',en:['swimming']},
+    {fr:'la boxe',en:['boxing']},{fr:'le ski',en:['skiing']},{fr:'le patinage',en:['skating']},
+    {fr:'parier',en:['bet']},{fr:'un pique-nique',en:['picnic']}
+  ]},
+  {id:'ch11b', num:'XIb', title:'Leisure (suite)', fr:'Lecture — Presse — Radio — TV', words:[
+    {fr:'un journal',en:['newspaper','paper']},{fr:'un magazine',en:['magazine']},{fr:'une nouvelle',en:['short story']},
+    {fr:'une bibliothèque',en:['library']},{fr:'un journaliste',en:['journalist']},{fr:'lire',en:['read']},
+    {fr:'la radio',en:['radio','wireless']},{fr:'un disque',en:['record']},{fr:'la télévision',en:['television','tv']},
+    {fr:'un appareil photo',en:['camera']},{fr:'une pellicule',en:['film','roll of film']},
+    {fr:'développer',en:['develop']},{fr:'projeter',en:['project']},{fr:'enregistrer',en:['record']},
+    {fr:'un abonné',en:['subscriber']},{fr:'un passe-temps',en:['hobby','pastime']},
+    {fr:'une collection',en:['collection']},{fr:'divertir',en:['entertain','amuse']},
+    {fr:'les actualités',en:['news']},{fr:'les spectateurs',en:['viewers']}
+  ]},
+  {id:'ch12', num:'XII', title:'The Sky and the Earth', fr:'Le ciel et la terre', words:[
+    {fr:'le soleil',en:['sun']},{fr:'la lune',en:['moon']},{fr:'une étoile',en:['star']},
+    {fr:'le ciel',en:['sky']},{fr:'une planète',en:['planet']},{fr:'la terre',en:['earth']},
+    {fr:'la mer',en:['sea']},{fr:'l\'océan',en:['ocean']},{fr:'une montagne',en:['mountain']},
+    {fr:'une vallée',en:['valley']},{fr:'une île',en:['island']},{fr:'une côte',en:['coast']},
+    {fr:'le nord',en:['north']},{fr:'le sud',en:['south']},{fr:'l\'est',en:['east']},
+    {fr:'l\'ouest',en:['west']},{fr:'le cuivre',en:['copper']},{fr:'le pétrole',en:['oil','petroleum']},
+    {fr:'le fer',en:['iron']},{fr:'l\'or',en:['gold']}
+  ]},
+  {id:'ch13', num:'XIII', title:'The Weather', fr:'Le temps', words:[
+    {fr:'le printemps',en:['spring']},{fr:'l\'été',en:['summer']},{fr:'l\'automne',en:['autumn']},
+    {fr:'l\'hiver',en:['winter']},{fr:'la pluie',en:['rain']},{fr:'la neige',en:['snow']},
+    {fr:'le vent',en:['wind']},{fr:'le brouillard',en:['fog']},{fr:'la gelée',en:['frost']},
+    {fr:'l\'orage',en:['thunderstorm','storm']},{fr:'la foudre',en:['thunderbolt']},
+    {fr:'la chaleur',en:['warmth','heat']},{fr:'le froid',en:['cold']},{fr:'la sécheresse',en:['drought']},
+    {fr:'un nuage',en:['cloud']},{fr:'briller',en:['shine']},{fr:'pleuvoir',en:['rain']},
+    {fr:'geler',en:['freeze']},{fr:'fondre',en:['melt']},{fr:'souffler',en:['blow']}
+  ]},
+  {id:'ch14', num:'XIV', title:'Time', fr:'Le temps (durée)', words:[
+    {fr:'le passé',en:['past']},{fr:'le présent',en:['present']},{fr:'l\'avenir',en:['future']},
+    {fr:'une heure',en:['hour']},{fr:'une minute',en:['minute']},{fr:'un jour',en:['day']},
+    {fr:'une semaine',en:['week']},{fr:'un mois',en:['month']},{fr:'une année',en:['year']},
+    {fr:'le matin',en:['morning']},{fr:'le soir',en:['evening']},{fr:'la nuit',en:['night']},
+    {fr:'aujourd\'hui',en:['today']},{fr:'demain',en:['tomorrow']},{fr:'hier',en:['yesterday']},
+    {fr:'maintenant',en:['now']},{fr:'toujours',en:['always']},{fr:'jamais',en:['never']},
+    {fr:'souvent',en:['often']},{fr:'rarement',en:['seldom','rarely']}
+  ]},
+  {id:'ch15', num:'XV', title:'In the Village', fr:'Au village', words:[
+    {fr:'un village',en:['village']},{fr:'une ruelle',en:['alley','lane']},{fr:'une route',en:['road']},
+    {fr:'un chemin',en:['path','lane']},{fr:'une haie',en:['hedge']},{fr:'une église',en:['church']},
+    {fr:'le vicaire',en:['vicar']},{fr:'une auberge',en:['inn']},{fr:'le forgeron',en:['blacksmith']},
+    {fr:'la forge',en:['forge','smithy']},{fr:'un marteau',en:['hammer']},{fr:'une enclume',en:['anvil']},
+    {fr:'le cordonnier',en:['cobbler']},{fr:'le coiffeur',en:['barber']},{fr:'la boue',en:['mud']},
+    {fr:'la poussière',en:['dust']},{fr:'une ornière',en:['rut']},{fr:'un raccourci',en:['short cut']},
+    {fr:'la kermesse',en:['fair']},{fr:'un clown',en:['clown']}
+  ]},
+  {id:'ch16', num:'XVI', title:'The Farm', fr:'La ferme', words:[
+    {fr:'le fermier',en:['farmer']},{fr:'la grange',en:['barn']},{fr:'l\'écurie',en:['stable']},
+    {fr:'l\'étable',en:['cowhouse','cow-house']},{fr:'le taureau',en:['bull']},{fr:'la vache',en:['cow']},
+    {fr:'le veau',en:['calf']},{fr:'le cheval',en:['horse']},{fr:'le mouton',en:['sheep']},
+    {fr:'la brebis',en:['ewe']},{fr:'l\'agneau',en:['lamb']},{fr:'le porc',en:['pig']},
+    {fr:'la poule',en:['hen']},{fr:'le coq',en:['cock']},{fr:'le canard',en:['duck']},
+    {fr:'le chien',en:['dog']},{fr:'le chat',en:['cat']},{fr:'traire',en:['milk']},
+    {fr:'le miel',en:['honey']},{fr:'une ruche',en:['beehive','bee-hive']}
+  ]},
+  {id:'ch17', num:'XVII', title:'In the Garden', fr:'Au jardin', words:[
+    {fr:'une pelouse',en:['lawn']},{fr:'un parterre',en:['flower bed','flower-bed']},
+    {fr:'une rose',en:['rose']},{fr:'une tulipe',en:['tulip']},{fr:'la fraise',en:['strawberry']},
+    {fr:'la pomme',en:['apple']},{fr:'la poire',en:['pear']},{fr:'la cerise',en:['cherry']},
+    {fr:'la pêche',en:['peach']},{fr:'le verger',en:['orchard']},{fr:'arroser',en:['water']},
+    {fr:'tailler',en:['prune']},{fr:'cueillir',en:['pick','pluck']},{fr:'un râteau',en:['rake']},
+    {fr:'une bêche',en:['spade']},{fr:'un arrosoir',en:['watering can','watering-can']},
+    {fr:'un papillon',en:['butterfly']},{fr:'une abeille',en:['bee']},{fr:'une fourmi',en:['ant']},
+    {fr:'un escargot',en:['snail']}
+  ]},
+  {id:'ch18', num:'XVIII', title:'In the Fields', fr:'Aux champs', words:[
+    {fr:'labourer',en:['plough']},{fr:'la charrue',en:['plough']},{fr:'les semailles',en:['sowing']},
+    {fr:'la moisson',en:['harvest']},{fr:'le blé',en:['corn','wheat']},{fr:'l\'orge',en:['barley']},
+    {fr:'l\'avoine',en:['oats']},{fr:'le seigle',en:['rye']},{fr:'le maïs',en:['maize']},
+    {fr:'une faux',en:['scythe']},{fr:'faucher',en:['mow','reap']},{fr:'une gerbe',en:['sheaf']},
+    {fr:'une meule',en:['stack','rick']},{fr:'le foin',en:['hay']},{fr:'un pré',en:['meadow']},
+    {fr:'un pâturage',en:['pasture']},{fr:'la violette',en:['violet']},{fr:'la pâquerette',en:['daisy']},
+    {fr:'le coquelicot',en:['poppy']},{fr:'le chardon',en:['thistle']}
+  ]},
+  {id:'ch19', num:'XIX', title:'In the Forest', fr:'Dans la forêt', words:[
+    {fr:'un arbre',en:['tree']},{fr:'une branche',en:['branch']},{fr:'une feuille',en:['leaf']},
+    {fr:'le tronc',en:['trunk','stem']},{fr:'une racine',en:['root']},{fr:'l\'écorce',en:['bark']},
+    {fr:'le chêne',en:['oak']},{fr:'le hêtre',en:['beech']},{fr:'le sapin',en:['fir']},
+    {fr:'le pin',en:['pine']},{fr:'le bouleau',en:['birch']},{fr:'le bûcheron',en:['woodcutter']},
+    {fr:'une hache',en:['axe']},{fr:'abattre un arbre',en:['fell']},{fr:'le renard',en:['fox']},
+    {fr:'le loup',en:['wolf']},{fr:'l\'écureuil',en:['squirrel']},{fr:'le cerf',en:['stag']},
+    {fr:'la chasse',en:['hunting']},{fr:'un chasseur',en:['hunter']}
+  ]},
+  {id:'ch20', num:'XX', title:'By the Water-Side', fr:'Au bord de l\'eau', words:[
+    {fr:'la plage',en:['beach']},{fr:'le sable',en:['sand']},{fr:'une falaise',en:['cliff']},
+    {fr:'une vague',en:['wave']},{fr:'l\'écume',en:['foam','froth']},{fr:'une mouette',en:['seagull','sea-gull']},
+    {fr:'un crabe',en:['crab']},{fr:'un homard',en:['lobster']},{fr:'une rivière',en:['river','stream']},
+    {fr:'un lac',en:['lake']},{fr:'un marécage',en:['swamp','marsh']},{fr:'une cascade',en:['waterfall']},
+    {fr:'pêcher',en:['fish']},{fr:'une ligne de pêche',en:['fishing line']},{fr:'un hameçon',en:['hook']},
+    {fr:'un saumon',en:['salmon']},{fr:'une anguille',en:['eel']},{fr:'la grenouille',en:['frog']},
+    {fr:'le cygne',en:['swan']},{fr:'un nénuphar',en:['water lily','water-lily']}
+  ]},
+  {id:'ch21', num:'XXI', title:'Travelling', fr:'Les voyages', words:[
+    {fr:'un voyage',en:['journey','trip']},{fr:'une valise',en:['suitcase','suit-case']},
+    {fr:'un billet',en:['ticket']},{fr:'la gare',en:['station']},{fr:'le quai',en:['platform']},
+    {fr:'le train',en:['train']},{fr:'un wagon',en:['carriage','coach']},
+    {fr:'conduire',en:['drive']},{fr:'un vélo',en:['bicycle','bike']},{fr:'un pneu',en:['tyre']},
+    {fr:'une crevaison',en:['puncture']},{fr:'une auto',en:['car','motor car']},
+    {fr:'le permis de conduire',en:['driving licence']},{fr:'l\'essence',en:['petrol']},
+    {fr:'une compagnie aérienne',en:['airline']},{fr:'un aéroport',en:['airport']},
+    {fr:'un billet aller-retour',en:['return ticket']},{fr:'une escale',en:['stopover','stop']},
+    {fr:'une traversée',en:['crossing']},{fr:'les bagages',en:['luggage']}
+  ]},
+  {id:'ch22', num:'XXII', title:'Countries and Peoples', fr:'Les pays et les peuples', words:[
+    {fr:'un pays',en:['country']},{fr:'une nation',en:['nation']},{fr:'une frontière',en:['frontier','border']},
+    {fr:'un habitant',en:['inhabitant']},{fr:'une langue',en:['language','tongue']},
+    {fr:'un drapeau',en:['flag']},{fr:'l\'Angleterre',en:['England']},{fr:'un Anglais',en:['Englishman']},
+    {fr:'la France',en:['France']},{fr:'un Français',en:['Frenchman']},{fr:'l\'Allemagne',en:['Germany']},
+    {fr:'l\'Espagne',en:['Spain']},{fr:'la Russie',en:['Russia']},{fr:'la Chine',en:['China']},
+    {fr:'le Japon',en:['Japan']},{fr:'émigrer',en:['emigrate']},{fr:'coloniser',en:['colonize']},
+    {fr:'un passeport',en:['passport']},{fr:'une carte',en:['map']},{fr:'l\'échelle',en:['scale']}
+  ]},
+  {id:'ch23', num:'XXIII', title:'Exotic Countries', fr:'Les pays exotiques', words:[
+    {fr:'un désert',en:['desert']},{fr:'une oasis',en:['oasis']},{fr:'la jungle',en:['jungle']},
+    {fr:'un volcan',en:['volcano']},{fr:'un tremblement de terre',en:['earthquake']},
+    {fr:'le lion',en:['lion']},{fr:'le tigre',en:['tiger']},{fr:'l\'éléphant',en:['elephant']},
+    {fr:'la girafe',en:['giraffe']},{fr:'le chameau',en:['camel']},{fr:'le crocodile',en:['crocodile']},
+    {fr:'le requin',en:['shark']},{fr:'l\'autruche',en:['ostrich']},{fr:'le perroquet',en:['parrot']},
+    {fr:'le palmier',en:['palm tree','palm-tree']},{fr:'la banane',en:['banana']},
+    {fr:'rugir',en:['roar']},{fr:'bondir',en:['leap','bound']},{fr:'explorer',en:['explore']},
+    {fr:'une tribu',en:['tribe']}
+  ]},
+  {id:'ch24', num:'XXIV', title:'Towns and Cities', fr:'Les villes', words:[
+    {fr:'une ville',en:['city','town']},{fr:'la capitale',en:['capital']},{fr:'un quartier',en:['district']},
+    {fr:'un faubourg',en:['suburb']},{fr:'une rue',en:['street']},{fr:'un trottoir',en:['pavement']},
+    {fr:'la chaussée',en:['roadway']},{fr:'un carrefour',en:['crossroads']},{fr:'la foule',en:['crowd']},
+    {fr:'un piéton',en:['pedestrian']},{fr:'un embouteillage',en:['traffic jam']},{fr:'un bus',en:['bus']},
+    {fr:'un taxi',en:['taxi','cab']},{fr:'le métro',en:['underground','subway','tube']},
+    {fr:'la circulation',en:['traffic']},{fr:'un hôpital',en:['hospital']},{fr:'un musée',en:['museum']},
+    {fr:'un pompier',en:['fireman']},{fr:'un agent de police',en:['policeman','constable']},
+    {fr:'traverser',en:['cross']}
+  ]},
+  {id:'ch24b', num:'XXIVb', title:'Town Life', fr:'La vie urbaine', words:[
+    {fr:'la poste',en:['post office']},{fr:'un timbre',en:['stamp']},{fr:'une enveloppe',en:['envelope']},
+    {fr:'un colis',en:['parcel']},{fr:'un télégramme',en:['telegram','wire']},{fr:'téléphoner',en:['phone','ring up']},
+    {fr:'un théâtre',en:['theatre']},{fr:'une pièce de théâtre',en:['play']},{fr:'les acteurs',en:['actors','players']},
+    {fr:'la scène',en:['stage']},{fr:'le rideau',en:['curtain']},{fr:'les applaudissements',en:['applause']},
+    {fr:'le cinéma',en:['cinema']},{fr:'l\'écran',en:['screen']},{fr:'un hôtel',en:['hotel']},
+    {fr:'un restaurant',en:['restaurant']},{fr:'le menu',en:['menu']},{fr:'la note',en:['bill']},
+    {fr:'un pourboire',en:['tip']},{fr:'un café',en:['cafe','café']}
+  ]},
+  {id:'ch25', num:'XXV', title:'Callings and Trades', fr:'Professions et métiers', words:[
+    {fr:'un médecin',en:['doctor','physician']},{fr:'un avocat',en:['barrister','lawyer']},
+    {fr:'un ingénieur',en:['engineer']},{fr:'un architecte',en:['architect']},{fr:'un conférencier',en:['lecturer']},
+    {fr:'un boulanger',en:['baker']},{fr:'un boucher',en:['butcher']},{fr:'un épicier',en:['grocer']},
+    {fr:'un tailleur',en:['tailor']},{fr:'un cordonnier',en:['shoemaker','cobbler']},
+    {fr:'un coiffeur',en:['hairdresser']},{fr:'un imprimeur',en:['printer']},
+    {fr:'un libraire',en:['bookseller']},{fr:'un éditeur',en:['publisher']},{fr:'tricoter',en:['knit']},
+    {fr:'coudre',en:['sew']},{fr:'repasser',en:['iron']},{fr:'former',en:['train']},
+    {fr:'un apprenti',en:['apprentice']},{fr:'renvoyer',en:['dismiss']}
+  ]},
+  {id:'ch26', num:'XXVI', title:'Shops and Business', fr:'Boutiques et affaires', words:[
+    {fr:'un magasin',en:['shop']},{fr:'un grand magasin',en:['department store']},{fr:'un marché',en:['market']},
+    {fr:'une vitrine',en:['shop window','shop-window']},{fr:'un client',en:['customer']},
+    {fr:'acheter',en:['buy','purchase']},{fr:'vendre',en:['sell']},{fr:'le prix',en:['price']},
+    {fr:'marchander',en:['bargain']},{fr:'une promotion',en:['bargain']},{fr:'rembourser',en:['refund','reimburse']},
+    {fr:'une caisse',en:['cash desk']},{fr:'un reçu',en:['receipt']},{fr:'emballer',en:['pack','wrap']},
+    {fr:'livrer',en:['deliver']},{fr:'un supermarché',en:['supermarket']},{fr:'un panier',en:['basket']},
+    {fr:'une marque',en:['brand']},{fr:'une boîte de conserve',en:['tin']},{fr:'commander',en:['order']}
+  ]},
+  {id:'ch26b', num:'XXVIb', title:'Finance', fr:'La finance', words:[
+    {fr:'une banque',en:['bank']},{fr:'un compte',en:['account']},{fr:'un chèque',en:['cheque']},
+    {fr:'un prêt',en:['loan']},{fr:'un emprunt',en:['loan']},{fr:'épargner',en:['save']},
+    {fr:'investir',en:['invest']},{fr:'la bourse',en:['stock exchange']},{fr:'une action',en:['share']},
+    {fr:'la faillite',en:['bankruptcy']},{fr:'les bénéfices',en:['profit']},{fr:'les pertes',en:['loss']},
+    {fr:'le chiffre d\'affaires',en:['turnover']},{fr:'la dette',en:['debt']},{fr:'payer',en:['pay']},
+    {fr:'assurer',en:['insure']},{fr:'la prime',en:['premium']},{fr:'vendre aux enchères',en:['sell by auction']},
+    {fr:'un grossiste',en:['wholesaler']},{fr:'un détaillant',en:['retailer']}
+  ]},
+  {id:'ch27', num:'XXVII', title:'Industry', fr:'L\'industrie', words:[
+    {fr:'une usine',en:['factory']},{fr:'un ouvrier',en:['worker','workman']},{fr:'le contremaître',en:['foreman']},
+    {fr:'le salaire',en:['wages']},{fr:'un syndicat',en:['trade union']},{fr:'le chômage',en:['unemployment']},
+    {fr:'la production',en:['output','production']},{fr:'une mine',en:['mine']},{fr:'un mineur',en:['miner']},
+    {fr:'le charbon',en:['coal']},{fr:'l\'acier',en:['steel']},{fr:'la fonte',en:['cast iron']},
+    {fr:'tisser',en:['weave']},{fr:'filer',en:['spin']},{fr:'souder',en:['solder']},
+    {fr:'l\'électricité',en:['electricity']},{fr:'une dynamo',en:['dynamo']},{fr:'un levier',en:['lever']},
+    {fr:'rouiller',en:['rust']},{fr:'réviser une machine',en:['overhaul']}
+  ]},
+  {id:'ch28', num:'XXVIII', title:'Society and Government', fr:'La société et le gouvernement', words:[
+    {fr:'l\'état',en:['state']},{fr:'une monarchie',en:['monarchy']},{fr:'une démocratie',en:['democracy']},
+    {fr:'une république',en:['republic']},{fr:'la liberté',en:['freedom']},{fr:'le roi',en:['king']},
+    {fr:'la reine',en:['queen']},{fr:'le trône',en:['throne']},{fr:'la couronne',en:['crown']},
+    {fr:'le premier ministre',en:['prime minister']},{fr:'un député',en:['mp','member of parliament']},
+    {fr:'une loi',en:['law','act']},{fr:'voter',en:['vote']},{fr:'élire',en:['elect']},
+    {fr:'un voleur',en:['thief']},{fr:'un meurtre',en:['murder']},{fr:'un tribunal',en:['court of justice']},
+    {fr:'un juge',en:['judge']},{fr:'condamner',en:['sentence']},{fr:'acquitter',en:['acquit']}
+  ]},
+  {id:'ch29', num:'XXIX', title:'The Army', fr:'L\'armée de terre', words:[
+    {fr:'un soldat',en:['soldier']},{fr:'un général',en:['general']},{fr:'un colonel',en:['colonel']},
+    {fr:'un capitaine',en:['captain']},{fr:'un lieutenant',en:['lieutenant']},{fr:'un sergent',en:['sergeant']},
+    {fr:'la caserne',en:['barracks']},{fr:'un fusil',en:['rifle','gun']},{fr:'une balle',en:['bullet']},
+    {fr:'un obus',en:['shell']},{fr:'tirer',en:['shoot']},{fr:'attaquer',en:['attack']},
+    {fr:'défendre',en:['defend']},{fr:'se rendre',en:['surrender']},{fr:'la victoire',en:['victory']},
+    {fr:'la défaite',en:['defeat']},{fr:'une retraite',en:['retreat']},{fr:'une trêve',en:['truce']},
+    {fr:'la paix',en:['peace']},{fr:'la guerre',en:['war']}
+  ]},
+  {id:'ch30', num:'XXX', title:'Sailing and Flying', fr:'La navigation et l\'aviation', words:[
+    {fr:'un navire',en:['ship','vessel']},{fr:'un marin',en:['sailor','seaman']},{fr:'le capitaine',en:['captain']},
+    {fr:'l\'équipage',en:['crew']},{fr:'la coque',en:['hull']},{fr:'l\'ancre',en:['anchor']},
+    {fr:'un phare',en:['lighthouse']},{fr:'un port',en:['harbour','port']},{fr:'naviguer',en:['sail','navigate']},
+    {fr:'couler',en:['sink']},{fr:'un naufrage',en:['shipwreck']},{fr:'un avion',en:['aeroplane','plane']},
+    {fr:'un pilote',en:['pilot']},{fr:'décoller',en:['take off']},{fr:'atterrir',en:['land']},
+    {fr:'un aérodrome',en:['airport','airfield']},{fr:'un sous-marin',en:['submarine']},
+    {fr:'une bouée',en:['buoy']},{fr:'l\'hélice',en:['propeller','screw']},{fr:'un porte-avions',en:['aircraft carrier']}
+  ]},
+  {id:'ch31', num:'XXXI', title:'Letters and Arts', fr:'Les lettres et les arts', words:[
+    {fr:'la littérature',en:['literature']},{fr:'la poésie',en:['poetry']},{fr:'un poète',en:['poet']},
+    {fr:'un roman',en:['novel']},{fr:'un auteur',en:['author']},{fr:'une comédie',en:['comedy']},
+    {fr:'l\'intrigue',en:['plot']},{fr:'un personnage',en:['character']},{fr:'la peinture',en:['painting']},
+    {fr:'un tableau',en:['painting','picture']},{fr:'la sculpture',en:['sculpture']},{fr:'un ciseau',en:['chisel']},
+    {fr:'l\'architecture',en:['architecture']},{fr:'une cathédrale',en:['cathedral']},{fr:'une flèche',en:['spire']},
+    {fr:'un clocher',en:['steeple']},{fr:'la musique',en:['music']},{fr:'un violon',en:['violin']},
+    {fr:'un piano',en:['piano']},{fr:'chanter',en:['sing']}
+  ]},
+  {id:'ch32', num:'XXXII', title:'Morals and Religion', fr:'La morale et la religion', words:[
+    {fr:'le devoir',en:['duty']},{fr:'la vérité',en:['truth']},{fr:'un mensonge',en:['lie']},
+    {fr:'la vertu',en:['virtue']},{fr:'le vice',en:['vice']},{fr:'la prudence',en:['caution','prudence']},
+    {fr:'la lâcheté',en:['cowardice']},{fr:'honnête',en:['honest']},{fr:'malhonnête',en:['dishonest']},
+    {fr:'pardonner',en:['forgive']},{fr:'Dieu',en:['God']},{fr:'la foi',en:['faith']},
+    {fr:'l\'église',en:['church']},{fr:'prier',en:['pray']},{fr:'bénir',en:['bless']},
+    {fr:'un prêtre',en:['priest']},{fr:'un évêque',en:['bishop']},{fr:'un moine',en:['monk']},
+    {fr:'la Bible',en:['bible']},{fr:'l\'Évangile',en:['gospel']}
+  ]},
+  {id:'ch33', num:'XXXIII', title:'The Soul and Feelings', fr:'L\'âme et les sentiments', words:[
+    {fr:'l\'amour',en:['love']},{fr:'la haine',en:['hatred']},{fr:'la joie',en:['joy']},
+    {fr:'la tristesse',en:['sadness']},{fr:'la peur',en:['fear']},{fr:'l\'espoir',en:['hope']},
+    {fr:'le désespoir',en:['despair']},{fr:'la confiance',en:['trust','confidence']},
+    {fr:'la jalousie',en:['jealousy']},{fr:'l\'envie',en:['envy']},{fr:'la colère',en:['anger']},
+    {fr:'le bonheur',en:['happiness']},{fr:'le malheur',en:['misery','unhappiness']},
+    {fr:'rire',en:['laugh']},{fr:'pleurer',en:['cry','weep']},{fr:'aimer',en:['love','care for']},
+    {fr:'détester',en:['hate','loathe']},{fr:'s\'inquiéter',en:['worry']},{fr:'rougir',en:['blush']},
+    {fr:'frissonner / frisson',en:['shudder','shiver']}
+  ]},
+  {id:'ch34', num:'XXXIV', title:'The Mind: Reason and Will', fr:'L\'esprit : la raison et la volonté', words:[
+    {fr:'la raison',en:['reason']},{fr:'l\'intelligence',en:['intelligence','intellect']},
+    {fr:'la mémoire',en:['memory']},{fr:'l\'imagination',en:['imagination']},{fr:'la sagesse',en:['wisdom']},
+    {fr:'la sottise',en:['folly']},{fr:'la volonté',en:['will']},{fr:'le courage',en:['pluck','courage']},
+    {fr:'comprendre',en:['understand']},{fr:'penser',en:['think']},{fr:'se rappeler',en:['remember','recollect']},
+    {fr:'oublier',en:['forget']},{fr:'décider',en:['decide','determine']},{fr:'essayer',en:['try','attempt']},
+    {fr:'hésiter',en:['hesitate']},{fr:'douter',en:['doubt']},{fr:'être sûr',en:['be sure','be certain']},
+    {fr:'un génie',en:['genius']},{fr:'un idiot',en:['fool']},{fr:'fou',en:['mad','crazy']}
+  ]},
+  {id:'app1', num:'App.I', title:'Mots invariables', fr:'Adverbes et prépositions', words:[
+    {fr:'environ',en:['about']},{fr:'au-dessus de',en:['above']},{fr:'après',en:['after']},
+    {fr:'encore',en:['again']},{fr:'contre',en:['against']},{fr:'parmi',en:['among']},
+    {fr:'avant',en:['before']},{fr:'derrière',en:['behind']},{fr:'en-dessous de',en:['below']},
+    {fr:'entre',en:['between']},{fr:'au-delà de',en:['beyond']},{fr:'par (préposition)',en:['by']},
+    {fr:'à cause de',en:['because of']},{fr:'à l\'intérieur de',en:['inside']},{fr:'vers',en:['towards']},
+    {fr:'à moins que',en:['unless']},{fr:'jusqu\'à',en:['until','till']},{fr:'sans',en:['without']},
+    {fr:'pourtant',en:['yet','however']},{fr:'donc',en:['therefore']}
+  ]},
+  {id:'app2', num:'App.II', title:'Faux amis', fr:'False friends', words:[
+    {fr:'"Actual" signifie',en:['réel','véritable','reel']},{fr:'"Eventually" signifie',en:['finalement','en fin de compte']},
+    {fr:'"Library" signifie',en:['bibliothèque','bibliotheque']},{fr:'"Deceive" signifie',en:['tromper','duper']},
+    {fr:'"Lecture" signifie',en:['cours','conférence','conference']},{fr:'"Sensible" signifie',en:['raisonnable','sensé','sense']},
+    {fr:'"Petrol" signifie',en:['essence']},{fr:'"Physician" signifie',en:['médecin','docteur','medecin']},
+    {fr:'"Fabric" signifie',en:['tissu','étoffe','etoffe']},{fr:'"Habit" signifie',en:['habitude']},
+    {fr:'"Furniture" signifie',en:['meubles','mobilier']},{fr:'"Corpse" signifie',en:['cadavre']},
+    {fr:'"Gentle" signifie',en:['doux','délicat','delicat']},{fr:'"Rude" signifie',en:['grossier','impoli']},
+    {fr:'"Attend" signifie',en:['assister à','soigner','assister a']},{fr:'"Demand" signifie',en:['exiger','réclamer','reclamer']},
+    {fr:'"Pretend" signifie',en:['faire semblant']},{fr:'"Prevent" signifie',en:['empêcher','empecher']},
+    {fr:'"Journey" signifie',en:['voyage','trajet']},{fr:'"Novel" signifie',en:['roman']}
+  ]},
+  {id:'app3', num:'App.III', title:'Verbes irréguliers', fr:'Infinitif → Prétérit', words:[
+    {fr:'fly → prét.',en:['flew']},{fr:'buy → prét.',en:['bought']},{fr:'think → prét.',en:['thought']},
+    {fr:'grow → prét.',en:['grew']},{fr:'know → prét.',en:['knew']},{fr:'take → prét.',en:['took']},
+    {fr:'write → prét.',en:['wrote']},{fr:'speak → prét.',en:['spoke']},{fr:'steal → prét.',en:['stole']},
+    {fr:'break → prét.',en:['broke']},{fr:'ride → prét.',en:['rode']},{fr:'drive → prét.',en:['drove']},
+    {fr:'begin → prét.',en:['began']},{fr:'swim → prét.',en:['swam']},{fr:'run → prét.',en:['ran']},
+    {fr:'come → prét.',en:['came']},{fr:'give → prét.',en:['gave']},{fr:'fall → prét.',en:['fell']},
+    {fr:'hear → prét.',en:['heard']},{fr:'catch → prét.',en:['caught']}
+  ]}
+];
+
+// ═══════════════════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════════════════
+const state={
+  currentLesson:0,
+  scores:{},   // lessonId -> {correct, total}
+  started:false
+};
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+function buildNav(){
+  // Ordre fixe — groupes thématiques
+  const nav=document.getElementById('nav-list');
+  nav.innerHTML='';
+  const groups=[
+    {label:'Leçons I – X', ids:['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10']},
+    {label:'Leçons XI – XX', ids:['ch11','ch11b','ch12','ch13','ch14','ch15','ch16','ch17','ch18','ch19','ch20']},
+    {label:'Leçons XXI – XXXIV', ids:['ch21','ch22','ch23','ch24','ch24b','ch25','ch26','ch26b','ch27','ch28','ch29','ch30','ch31','ch32','ch33','ch34']},
+    {label:'Appendices', ids:['app1','app2','app3']}
+  ];
+  groups.forEach(g=>{
+    const lbl=document.createElement('div');
+    lbl.className='nav-group';lbl.textContent=g.label;nav.appendChild(lbl);
+    g.ids.forEach(id=>{
+      const lesson=LESSONS.find(l=>l.id===id);if(!lesson)return;
+      const idx=LESSONS.indexOf(lesson);
+      const a=document.createElement('div');
+      a.className='nav-item';a.id='nav-'+id;
+      a.onclick=()=>loadLesson(idx);
+      a.innerHTML=`<span class="nav-num">${lesson.num}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${lesson.title}</span><span class="nav-badge badge-pending" id="badge-${id}">—</span>`;
+      nav.appendChild(a);
+    });
+  });
+}
+
+function startQuiz(){
+  document.getElementById('welcome-screen').style.display='none';
+  const qa=document.getElementById('quiz-area');
+  qa.style.display='flex';
+  qa.style.flexDirection='column';
+  qa.style.alignItems='center';
+  state.started=true;
+  loadLesson(0);
+}
+
+// ═══════════════════════════════════════════════════
+//  CHARGEMENT LEÇON
+// ═══════════════════════════════════════════════════
+function loadLesson(idx){
+  state.currentLesson=idx;
+  const lesson=LESSONS[idx];
+  // Nav active
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navEl=document.getElementById('nav-'+lesson.id);
+  if(navEl){navEl.classList.add('active');navEl.scrollIntoView({block:'nearest'});}
+
+  const area=document.getElementById('quiz-area');
+  area.innerHTML='';
+
+  // Header
+  const hdr=document.createElement('div');
+  hdr.className='lesson-header';
+  const sc=state.scores[lesson.id];
+  const pct=sc?Math.round(sc.correct/sc.total*100):0;
+  const done=sc&&sc.total===lesson.words.length;
+  hdr.innerHTML=`
+    <div class="lesson-num">Leçon ${lesson.num}</div>
+    <div class="lesson-title">${lesson.title}</div>
+    <div class="lesson-sub">${lesson.fr}</div>
+    <div class="lesson-progress">
+      <div class="lp-bar"><div class="lp-fill" id="lp-fill" style="width:${sc?pct:0}%"></div></div>
+      <div class="lp-text" id="lp-text">${sc?sc.correct+'/'+sc.total+' ('+pct+'%)':'0 / 20'}</div>
+    </div>`;
+  area.appendChild(hdr);
+
+  // Banner fin de leçon si déjà terminée
+  const banner=document.createElement('div');
+  banner.className='lesson-done-banner';banner.id='done-banner';
+  if(done){
+    banner.style.display='flex';
+    const nextIdx=idx+1<LESSONS.length?idx+1:null;
+    banner.innerHTML=`<span class="ldb-text">✓ Leçon terminée</span><span class="ldb-score">${sc.correct}/${sc.total} — ${pct}%</span>${nextIdx!==null?`<button class="next-btn" onclick="loadLesson(${nextIdx})">Leçon suivante →</button>`:'<span style="font-size:.72rem;color:var(--muted);font-family:JetBrains Mono,monospace">Bravo, toutes les leçons terminées !</span>'}`;
+  }
+  area.appendChild(banner);
+
+  // Grille mixte : 10 FR→EN + 10 EN→FR tirés aléatoirement
+  const BATCH = 20;
+  const half = BATCH / 2;
+  const pool = shuffle([...lesson.words]);
+  const frWords = pool.slice(0, half);          // 10 FR→EN
+  const enWords = pool.slice(half, BATCH);      // 10 EN→FR (si dispo)
+
+  // Section FR→EN
+  const secFR = document.createElement('div');
+  secFR.style.cssText='max-width:920px;width:100%;margin-bottom:8px';
+  const labelFR = lesson.id==='app2' ? 'Quel est le vrai sens ? (anglais → sens français)'
+    : lesson.id==='app3' ? 'Infinitif → Prétérit'
+    : 'Français → Anglais';
+  secFR.innerHTML='<div style="font-size:.62rem;color:var(--muted);font-family:\'JetBrains Mono\',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;padding-left:2px">'+labelFR+'</div>';
+  const gridFR = document.createElement('div');
+  gridFR.className='cards-grid';
+  frWords.forEach(w=>{
+    const origIdx=lesson.words.indexOf(w);
+    gridFR.appendChild(makeCard(lesson,w,origIdx,false,'fr'));
+  });
+  secFR.appendChild(gridFR);
+  area.appendChild(secFR);
+
+  // Section EN→FR
+  const secEN = document.createElement('div');
+  secEN.style.cssText='max-width:920px;width:100%;margin-bottom:8px';
+  const labelEN = lesson.id==='app2' ? 'Faux amis — série 2 (vrai sens)' 
+    : lesson.id==='app3' ? 'Prétérit → Infinitif'
+    : 'Anglais → Français';
+  secEN.innerHTML='<div style="font-size:.62rem;color:var(--muted);font-family:\'JetBrains Mono\',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;padding-left:2px">'+labelEN+'</div>';
+  const gridEN = document.createElement('div');
+  gridEN.className='cards-grid';
+  enWords.forEach(w=>{
+    const origIdx=lesson.words.indexOf(w);
+    gridEN.appendChild(makeCard(lesson,w,origIdx,false,'en'));
+  });
+  secEN.appendChild(gridEN);
+  area.appendChild(secEN);
+
+  // Bouton Try Again — toujours visible
+  const tryBtn = document.createElement('div');
+  tryBtn.id='try-again-wrap';
+  tryBtn.style.cssText='max-width:920px;width:100%;margin-top:16px;text-align:center';
+  tryBtn.innerHTML=`<button class="try-again-btn" onclick="tryAgain(${idx})">↺ Try Again</button>`;
+  area.appendChild(tryBtn);
+
+  // Footer credit
+  const footer=document.createElement('div');
+  footer.className='footer-credit';
+  footer.innerHTML='Exercises designed by Marc VASSEUR, Polytech Lille — Lille University';
+  area.appendChild(footer);
+}
+
+// ═══════════════════════════════════════════════════
+//  CARTE MOT
+// ═══════════════════════════════════════════════════
+function makeCard(lesson,word,index,alreadyDone,dir){
+  // dir='fr' → affiche FR, attend EN   |   dir='en' → affiche EN, attend FR
+  dir=dir||'fr';
+  const cardKey=lesson.id+'_'+index+'_'+dir;
+  const card=document.createElement('div');
+  card.className='wcard';
+  card.id='card-'+cardKey;
+
+  // Special lessons: app2 (faux amis) and app3 (verbes) always go fr→answers
+  const isSpecial = lesson.id==='app2' || lesson.id==='app3';
+  const effectiveDir = isSpecial ? 'fr' : dir;
+  const prompt  = effectiveDir==='fr' ? word.fr    : word.en[0];
+  let answers;
+  if(effectiveDir==='fr'){
+    answers = word.en;
+  } else if(lesson.id==='app3'){
+    // For verbs: "fly → prét." displayed as "flew", accept just the infinitive "fly"
+    const stem = word.fr.replace(/\s*→.*$/, '').trim();
+    answers = [stem, word.fr];
+  } else {
+    answers = [word.fr];
+  }
+  // Smart placeholder
+  let placeholder;
+  if(lesson.id==='app2') placeholder='Vrai sens en français…';
+  else if(lesson.id==='app3') placeholder='Prétérit en anglais…';
+  else if(effectiveDir==='fr') placeholder='Tapez en anglais…';
+  else placeholder='Tapez en français…';
+  const hint = answers[0].length>12?'('+answers[0].length+' lettres / letters)':'';
+  const alts = answers.length>1?'<br><span style="font-size:.6rem;color:var(--muted)">ou : '+answers.slice(1).join(' / ')+'</span>':'';
+
+  // Store answers safely as JSON in a data attribute — avoids ALL quoting issues
+  card.dataset.answers=JSON.stringify(answers);
+  card.dataset.cardkey=cardKey;
+  card.innerHTML=`
+    <div class="wcard-top">
+      <div>
+        <div class="wcard-fr">${prompt}</div>
+        ${hint?`<div class="wcard-hint">${hint}</div>`:''}
+      </div>
+      <div class="wcard-status" id="st-${cardKey}"></div>
+    </div>
+    <div class="wcard-input-row">
+      <input class="wcard-input" id="inp-${cardKey}" placeholder="${placeholder}"
+        onkeydown="if(event.key==='Enter')checkWordById('${cardKey}')"
+        ${alreadyDone?'disabled':''}>
+      <button class="wcard-btn" onclick="checkWordById('${cardKey}')" ${alreadyDone?'disabled':''}>OK</button>
+    </div>
+    <div class="wcard-feedback" id="fb-${cardKey}"></div>
+    <div class="wcard-answer" id="ans-${cardKey}">${alts}</div>`;
+
+  // Si déjà terminé, restaurer l'état
+  if(alreadyDone){
+    const prevData=getWordResult(cardKey);
+    if(prevData){
+      const inp=card.querySelector('.wcard-input');
+      inp.value=prevData.val;
+      applyResult(card,cardKey,prevData.ok,prevData.val,answers,true);
+    }
+  }
+  return card;
+}
+
+// Stockage résultats mot par mot
+const wordResults={};
+function storeWordResult(key,ok,val){wordResults[key]={ok,val};}
+function getWordResult(key){return wordResults[key];}
+
+// ═══════════════════════════════════════════════════
+//  VÉRIFICATION
+// ═══════════════════════════════════════════════════
+// Articles FR et EN à ignorer en comparaison
+const ARTICLES=/^(le |la |les |l'|l'|un |une |des |the |a |an )+/i;
+
+function normalize(s){
+  return s.trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[''`]/g,"'")
+    .replace(/[-–]/g,' ')
+    .replace(/\s+/g,' ');
+}
+
+function stripArticle(s){
+  return normalize(s).replace(ARTICLES,'').trim();
+}
+
+function checkWordById(cardKey){
+  // Retrieve answers from the card's data attribute — safe from quoting issues
+  const card=document.getElementById('card-'+cardKey);
+  if(!card)return;
+  const answers=JSON.parse(card.dataset.answers||'[]');
+  checkWord(cardKey,answers);
+}
+
+function checkWord(cardKey,answers){
+  const inp=document.getElementById('inp-'+cardKey);
+  if(!inp||inp.disabled)return;
+  const val=inp.value;
+  if(!val.trim())return;
+
+  const nv=normalize(val);
+  // Match : exact OU sans article des deux côtés (face = le visage, epaule = l'épaule…)
+  const snv=stripArticle(nv);
+  const strict=answers.some(a=>{
+    const na=normalize(a);
+    const sa=stripArticle(a);
+    return na===nv || sa===nv || na===snv || sa===snv;
+  });
+
+  applyResult(document.getElementById('card-'+cardKey),cardKey,strict,val,answers,false);
+  storeWordResult(cardKey,strict,val);
+  // Extract lessonId from cardKey (format: lessonId_index_dir)
+  const parts=cardKey.split('_');
+  const lessonId=parts.slice(0,-2).join('_');
+  const index=parseInt(parts[parts.length-2]);
+  updateLessonScore(lessonId,index,strict);
+}
+
+function applyResult(card,cardKey,ok,val,answers,restore){
+  const inp=document.getElementById('inp-'+cardKey);
+  const fb=document.getElementById('fb-'+cardKey);
+  const st=document.getElementById('st-'+cardKey);
+  const ans=document.getElementById('ans-'+cardKey);
+
+  inp.disabled=true;
+  if(ok){
+    card.classList.add('state-ok');
+    inp.classList.add('inp-ok');
+    fb.textContent='✓ Correct !';fb.className='wcard-feedback fb-ok';
+    st.textContent='✓';
+  } else {
+    card.classList.add('state-bad');
+    inp.classList.add('inp-bad');
+    fb.textContent='✗ Réponse : '+answers[0];fb.className='wcard-feedback fb-bad';
+    st.textContent='✗';
+    if(ans){ans.style.display='block';}
+  }
+}
+
+function updateLessonScore(lessonId,index,ok){
+  const lesson=LESSONS.find(l=>l.id===lessonId);
+  if(!state.scores[lessonId])state.scores[lessonId]={correct:0,total:0,answered:new Set()};
+  const sc=state.scores[lessonId];
+  if(sc.answered.has(index))return;
+  sc.answered.add(index);
+  sc.total++;
+  if(ok)sc.correct++;
+
+  // Update header progress
+  const pct=Math.round(sc.correct/sc.total*100);
+  const fill=document.getElementById('lp-fill');
+  const txt=document.getElementById('lp-text');
+  const batchSize=20;
+  if(fill)fill.style.width=Math.round(sc.total/batchSize*100)+'%';
+  if(txt)txt.textContent=sc.correct+'/'+sc.total+' ('+pct+'%)';
+
+  // Badge nav
+  const badge=document.getElementById('badge-'+lessonId);
+  if(badge){
+    badge.textContent=sc.correct+'/'+sc.total;
+    if(sc.total===batchSize){
+      badge.className='nav-badge badge-ok';
+      showDoneBanner(lessonId,pct);
+    }
+  }
+  // Global score
+  updateGlobal();
+}
+
+function showDoneBanner(lessonId,pct){
+  const banner=document.getElementById('done-banner');
+  if(!banner)return;
+  const idx=LESSONS.findIndex(l=>l.id===lessonId);
+  const sc=state.scores[lessonId];
+  const nextIdx=idx+1<LESSONS.length?idx+1:null;
+  banner.style.display='flex';
+  banner.innerHTML=`<span class="ldb-text">✓ Leçon terminée</span><span class="ldb-score">${sc.correct}/${sc.total} — ${pct}%</span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="batch-btn" onclick="loadNextBatch('${lessonId}')">+20 mots suivants ⟳</button>${nextIdx!==null?`<button class="next-btn" onclick="loadLesson(${nextIdx})">Leçon suivante →</button>`:'<span style="font-size:.72rem;color:var(--muted);font-family:JetBrains Mono,monospace">Toutes les leçons terminées !</span>'}</div>`;
+}
+
+function tryAgain(idx){
+  // Réinitialiser le score de la leçon courante et recharger
+  const lesson=LESSONS[idx];
+  if(!lesson)return;
+  delete state.scores[lesson.id];
+  Object.keys(wordResults).filter(k=>k.startsWith(lesson.id+'_')).forEach(k=>delete wordResults[k]);
+  // Reset batch pool so new random selection
+  delete batchPool[lesson.id];
+  delete batchOffset[lesson.id];
+  loadLesson(idx);
+}
+
+function updateGlobal(){
+  let tot=0,cor=0;
+  Object.values(state.scores).forEach(s=>{tot+=s.total;cor+=s.correct;});
+  document.getElementById('g-score').textContent=cor+' / '+tot;
+  const pct=tot?Math.round(cor/tot*100):0;
+  document.getElementById('g-bar').style.width=pct+'%';
+}
+
+
+// ═══════════════════════════════════════════════════
+//  SHUFFLE — Fisher-Yates
+// ═══════════════════════════════════════════════════
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// ═══════════════════════════════════════════════════
+//  BATCH SUIVANT — tire 20 mots aléatoires des mots
+//  non encore vus dans cette leçon (si tous vus, repart de zéro)
+// ═══════════════════════════════════════════════════
+const batchOffset={};  // lessonId -> index de départ dans pool mélangé
+const batchPool={};    // lessonId -> ordre mélangé permanent pour cette session
+
+function loadNextBatch(lessonId){
+  const lesson=LESSONS.find(l=>l.id===lessonId);
+  if(!lesson)return;
+
+  // Construire / récupérer pool mélangé pour cette leçon
+  if(!batchPool[lessonId]) batchPool[lessonId]=shuffle([...Array(lesson.words.length).keys()]);
+  if(!batchOffset[lessonId]) batchOffset[lessonId]=0;
+
+  let start=batchOffset[lessonId];
+  // Si on a dépassé la fin, on repart du début avec un nouveau mélange
+  if(start>=lesson.words.length){
+    batchPool[lessonId]=shuffle([...Array(lesson.words.length).keys()]);
+    start=0;
+  }
+  const batchSize=Math.min(20,lesson.words.length-start);
+  const indices=batchPool[lessonId].slice(start,start+batchSize);
+  batchOffset[lessonId]=start+batchSize;
+
+  // Réinitialiser le score de cette leçon pour le nouveau batch
+  state.scores[lessonId]={correct:0,total:0,answered:new Set()};
+  Object.keys(wordResults).filter(k=>k.startsWith(lessonId+'_')).forEach(k=>delete wordResults[k]);
+
+  // Remplacer la grille
+  const grid=document.getElementById('cards-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  indices.forEach(origIdx=>{
+    const w=lesson.words[origIdx];
+    grid.appendChild(makeCard(lesson,w,origIdx,false));
+  });
+
+  // Masquer le banner et réinitialiser progress
+  const banner=document.getElementById('done-banner');
+  if(banner)banner.style.display='none';
+  const fill=document.getElementById('lp-fill');
+  const txt=document.getElementById('lp-text');
+  if(fill)fill.style.width='0%';
+  if(txt)txt.textContent='0 / '+batchSize;
+  updateGlobal();
+
+  // Focus premier champ
+  const first=grid.querySelector('.wcard-input');
+  if(first)first.focus();
+}
+
+function buildNav(){
+  const nav=document.getElementById('nav-list');
+  nav.innerHTML='';
+  const groups=[
+    {label:'Leçons I – X', ids:['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10']},
+    {label:'Leçons XI – XX', ids:['ch11','ch11b','ch12','ch13','ch14','ch15','ch16','ch17','ch18','ch19','ch20']},
+    {label:'Leçons XXI – XXXIV', ids:['ch21','ch22','ch23','ch24','ch24b','ch25','ch26','ch26b','ch27','ch28','ch29','ch30','ch31','ch32','ch33','ch34']},
+    {label:'Appendices', ids:['app1','app2','app3']}
+  ];
+  groups.forEach(g=>{
+    const lbl=document.createElement('div');
+    lbl.className='nav-group';lbl.textContent=g.label;nav.appendChild(lbl);
+    g.ids.forEach(id=>{
+      const lesson=LESSONS.find(l=>l.id===id);if(!lesson)return;
+      const idx=LESSONS.indexOf(lesson);
+      const a=document.createElement('div');
+      a.className='nav-item';a.id='nav-'+id;
+      a.onclick=()=>loadLesson(idx);
+      a.innerHTML=`<span class="nav-num">${lesson.num}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${lesson.title}</span><span class="nav-badge badge-pending" id="badge-${id}">—</span>`;
+      nav.appendChild(a);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════
+buildNav();
+</script>
+</body>
+</html>
