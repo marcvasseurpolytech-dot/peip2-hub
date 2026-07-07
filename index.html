@@ -76,6 +76,27 @@ main{flex:1;padding:2rem 2.2rem 4rem;max-width:1180px;margin:0 auto;width:100%}
 .btn.wa{background:#25D366;border-color:#25D366;color:#04210f;font-weight:700;margin-left:auto}
 .btn.wa:hover{background:#1ebe57}
 
+.res-pair{display:inline-flex;align-items:center;gap:.25rem}
+.wa-icon{
+  display:inline-flex;align-items:center;justify-content:center;width:1.9rem;height:1.9rem;border-radius:50%;
+  background:#25D366;color:#04210f;text-decoration:none;font-size:.85rem;flex-shrink:0;transition:var(--t);
+}
+.wa-icon:hover{background:#1ebe57;transform:scale(1.06)}
+
+.corrige-toggle{
+  font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.03em;
+  color:rgba(250,246,237,.4);cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;
+  margin-top:.1rem;user-select:none;
+}
+.corrige-toggle:hover{color:rgba(250,246,237,.65)}
+.corrige-box{
+  display:none;margin-top:.3rem;padding:.55rem .7rem;background:rgba(239,71,111,.08);
+  border:1px dashed rgba(239,71,111,.4);border-radius:8px;
+}
+.corrige-box.open{display:block}
+.corrige-box a{color:var(--red-l);font-family:'JetBrains Mono',monospace;font-size:.72rem;text-decoration:none;font-weight:700}
+.corrige-box a:hover{text-decoration:underline}
+
 .list-row{
   display:flex;align-items:center;gap:.8rem;padding:.6rem .9rem;border-radius:10px;
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
@@ -204,11 +225,26 @@ function waLink(text, url){
   return "https://wa.me/?text=" + encodeURIComponent(text + " " + BASE_URL + "/" + url);
 }
 
+function resPair(cls, icon, label, url, waText){
+  return `<span class="res-pair">
+    <a class="btn ${cls}" href="${url}" target="_blank">${icon} ${label}</a>
+    <a class="wa-icon" href="${waLink(waText, url)}" target="_blank" title="Envoyer par WhatsApp">💬</a>
+  </span>`;
+}
+
+function corrigeBox(id, url){
+  return `
+    <span class="corrige-toggle" onclick="document.getElementById('${id}').classList.toggle('open')">▸ Corrigé (prof)</span>
+    <div class="corrige-box" id="${id}">
+      <a href="${url}" target="_blank">🔒 Ouvrir le corrigé (PDF, nouvel onglet)</a>
+    </div>`;
+}
+
 function grammaireCard(g){
   const fiche = `cours/${g.n}_ETUDIANT.docx`;
-  const prof = `cours/${g.n}_PROF_CORRIGE.docx`;
+  const prof = `prof/${g.n}_PROF_CORRIGE.pdf`;
   const murphy = `cours/${g.n}_MURPHY.docx`;
-  const waTarget = g.cours || fiche;
+  const label = g.n + ' : ' + g.title.replace(/&amp;/g,'&');
   return `
   <div class="card">
     <div class="card-head">
@@ -216,17 +252,17 @@ function grammaireCard(g){
       <span class="card-title">${g.title}</span>
     </div>
     <div class="btn-row">
-      ${g.cours ? `<a class="btn cours" href="${g.cours}" target="_blank">▶ Cours</a>` : ""}
-      <a class="btn fiche" href="${fiche}" target="_blank">📄 Fiche</a>
-      <a class="btn murphy" href="${murphy}" target="_blank">＋ Murphy</a>
-      <a class="btn prof" href="${prof}" target="_blank">🔒 Corrigé prof</a>
-      <a class="btn wa" href="${waLink('PEIP2 — ' + g.n + ' : ' + g.title.replace(/&amp;/g,'&'), waTarget)}" target="_blank">💬 Envoyer</a>
+      ${g.cours ? resPair("cours", "▶", "Cours", g.cours, "PEIP2 — " + label + " (cours animé)") : ""}
+      ${resPair("fiche", "📄", "Fiche", fiche, "PEIP2 — " + label + " (fiche)")}
+      ${resPair("murphy", "＋", "Murphy", murphy, "PEIP2 — " + label + " (supplément Murphy)")}
     </div>
+    ${corrigeBox("corrige-" + g.n, prof)}
   </div>`;
 }
 
 function vocabCard(v){
   const doc = `vocabulaire/${v.n}_VOCABULAIRE.docx`;
+  const label = v.n + ' : ' + v.title.replace(/&amp;/g,'&');
   return `
   <div class="card">
     <div class="card-head">
@@ -234,8 +270,7 @@ function vocabCard(v){
       <span class="card-title">${v.title}</span>
     </div>
     <div class="btn-row">
-      <a class="btn fiche" href="${doc}" target="_blank">📄 Fiche</a>
-      <a class="btn wa" href="${waLink('PEIP2 — ' + v.n + ' : ' + v.title.replace(/&amp;/g,'&'), doc)}" target="_blank">💬 Envoyer</a>
+      ${resPair("fiche", "📄", "Fiche", doc, "PEIP2 — " + label)}
     </div>
   </div>`;
 }
@@ -261,8 +296,7 @@ document.getElementById("verbesGrid").innerHTML = verbesItems.map(it => `
       <span class="card-title">${it.title}</span>
     </div>
     <div class="btn-row">
-      <a class="btn ${it.isHtml ? 'cours' : 'fiche'}" href="${it.file}" target="_blank">${it.isHtml ? "▶ Ouvrir" : "📄 Fiche"}</a>
-      <a class="btn wa" href="${waLink(it.title.replace(/&amp;/g,'&'), it.file)}" target="_blank">💬 Envoyer</a>
+      ${resPair(it.isHtml ? "cours" : "fiche", it.isHtml ? "▶" : "📄", it.isHtml ? "Ouvrir" : "Fiche", it.file, it.title.replace(/&amp;/g,'&'))}
     </div>
   </div>`).join("");
 
@@ -271,11 +305,10 @@ document.getElementById("whGrid").innerHTML = `
   <div class="card">
     <div class="card-head"><span class="badge wh">WH</span><span class="card-title">Cours — La structure interrogative</span></div>
     <div class="btn-row">
-      <a class="btn cours" href="wh-questions/WH_cours.html" target="_blank">▶ Cours</a>
-      <a class="btn fiche" href="wh-questions/partie1_wh_questions.docx" target="_blank">📄 Fiche</a>
-      <a class="btn murphy" href="wh-questions/WH_questions_correction.pdf" target="_blank">✓ Correction</a>
-      <a class="btn wa" href="${waLink('PEIP2 — WH Questions : cours', 'wh-questions/WH_cours.html')}" target="_blank">💬 Envoyer</a>
+      ${resPair("cours", "▶", "Cours", "wh-questions/WH_cours.html", "PEIP2 — WH Questions : cours")}
+      ${resPair("fiche", "📄", "Fiche", "wh-questions/partie1_wh_questions.docx", "PEIP2 — WH Questions : fiche")}
     </div>
+    ${corrigeBox("corrige-wh", "prof/WH_questions_correction.pdf")}
   </div>`;
 let whRows = "";
 for(let i=1;i<=10;i++){
@@ -286,8 +319,7 @@ for(let i=1;i<=10;i++){
     <span class="badge wh">Ex. ${num}</span>
     <span class="card-title">Exercice WH Questions n°${i}</span>
     <div class="btn-row">
-      <a class="btn cours" href="${file}" target="_blank">▶ Ouvrir</a>
-      <a class="btn wa" href="${waLink('PEIP2 — WH Questions, exercice ' + i, file)}" target="_blank">💬 Envoyer</a>
+      ${resPair("cours", "▶", "Ouvrir", file, "PEIP2 — WH Questions, exercice " + i)}
     </div>
   </div>`;
 }
@@ -298,15 +330,13 @@ document.getElementById("vocabBaseGrid").innerHTML = `
   <div class="card">
     <div class="card-head"><span class="badge v">VOC</span><span class="card-title">Petit vocabulaire anglais illustré</span></div>
     <div class="btn-row">
-      <a class="btn cours" href="vocabulaire-base/petit_vocabulaire_anglais.html" target="_blank">▶ Ouvrir</a>
-      <a class="btn wa" href="${waLink('PEIP2 — Petit vocabulaire anglais', 'vocabulaire-base/petit_vocabulaire_anglais.html')}" target="_blank">💬 Envoyer</a>
+      ${resPair("cours", "▶", "Ouvrir", "vocabulaire-base/petit_vocabulaire_anglais.html", "PEIP2 — Petit vocabulaire anglais")}
     </div>
   </div>
   <div class="card">
     <div class="card-head"><span class="badge v">QUIZ</span><span class="card-title">Quiz de vocabulaire</span></div>
     <div class="btn-row">
-      <a class="btn cours" href="vocabulaire-base/quiz_vocabulaire.html" target="_blank">▶ Ouvrir</a>
-      <a class="btn wa" href="${waLink('PEIP2 — Quiz de vocabulaire', 'vocabulaire-base/quiz_vocabulaire.html')}" target="_blank">💬 Envoyer</a>
+      ${resPair("cours", "▶", "Ouvrir", "vocabulaire-base/quiz_vocabulaire.html", "PEIP2 — Quiz de vocabulaire")}
     </div>
   </div>`;
 
@@ -315,8 +345,7 @@ document.getElementById("wrapupGrid").innerHTML = `
   <div class="card">
     <div class="card-head"><span class="badge">✓</span><span class="card-title">Quiz de synthèse — Grammaire 1, 2 &amp; 3</span></div>
     <div class="btn-row">
-      <a class="btn cours" href="wrapup/quiz_grammaire_123.html" target="_blank">▶ Ouvrir</a>
-      <a class="btn wa" href="${waLink('PEIP2 — Quiz de synthèse Grammaire 1-2-3', 'wrapup/quiz_grammaire_123.html')}" target="_blank">💬 Envoyer</a>
+      ${resPair("cours", "▶", "Ouvrir", "wrapup/quiz_grammaire_123.html", "PEIP2 — Quiz de synthèse Grammaire 1-2-3")}
     </div>
   </div>`;
 
