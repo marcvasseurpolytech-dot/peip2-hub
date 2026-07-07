@@ -273,21 +273,19 @@ function corrigeBox(id, url){
 function extraItemRow(slug, it){
   const ficheUrl = `extra/${it.fiche}`;
   const label = it.title;
-  let html = `<div class="extra-item-row">
+  return `<div class="extra-item-row">
     <span class="ti">${label}</span>
     <a class="btn fiche" href="${ficheUrl}" target="_blank">📄 Ouvrir</a>
-    <a class="wa-icon" href="${waLink('PEIP2 — ' + label, ficheUrl)}" target="_blank" title="Envoyer par WhatsApp">💬</a>`;
-  if(it.corrige){
-    const cid = "mc-" + slug + "-" + it.id;
-    html += `
-    <span class="corrige-toggle extra-mini-corrige" onclick="document.getElementById('${cid}').classList.toggle('open')">▸ corrigé</span>
-    <div class="corrige-box" id="${cid}" style="width:100%">
-      <a href="prof-extra/${it.corrige}" target="_blank">🔒 Ouvrir le corrigé</a>
-    </div>`;
-  }
-  html += `</div>`;
-  return html;
+    <a class="wa-icon" href="${waLink('PEIP2 — ' + label, ficheUrl)}" target="_blank" title="Envoyer par WhatsApp">💬</a>
+  </div>`;
 }
+
+const THEME_CORRIGE_PAGE = {
+  g02:"prof-extra/g02/corrige.html", g04:"prof-extra/g04/corrige.html", g05:"prof-extra/g05/corrige.html",
+  g06:"prof-extra/g06/corrige.html", g07:"prof-extra/g07/corrige.html", g08:"prof-extra/g08/corrige.html",
+  g10:"prof-extra/g10/corrige.html", g13:"prof-extra/g13/corrige.html", g19:"prof-extra/g19/corrige.html",
+  "relative-clauses":"prof-extra/relative-clauses/corrige.html"
+};
 
 function extraBlock(slug){
   const data = EXTRA[slug];
@@ -303,6 +301,13 @@ function extraBlock(slug){
   }
   if(images.length){
     inner += `<div class="extra-thumbs">${images.map((img,i) => `<a href="extra/${img}" target="_blank">🖼 Image ${i+1}</a>`).join("")}</div>`;
+  }
+  const corrigePage = THEME_CORRIGE_PAGE[slug];
+  if(corrigePage){
+    inner += `<div class="extra-item-row" style="border-top:1px dashed rgba(239,71,111,.3);margin-top:.3rem;padding-top:.55rem">
+      <span class="ti" style="color:var(--red-l)">🔒 Corrigé complet + rappel grammatical</span>
+      <a class="btn prof" href="${corrigePage}" target="_blank">Ouvrir le corrigé</a>
+    </div>`;
   }
   return `
     <span class="extra-toggle" onclick="document.getElementById('${boxId}').classList.toggle('open')">▸ Exercices supplémentaires (${items.length + refs.length + (images.length?1:0)})</span>
@@ -426,28 +431,24 @@ function complementCard(slug, badgeCls, badgeTxt){
   if(!data) return "";
   const items = (data.items||[]).map(it => extraItemRowStandalone(slug, it)).join("");
   const refs = (data.refs||[]).map(r => `<div class="extra-item-row"><span class="ti">📎 ${r.title}</span><a class="btn murphy" href="extra/${r.file}" target="_blank">Ouvrir</a></div>`).join("");
+  const corrigePage = THEME_CORRIGE_PAGE[slug];
+  const corrigeRow = corrigePage ? `<div class="extra-item-row" style="border-top:1px dashed rgba(239,71,111,.3);margin-top:.3rem;padding-top:.55rem">
+      <span class="ti" style="color:var(--red-l)">🔒 Corrigé complet + rappel grammatical</span>
+      <a class="btn prof" href="${corrigePage}" target="_blank">Ouvrir le corrigé</a>
+    </div>` : "";
   return `
   <div class="card" style="grid-column:1/-1">
     <div class="card-head"><span class="badge ${badgeCls}">${badgeTxt}</span><span class="card-title">${data.label}</span></div>
-    <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.3rem">${items}${refs}</div>
+    <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.3rem">${items}${refs}${corrigeRow}</div>
   </div>`;
 }
 function extraItemRowStandalone(slug, it){
   const ficheUrl = `extra/${it.fiche}`;
-  let html = `<div class="extra-item-row">
+  return `<div class="extra-item-row">
     <span class="ti">${it.title}</span>
     <a class="btn fiche" href="${ficheUrl}" target="_blank">📄 Ouvrir</a>
-    <a class="wa-icon" href="${waLink('PEIP2 — ' + it.title, ficheUrl)}" target="_blank" title="Envoyer par WhatsApp">💬</a>`;
-  if(it.corrige){
-    const cid = "mc-" + slug + "-" + it.id;
-    html += `
-    <span class="corrige-toggle extra-mini-corrige" onclick="document.getElementById('${cid}').classList.toggle('open')">▸ corrigé</span>
-    <div class="corrige-box" id="${cid}" style="width:100%">
-      <a href="prof-extra/${it.corrige}" target="_blank">🔒 Ouvrir le corrigé</a>
-    </div>`;
-  }
-  html += `</div>`;
-  return html;
+    <a class="wa-icon" href="${waLink('PEIP2 — ' + it.title, ficheUrl)}" target="_blank" title="Envoyer par WhatsApp">💬</a>
+  </div>`;
 }
 document.getElementById("complementsGrid").innerHTML =
   complementCard("relative-clauses", "purple", "REL") +
