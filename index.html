@@ -73,6 +73,7 @@ main{flex:1;padding:2rem 2.2rem 4rem;max-width:1180px;margin:0 auto;width:100%}
 .btn.fiche{border-color:var(--teal);color:var(--teal-l)}
 .btn.murphy{border-color:var(--gold);color:var(--gold-l)}
 .btn.prof{border-color:var(--red);color:var(--red-l)}
+.btn.test{border-color:var(--gold);color:var(--gold-l)}
 .btn.wa{background:#25D366;border-color:#25D366;color:#04210f;font-weight:700;margin-left:auto}
 .btn.wa:hover{background:#1ebe57}
 
@@ -201,7 +202,7 @@ footer a{color:var(--gold-l);text-decoration:none}
     </div>
 
     <div class="tab-panel" data-panel="vocabulaire">
-      <div class="section-title">Vocabulaire — V01 à V07</div>
+      <div class="section-title">Vocabulaire — V01 à V09</div>
       <div class="section-sub">Vocabulaire thématique avancé</div>
       <div class="grid" id="vocabGrid"></div>
     </div>
@@ -310,6 +311,8 @@ const VOCAB = [
   {n:"V05", title:"Word Formation — Prefixes &amp; Suffixes"},
   {n:"V06", title:"100 Phrasal Verbs to Know"},
   {n:"V07", title:"400 Adjectifs Utiles (sélection)"},
+  {n:"V08", title:"Les Contraires (sélection)"},
+  {n:"V09", title:"Phrases Utiles en Anglais"},
 ];
 
 function waLink(text, url){
@@ -443,10 +446,15 @@ function grammaireCard(g){
   </div>`;
 }
 
+const VOCAB_WITH_TEST = ["V06","V07","V08","V09"];
+
 function vocabCard(v){
   const doc = `vocabulaire/${v.n}_VOCABULAIRE.pdf`;
   const label = v.n + ' : ' + v.title.replace(/&amp;/g,'&');
   const pid = "v-" + v.n;
+  const testBtn = VOCAB_WITH_TEST.includes(v.n)
+    ? `<a class="btn test" href="vocabulaire/tests/${v.n}_test.html" target="_blank">🎲 Test</a>`
+    : '';
   return `
   <div class="card${doneClass(pid)}">
     <div class="card-head">
@@ -456,6 +464,7 @@ function vocabCard(v){
     </div>
     <div class="btn-row">
       ${resPair("fiche", "📄", "Fiche", doc, "PEIP2 — " + label)}
+      ${testBtn}
     </div>
   </div>`;
 }
@@ -576,7 +585,7 @@ document.getElementById("complementsGrid").innerHTML =
 /* Générateur de test de semestre */
 const TEST_THEMES = [
   ...GRAMMAIRE.map(g => ({id:g.n, label:g.n+' — '+g.title.replace(/&amp;/g,'&')})),
-  {id:"vocab", label:"Vocabulaire (V01–V07)"},
+  {id:"vocab", label:"Vocabulaire (V01–V09)"},
   {id:"verbes", label:"Verbes irréguliers"},
   {id:"wh", label:"WH Questions"},
   {id:"vocabbase", label:"Vocabulaire de base"},
