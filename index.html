@@ -201,7 +201,7 @@ footer a{color:var(--gold-l);text-decoration:none}
     </div>
 
     <div class="tab-panel" data-panel="vocabulaire">
-      <div class="section-title">Vocabulaire — V01 à V05</div>
+      <div class="section-title">Vocabulaire — V01 à V07</div>
       <div class="section-sub">Vocabulaire thématique avancé</div>
       <div class="grid" id="vocabGrid"></div>
     </div>
@@ -308,6 +308,8 @@ const VOCAB = [
   {n:"V03", title:"Professional &amp; Business Vocabulary"},
   {n:"V04", title:"Connectors &amp; Discourse Markers"},
   {n:"V05", title:"Word Formation — Prefixes &amp; Suffixes"},
+  {n:"V06", title:"100 Phrasal Verbs to Know"},
+  {n:"V07", title:"400 Adjectifs Utiles (sélection)"},
 ];
 
 function waLink(text, url){
@@ -574,7 +576,7 @@ document.getElementById("complementsGrid").innerHTML =
 /* Générateur de test de semestre */
 const TEST_THEMES = [
   ...GRAMMAIRE.map(g => ({id:g.n, label:g.n+' — '+g.title.replace(/&amp;/g,'&')})),
-  {id:"vocab", label:"Vocabulaire (V01–V05)"},
+  {id:"vocab", label:"Vocabulaire (V01–V07)"},
   {id:"verbes", label:"Verbes irréguliers"},
   {id:"wh", label:"WH Questions"},
   {id:"vocabbase", label:"Vocabulaire de base"},
