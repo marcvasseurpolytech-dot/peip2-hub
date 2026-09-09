@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test — V07 · 400 Adjectifs Utiles</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;--bg2:#171614;--bg3:#1e1c19;
+  --gold:#c9a84c;--gold2:#e8c96a;--cream:#f0ead8;
+  --muted:#7a7060;--border:#2a2820;
+  --ok:#5a9e52;--ok-bg:#1a2e18;--ok-border:#3a6e34;
+  --bad:#c0574a;--bad-bg:#2e1614;--bad-border:#7a3028;
+}
+body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px}
+.wrap{max-width:560px;width:100%}
+.hdr{text-align:center;margin-bottom:24px}
+.hdr-code{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.hdr-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.hdr-sub{font-size:.85rem;color:var(--muted);font-style:italic}
+.back-link{display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px}
+.back-link:hover{border-color:var(--gold);color:var(--gold)}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;margin-top:8px}
+
+/* Start screen */
+.opts{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.opt-row{display:flex;gap:8px}
+.opt-btn{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cream);cursor:pointer;transition:all .15s;text-align:center}
+.opt-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.1)}
+.opt-label{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.start-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:13px;font-size:.88rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700;margin-top:6px;transition:opacity .15s}
+.start-btn:hover{opacity:.85}
+
+/* Quiz screen */
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.progress-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.qword{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--cream);margin-bottom:20px;text-align:center;padding:14px;background:var(--bg3);border-radius:8px}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:.85rem;color:var(--cream);cursor:pointer;text-align:left;transition:all .15s;font-family:'Source Serif 4',serif}
+.choice-btn:hover:not(:disabled){border-color:var(--gold)}
+.choice-btn:disabled{cursor:default}
+.choice-btn.correct{border-color:var(--ok-border);background:var(--ok-bg);color:var(--ok)}
+.choice-btn.incorrect{border-color:var(--bad-border);background:var(--bad-bg);color:var(--bad)}
+.next-wrap{margin-top:16px;text-align:center;min-height:44px}
+.next-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:10px 28px;font-size:.8rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700}
+.next-btn:hover{opacity:.85}
+
+/* Result screen */
+.result-score{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);text-align:center;margin:12px 0 4px}
+.result-label{text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:20px;font-family:'JetBrains Mono',monospace}
+.result-msg{text-align:center;font-size:.95rem;color:var(--cream);margin-bottom:22px;font-style:italic}
+.retry-btn{width:100%;background:transparent;border:2px solid var(--gold);border-radius:8px;padding:12px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--gold);font-weight:700;letter-spacing:.03em;transition:all .2s}
+.retry-btn:hover{background:var(--gold);color:var(--bg)}
+
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-code">V07 — Test aléatoire</div>
+    <div class="hdr-title">400 Adjectifs Utiles</div>
+    <div class="hdr-sub">Teste-toi sur les adjectifs</div>
+    <a class="back-link" href="../index.html">← Retour au hub</a>
+  </div>
+
+  <div class="card" id="screenStart">
+    <div class="opt-label">Sens du test</div>
+    <div class="opt-row" id="dirRow">
+      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
+      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
+    </div>
+    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-row" id="lenRow">
+      <button class="opt-btn" data-n="10">10</button>
+      <button class="opt-btn active" data-n="15">15</button>
+      <button class="opt-btn" data-n="20">20</button>
+      <button class="opt-btn" data-n="40">Max (40)</button>
+    </div>
+    <button class="start-btn" id="startBtn">🎲 Générer un test aléatoire</button>
+  </div>
+
+  <div class="card hidden" id="screenQuiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progText">0 / 0</div>
+    </div>
+    <div class="qnum" id="qnum">Question 1</div>
+    <div class="qword" id="qword"></div>
+    <div class="choices" id="choices"></div>
+    <div class="next-wrap" id="nextWrap"></div>
+  </div>
+
+  <div class="card hidden" id="screenResult">
+    <div class="result-score" id="resScore">0/0</div>
+    <div class="result-label">RÉSULTAT</div>
+    <div class="result-msg" id="resMsg"></div>
+    <button class="retry-btn" id="retryBtn">🎲 Nouveau test aléatoire</button>
+  </div>
+</div>
+
+<script>
+const DATA = [{"fr": "accueillant", "en": "welcoming"}, {"fr": "brusque", "en": "abrupt"}, {"fr": "capable", "en": "capable"}, {"fr": "chaleureux", "en": "warm"}, {"fr": "compatissant", "en": "compassionate"}, {"fr": "confiant", "en": "trusting"}, {"fr": "curieux", "en": "curious"}, {"fr": "déterminé", "en": "determined"}, {"fr": "gentil", "en": "nice"}, {"fr": "joueur", "en": "playful"}, {"fr": "méfiant", "en": "wary"}, {"fr": "optimiste", "en": "optimistic"}, {"fr": "paresseux", "en": "lazy"}, {"fr": "sincère", "en": "sincere"}, {"fr": "sportif", "en": "sporting"}, {"fr": "admirable", "en": "admirable"}, {"fr": "amer", "en": "bitter"}, {"fr": "dégoûté", "en": "disgusted"}, {"fr": "déprimé", "en": "depressed"}, {"fr": "énervé", "en": "angry"}, {"fr": "exaspéré", "en": "exasperated"}, {"fr": "fatigué", "en": "tired"}, {"fr": "heureux", "en": "happy"}, {"fr": "inquiet", "en": "worried"}, {"fr": "malheureux", "en": "unfortunate"}, {"fr": "émouvant", "en": "moving"}, {"fr": "passionnant", "en": "exciting"}, {"fr": "coupable", "en": "guilty"}, {"fr": "banal", "en": "banal"}, {"fr": "bizarre", "en": "weird"}, {"fr": "bon marché", "en": "inexpensive"}, {"fr": "classique", "en": "classic"}, {"fr": "convaincant", "en": "convincing"}, {"fr": "crédible", "en": "credible"}, {"fr": "drôle", "en": "funny"}, {"fr": "éblouissant", "en": "dazzling"}, {"fr": "efficace", "en": "effective"}, {"fr": "équivalent", "en": "equivalent"}, {"fr": "évident", "en": "obvious"}, {"fr": "excusable", "en": "excusable"}, {"fr": "facile", "en": "easy"}, {"fr": "fiable", "en": "reliable"}, {"fr": "horrible", "en": "horrible"}, {"fr": "identique", "en": "identical"}, {"fr": "imprévisible", "en": "unpredictable"}, {"fr": "incroyable", "en": "amazing"}, {"fr": "insupportable", "en": "unbearable"}, {"fr": "inventif", "en": "inventive"}, {"fr": "louable", "en": "commendable"}, {"fr": "minable", "en": "crummy"}, {"fr": "phénoménal", "en": "phenomenal"}, {"fr": "pertinent", "en": "relevant"}, {"fr": "prodigieux", "en": "prodigious"}, {"fr": "rare", "en": "rare"}, {"fr": "récent", "en": "recent"}, {"fr": "remarquable", "en": "remarkable"}, {"fr": "romantique", "en": "romantic"}, {"fr": "satisfaisant", "en": "satisfactory"}, {"fr": "superficiel", "en": "superficial"}, {"fr": "supportable", "en": "supportable"}, {"fr": "tolérable", "en": "tolerable"}, {"fr": "unique", "en": "unique"}, {"fr": "âgé (e)", "en": "elderly"}, {"fr": "ancien", "en": "former"}, {"fr": "carré", "en": "square"}, {"fr": "chaud", "en": "hot"}, {"fr": "comestible", "en": "edible"}, {"fr": "disparu", "en": "missing"}, {"fr": "électrique", "en": "electrical"}, {"fr": "énorme", "en": "huge"}, {"fr": "entier", "en": "whole"}, {"fr": "fragile", "en": "fragile"}, {"fr": "froid", "en": "cold"}, {"fr": "illimité", "en": "unlimited"}, {"fr": "important", "en": "important"}, {"fr": "interdit", "en": "prohibited"}, {"fr": "légal", "en": "legal"}, {"fr": "local", "en": "local"}, {"fr": "moelleux", "en": "soft"}, {"fr": "mortel", "en": "lethal"}, {"fr": "muet", "en": "mute"}, {"fr": "naturel", "en": "natural"}, {"fr": "nombreux", "en": "numerous"}, {"fr": "nul", "en": "void"}, {"fr": "pauvre", "en": "poor"}, {"fr": "politique", "en": "political"}, {"fr": "populaire", "en": "popular"}, {"fr": "pratique", "en": "practical"}, {"fr": "premier", "en": "first"}, {"fr": "privé", "en": "private"}, {"fr": "public", "en": "public"}, {"fr": "sec", "en": "dry"}, {"fr": "silencieux", "en": "silent"}, {"fr": "solitaire", "en": "lonely"}, {"fr": "spacieux", "en": "spacious"}, {"fr": "temporaire", "en": "temporary"}, {"fr": "toxique", "en": "toxic"}, {"fr": "triangulaire", "en": "triangular"}, {"fr": "vaste", "en": "extensive"}, {"fr": "vivant", "en": "living"}];
+let dir = 'fr2en';
+let qcount = 15;
+let quiz = [];
+let cur = 0;
+let score = 0;
+
+document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); dir = b.dataset.dir;
+  };
+});
+document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); qcount = parseInt(b.dataset.n);
+  };
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildQuiz(){
+  const pool = shuffle(DATA);
+  quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
+    const question = dir==='fr2en' ? item.fr : item.en;
+    const correct = dir==='fr2en' ? item.en : item.fr;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const distractors = shuffle(distractorPool).slice(0,3);
+    const options = shuffle([correct, ...distractors]);
+    return {question, correct, options};
+  });
+  cur = 0; score = 0;
+}
+
+document.getElementById('startBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenStart').classList.add('hidden');
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+document.getElementById('retryBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+
+function renderQ(){
+  const q = quiz[cur];
+  document.getElementById('progFill').style.width = ((cur)/quiz.length*100)+'%';
+  document.getElementById('progText').textContent = (cur+1)+' / '+quiz.length;
+  document.getElementById('qnum').textContent = 'Question '+(cur+1);
+  document.getElementById('qword').textContent = q.question;
+  const cWrap = document.getElementById('choices');
+  cWrap.innerHTML = '';
+  document.getElementById('nextWrap').innerHTML = '';
+  q.options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.textContent = opt;
+    b.onclick = ()=>selectAnswer(opt);
+    cWrap.appendChild(b);
+  });
+}
+
+function selectAnswer(opt){
+  const q = quiz[cur];
+  const buttons = document.querySelectorAll('#choices .choice-btn');
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.correct) b.classList.add('correct');
+    else if(b.textContent === opt && opt !== q.correct) b.classList.add('incorrect');
+  });
+  if(opt === q.correct) score++;
+  const nextWrap = document.getElementById('nextWrap');
+  const btn = document.createElement('button');
+  btn.className = 'next-btn';
+  btn.textContent = (cur < quiz.length-1) ? 'Suivant →' : 'Voir le résultat';
+  btn.onclick = ()=>{
+    cur++;
+    if(cur < quiz.length) renderQ();
+    else showResult();
+  };
+  nextWrap.appendChild(btn);
+}
+
+function showResult(){
+  document.getElementById('screenQuiz').classList.add('hidden');
+  document.getElementById('screenResult').classList.remove('hidden');
+  document.getElementById('resScore').textContent = score+'/'+quiz.length;
+  const pct = Math.round(score/quiz.length*100);
+  let msg = 'Continue à réviser, tu vas progresser !';
+  if(pct>=90) msg = 'Excellent ! Maîtrise quasi parfaite.';
+  else if(pct>=75) msg = 'Très bien, presque tout est acquis.';
+  else if(pct>=50) msg = 'Pas mal, encore un peu de révision.';
+  document.getElementById('resMsg').textContent = msg;
+}
+</script>
+</body>
+</html>
