@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test — V09 · Phrases Utiles en Anglais</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;--bg2:#171614;--bg3:#1e1c19;
+  --gold:#c9a84c;--gold2:#e8c96a;--cream:#f0ead8;
+  --muted:#7a7060;--border:#2a2820;
+  --ok:#5a9e52;--ok-bg:#1a2e18;--ok-border:#3a6e34;
+  --bad:#c0574a;--bad-bg:#2e1614;--bad-border:#7a3028;
+}
+body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px}
+.wrap{max-width:560px;width:100%}
+.hdr{text-align:center;margin-bottom:24px}
+.hdr-code{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.hdr-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.hdr-sub{font-size:.85rem;color:var(--muted);font-style:italic}
+.back-link{display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px}
+.back-link:hover{border-color:var(--gold);color:var(--gold)}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;margin-top:8px}
+
+/* Start screen */
+.opts{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.opt-row{display:flex;gap:8px}
+.opt-btn{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cream);cursor:pointer;transition:all .15s;text-align:center}
+.opt-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.1)}
+.opt-label{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.start-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:13px;font-size:.88rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700;margin-top:6px;transition:opacity .15s}
+.start-btn:hover{opacity:.85}
+
+/* Quiz screen */
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.progress-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.qword{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--cream);margin-bottom:20px;text-align:center;padding:14px;background:var(--bg3);border-radius:8px}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:.85rem;color:var(--cream);cursor:pointer;text-align:left;transition:all .15s;font-family:'Source Serif 4',serif}
+.choice-btn:hover:not(:disabled){border-color:var(--gold)}
+.choice-btn:disabled{cursor:default}
+.choice-btn.correct{border-color:var(--ok-border);background:var(--ok-bg);color:var(--ok)}
+.choice-btn.incorrect{border-color:var(--bad-border);background:var(--bad-bg);color:var(--bad)}
+.next-wrap{margin-top:16px;text-align:center;min-height:44px}
+.next-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:10px 28px;font-size:.8rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700}
+.next-btn:hover{opacity:.85}
+
+/* Result screen */
+.result-score{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);text-align:center;margin:12px 0 4px}
+.result-label{text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:20px;font-family:'JetBrains Mono',monospace}
+.result-msg{text-align:center;font-size:.95rem;color:var(--cream);margin-bottom:22px;font-style:italic}
+.retry-btn{width:100%;background:transparent;border:2px solid var(--gold);border-radius:8px;padding:12px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--gold);font-weight:700;letter-spacing:.03em;transition:all .2s}
+.retry-btn:hover{background:var(--gold);color:var(--bg)}
+
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-code">V09 — Test aléatoire</div>
+    <div class="hdr-title">Phrases Utiles en Anglais</div>
+    <div class="hdr-sub">Teste-toi sur les phrases utiles</div>
+    <a class="back-link" href="../index.html">← Retour au hub</a>
+  </div>
+
+  <div class="card" id="screenStart">
+    <div class="opt-label">Sens du test</div>
+    <div class="opt-row" id="dirRow">
+      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
+      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
+    </div>
+    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-row" id="lenRow">
+      <button class="opt-btn" data-n="10">10</button>
+      <button class="opt-btn active" data-n="15">15</button>
+      <button class="opt-btn" data-n="20">20</button>
+      <button class="opt-btn" data-n="40">Max (40)</button>
+    </div>
+    <button class="start-btn" id="startBtn">🎲 Générer un test aléatoire</button>
+  </div>
+
+  <div class="card hidden" id="screenQuiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progText">0 / 0</div>
+    </div>
+    <div class="qnum" id="qnum">Question 1</div>
+    <div class="qword" id="qword"></div>
+    <div class="choices" id="choices"></div>
+    <div class="next-wrap" id="nextWrap"></div>
+  </div>
+
+  <div class="card hidden" id="screenResult">
+    <div class="result-score" id="resScore">0/0</div>
+    <div class="result-label">RÉSULTAT</div>
+    <div class="result-msg" id="resMsg"></div>
+    <button class="retry-btn" id="retryBtn">🎲 Nouveau test aléatoire</button>
+  </div>
+</div>
+
+<script>
+const DATA = [{"fr": "Bonjour !", "en": "Hello!"}, {"fr": "À bientôt !", "en": "See you soon!"}, {"fr": "Allons-y.", "en": "Let’s go."}, {"fr": "Attends-moi ici.", "en": "Wait for me here."}, {"fr": "Attends.", "en": "Wait."}, {"fr": "Au revoir !", "en": "Goodbye!"}, {"fr": "Bonne chance !", "en": "Good luck!"}, {"fr": "C’est délicieux.", "en": "It’s delicious."}, {"fr": "C’est difficile.", "en": "It’s difficult."}, {"fr": "C’est facile.", "en": "It’s easy."}, {"fr": "C’est mon nouveau téléphone.", "en": "It’s my new phone."}, {"fr": "C’est par là.", "en": "It’s that way."}, {"fr": "C’est une bonne question.", "en": "That’s a good question."}, {"fr": "C’est assez loin.", "en": "It’s quite far."}, {"fr": "C’est de pire en pire", "en": "It’s getting worse and worse."}, {"fr": "C’est tout près.", "en": "It’s very close."}, {"fr": "C’est une super idée.", "en": "That’s a great idea."}, {"fr": "Ça a l’air bon.", "en": "It looks good."}, {"fr": "Ça coûte trop cher.", "en": "It’s too expensive."}, {"fr": "Ça m’est égal.", "en": "I don’t mind."}, {"fr": "Ça ne fait rien.", "en": "It doesn’t matter."}, {"fr": "Ça ne m’intéresse pas.", "en": "I’m not interested."}, {"fr": "Ça ne me dérange pas.", "en": "It doesn’t bother me."}, {"fr": "Ce n’est pas grave.", "en": "It’s not serious."}, {"fr": "Ce n’est pas loin.", "en": "It’s not far."}, {"fr": "De rien.", "en": "You’re welcome."}, {"fr": "Donne-moi ça.", "en": "Give me that."}, {"fr": "Donne-moi une minute.", "en": "Give me a minute."}, {"fr": "Êtes-vous prêt ?", "en": "Are you ready?"}, {"fr": "Fais-moi confiance !", "en": "Trust me!"}, {"fr": "Il a l’air perplexe.", "en": "He looks perplexed."}, {"fr": "Il fait beau aujourd’hui.", "en": "It’s nice weather today."}, {"fr": "Il faut qu’on parle.", "en": "We need to talk."}, {"fr": "Il faut que je mange.", "en": "I need to eat."}, {"fr": "J’ai beaucoup de travail.", "en": "I have a lot of work."}, {"fr": "J’ai réservé une chambre.", "en": "I booked a room."}, {"fr": "J’aime ça !", "en": "I like that!"}, {"fr": "J’en ai aucune idée.", "en": "I have no idea."}, {"fr": "J’ai de la fièvre", "en": "I have a fever."}, {"fr": "J’ai mal à la tête", "en": "I have a headache."}, {"fr": "J’ai mal aux dents.", "en": "I have a toothache."}, {"fr": "Je cherche des chaussures.", "en": "I’m looking for shoes."}, {"fr": "Je cherche du travail.", "en": "I’m looking for a job."}, {"fr": "Je dois y aller.", "en": "I have to go."}, {"fr": "Je m’appelle [prénom].", "en": "My name is [name]."}, {"fr": "Je me sens bien.", "en": "I feel good."}, {"fr": "Je me suis perdu.", "en": "I am lost."}, {"fr": "Je n’ai pas le temps.", "en": "I don’t have time."}, {"fr": "Je n’aime pas ça.", "en": "I don’t like that."}, {"fr": "Je n’en crois pas mes yeux !", "en": "I can’t believe my eyes!"}, {"fr": "Je n’y arrive pas.", "en": "I can’t do it."}, {"fr": "Je ne comprends pas.", "en": "I don’t understand."}, {"fr": "Je ne me sens pas bien.", "en": "I don’t feel well."}, {"fr": "Je ne peux pas.", "en": "I can’t."}, {"fr": "Je ne sais pas trop.", "en": "I’m not sure."}, {"fr": "Je ne sais pas.", "en": "I don’t know."}, {"fr": "Je ne suis pas d’accord.", "en": "I disagree."}, {"fr": "Je ne vous entends pas bien.", "en": "I can’t hear you well."}, {"fr": "Je suis content de te voir.", "en": "I’m glad to see you."}, {"fr": "Je suis d’accord.", "en": "I agree."}, {"fr": "Je suis désolé(e) de vous déranger.", "en": "I’m sorry to bother you."}, {"fr": "Je suis désolé(e).", "en": "I’m sorry."}, {"fr": "Je suis en avance.", "en": "I’m early."}, {"fr": "Je suis en retard.", "en": "I’m late."}, {"fr": "Je suis en train d’apprendre le français.", "en": "I’m learning French."}, {"fr": "Je suis étranger(ère).", "en": "I am a foreigner."}, {"fr": "Je suis fatigué(e).", "en": "I am tired."}, {"fr": "Je suis heureux(se).", "en": "I am happy."}, {"fr": "Je suis ici.", "en": "I am here."}, {"fr": "Je suis intéressé(e).", "en": "I am interested."}, {"fr": "Je suis libre.", "en": "I am free."}, {"fr": "Je suis occupé(e).", "en": "I am busy."}, {"fr": "Je suis perdu(e).", "en": "I am lost."}, {"fr": "Je suis prêt.", "en": "I am ready."}, {"fr": "Je suis très fatigué.", "en": "I am very tired."}, {"fr": "Je suis triste.", "en": "I am sad."}, {"fr": "Je vais m’en occuper.", "en": "I’ll take care of it."}, {"fr": "Je vais m’habiller.", "en": "I’m going to get dressed."}, {"fr": "Je vais y aller en train.", "en": "I’m going to go by train."}, {"fr": "Je veux y aller.", "en": "I want to go there."}, {"fr": "Je vous aime.", "en": "I love you."}, {"fr": "Je vous déteste.", "en": "I hate you."}, {"fr": "Je vous souhaite une bonne journée !", "en": "Have a nice day!"}, {"fr": "Merci beaucoup !", "en": "Thank you very much!"}, {"fr": "Merci de votre aide.", "en": "Thank you for your help."}, {"fr": "Mon choix est fait.", "en": "My choice is made."}, {"fr": "Ne t’inquiète pas.", "en": "Don’t worry."}, {"fr": "Nous sommes du même avis.", "en": "We are of the same opinion."}, {"fr": "Pardon, pouvez-vous répéter ?", "en": "Sorry, can you repeat?"}, {"fr": "Pas du tout.", "en": "Not at all."}, {"fr": "Quel dommage !", "en": "What a pity!"}, {"fr": "Repose-toi bien.", "en": "Rest well."}, {"fr": "S’il vous plaît.", "en": "Please."}, {"fr": "Suis-moi.", "en": "Follow me."}, {"fr": "Tiens-moi au courant.", "en": "Keep me informed."}, {"fr": "Tu devrais essayer.", "en": "You should try."}, {"fr": "Tu devrais venir.", "en": "You should come."}, {"fr": "Viens avec moi.", "en": "Come with me."}, {"fr": "Viens ici.", "en": "Come here."}];
+let dir = 'fr2en';
+let qcount = 15;
+let quiz = [];
+let cur = 0;
+let score = 0;
+
+document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); dir = b.dataset.dir;
+  };
+});
+document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); qcount = parseInt(b.dataset.n);
+  };
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildQuiz(){
+  const pool = shuffle(DATA);
+  quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
+    const question = dir==='fr2en' ? item.fr : item.en;
+    const correct = dir==='fr2en' ? item.en : item.fr;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const distractors = shuffle(distractorPool).slice(0,3);
+    const options = shuffle([correct, ...distractors]);
+    return {question, correct, options};
+  });
+  cur = 0; score = 0;
+}
+
+document.getElementById('startBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenStart').classList.add('hidden');
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+document.getElementById('retryBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+
+function renderQ(){
+  const q = quiz[cur];
+  document.getElementById('progFill').style.width = ((cur)/quiz.length*100)+'%';
+  document.getElementById('progText').textContent = (cur+1)+' / '+quiz.length;
+  document.getElementById('qnum').textContent = 'Question '+(cur+1);
+  document.getElementById('qword').textContent = q.question;
+  const cWrap = document.getElementById('choices');
+  cWrap.innerHTML = '';
+  document.getElementById('nextWrap').innerHTML = '';
+  q.options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.textContent = opt;
+    b.onclick = ()=>selectAnswer(opt);
+    cWrap.appendChild(b);
+  });
+}
+
+function selectAnswer(opt){
+  const q = quiz[cur];
+  const buttons = document.querySelectorAll('#choices .choice-btn');
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.correct) b.classList.add('correct');
+    else if(b.textContent === opt && opt !== q.correct) b.classList.add('incorrect');
+  });
+  if(opt === q.correct) score++;
+  const nextWrap = document.getElementById('nextWrap');
+  const btn = document.createElement('button');
+  btn.className = 'next-btn';
+  btn.textContent = (cur < quiz.length-1) ? 'Suivant →' : 'Voir le résultat';
+  btn.onclick = ()=>{
+    cur++;
+    if(cur < quiz.length) renderQ();
+    else showResult();
+  };
+  nextWrap.appendChild(btn);
+}
+
+function showResult(){
+  document.getElementById('screenQuiz').classList.add('hidden');
+  document.getElementById('screenResult').classList.remove('hidden');
+  document.getElementById('resScore').textContent = score+'/'+quiz.length;
+  const pct = Math.round(score/quiz.length*100);
+  let msg = 'Continue à réviser, tu vas progresser !';
+  if(pct>=90) msg = 'Excellent ! Maîtrise quasi parfaite.';
+  else if(pct>=75) msg = 'Très bien, presque tout est acquis.';
+  else if(pct>=50) msg = 'Pas mal, encore un peu de révision.';
+  document.getElementById('resMsg').textContent = msg;
+}
+</script>
+</body>
+</html>
