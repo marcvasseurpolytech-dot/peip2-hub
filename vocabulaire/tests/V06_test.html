@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test — V06 · 100 Phrasal Verbs to Know</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;--bg2:#171614;--bg3:#1e1c19;
+  --gold:#c9a84c;--gold2:#e8c96a;--cream:#f0ead8;
+  --muted:#7a7060;--border:#2a2820;
+  --ok:#5a9e52;--ok-bg:#1a2e18;--ok-border:#3a6e34;
+  --bad:#c0574a;--bad-bg:#2e1614;--bad-border:#7a3028;
+}
+body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px}
+.wrap{max-width:560px;width:100%}
+.hdr{text-align:center;margin-bottom:24px}
+.hdr-code{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.hdr-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.hdr-sub{font-size:.85rem;color:var(--muted);font-style:italic}
+.back-link{display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px}
+.back-link:hover{border-color:var(--gold);color:var(--gold)}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;margin-top:8px}
+
+/* Start screen */
+.opts{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.opt-row{display:flex;gap:8px}
+.opt-btn{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cream);cursor:pointer;transition:all .15s;text-align:center}
+.opt-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.1)}
+.opt-label{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.start-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:13px;font-size:.88rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700;margin-top:6px;transition:opacity .15s}
+.start-btn:hover{opacity:.85}
+
+/* Quiz screen */
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.progress-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.qword{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--cream);margin-bottom:20px;text-align:center;padding:14px;background:var(--bg3);border-radius:8px}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:.85rem;color:var(--cream);cursor:pointer;text-align:left;transition:all .15s;font-family:'Source Serif 4',serif}
+.choice-btn:hover:not(:disabled){border-color:var(--gold)}
+.choice-btn:disabled{cursor:default}
+.choice-btn.correct{border-color:var(--ok-border);background:var(--ok-bg);color:var(--ok)}
+.choice-btn.incorrect{border-color:var(--bad-border);background:var(--bad-bg);color:var(--bad)}
+.next-wrap{margin-top:16px;text-align:center;min-height:44px}
+.next-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:10px 28px;font-size:.8rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700}
+.next-btn:hover{opacity:.85}
+
+/* Result screen */
+.result-score{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);text-align:center;margin:12px 0 4px}
+.result-label{text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:20px;font-family:'JetBrains Mono',monospace}
+.result-msg{text-align:center;font-size:.95rem;color:var(--cream);margin-bottom:22px;font-style:italic}
+.retry-btn{width:100%;background:transparent;border:2px solid var(--gold);border-radius:8px;padding:12px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--gold);font-weight:700;letter-spacing:.03em;transition:all .2s}
+.retry-btn:hover{background:var(--gold);color:var(--bg)}
+
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-code">V06 — Test aléatoire</div>
+    <div class="hdr-title">100 Phrasal Verbs to Know</div>
+    <div class="hdr-sub">Teste-toi sur les phrasal verbs</div>
+    <a class="back-link" href="../index.html">← Retour au hub</a>
+  </div>
+
+  <div class="card" id="screenStart">
+    <div class="opt-label">Sens du test</div>
+    <div class="opt-row" id="dirRow">
+      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
+      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
+    </div>
+    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-row" id="lenRow">
+      <button class="opt-btn" data-n="10">10</button>
+      <button class="opt-btn active" data-n="15">15</button>
+      <button class="opt-btn" data-n="20">20</button>
+      <button class="opt-btn" data-n="40">Max (40)</button>
+    </div>
+    <button class="start-btn" id="startBtn">🎲 Générer un test aléatoire</button>
+  </div>
+
+  <div class="card hidden" id="screenQuiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progText">0 / 0</div>
+    </div>
+    <div class="qnum" id="qnum">Question 1</div>
+    <div class="qword" id="qword"></div>
+    <div class="choices" id="choices"></div>
+    <div class="next-wrap" id="nextWrap"></div>
+  </div>
+
+  <div class="card hidden" id="screenResult">
+    <div class="result-score" id="resScore">0/0</div>
+    <div class="result-label">RÉSULTAT</div>
+    <div class="result-msg" id="resMsg"></div>
+    <button class="retry-btn" id="retryBtn">🎲 Nouveau test aléatoire</button>
+  </div>
+</div>
+
+<script>
+const DATA = [{"fr": "ask out", "en": "inviter à sortir (rendez-vous galant)"}, {"fr": "bear with", "en": "patienter"}, {"fr": "break up", "en": "rompre (une relation)"}, {"fr": "bring up", "en": "élever (un enfant)"}, {"fr": "call back", "en": "rappeler (au téléphone)"}, {"fr": "cheer up", "en": "reprendre courage"}, {"fr": "drop by / in", "en": "passer voir"}, {"fr": "get along (with)", "en": "s'entendre (avec quelqu'un)"}, {"fr": "go out", "en": "sortir (socialement"}, {"fr": "hang on", "en": "attendre (au téléphone)"}, {"fr": "hold on", "en": "attendre un instant"}, {"fr": "keep up (with)", "en": "suivre le rythme"}, {"fr": "let down", "en": "décevoir (quelqu'un)"}, {"fr": "look after", "en": "s'occuper de"}, {"fr": "look forward to", "en": "avoir hâte de"}, {"fr": "make up", "en": "se réconcilier"}, {"fr": "point out", "en": "faire remarquer"}, {"fr": "put up with", "en": "tolérer"}, {"fr": "show off", "en": "frimer"}, {"fr": "speak up", "en": "parler plus fort"}, {"fr": "stand by", "en": "être prêt à intervenir"}, {"fr": "tell off", "en": "gronder"}, {"fr": "turn down", "en": "refuser (une offre)"}, {"fr": "cut off", "en": "couper (une ligne téléphonique"}, {"fr": "hang up", "en": "raccrocher (le téléphone)"}, {"fr": "pick up", "en": "ramasser"}, {"fr": "plug in", "en": "brancher (un appareil électrique)"}, {"fr": "put away", "en": "ranger"}, {"fr": "put on", "en": "mettre (un vêtement)"}, {"fr": "switch off", "en": "éteindre (un appareil)"}, {"fr": "switch on", "en": "allumer (un appareil)"}, {"fr": "take off", "en": "enlever (un vêtement)"}, {"fr": "take out", "en": "sortir"}, {"fr": "tear up", "en": "déchirer en morceaux"}, {"fr": "throw away / out", "en": "jeter"}, {"fr": "turn off", "en": "éteindre (une lumière"}, {"fr": "turn on", "en": "allumer (une lumière"}, {"fr": "break in / into", "en": "faire irruption"}, {"fr": "bring back", "en": "rapporter"}, {"fr": "catch up", "en": "rattraper (quelqu'un ou son retard)"}, {"fr": "check in", "en": "s'enregistrer (à l'hôtel"}, {"fr": "check out", "en": "quitter (l'hôtel)"}, {"fr": "come back", "en": "revenir"}, {"fr": "come out", "en": "sortir"}, {"fr": "dress up", "en": "se déguiser"}, {"fr": "drop off", "en": "déposer (quelqu'un ou quelque chose)"}, {"fr": "eat out", "en": "manger à l'extérieur"}, {"fr": "get away", "en": "s'échapper"}, {"fr": "get back", "en": "revenir"}, {"fr": "get in / into", "en": "entrer (dans une voiture"}, {"fr": "get off", "en": "descendre (du bus"}, {"fr": "get on", "en": "monter (dans le bus"}, {"fr": "get up", "en": "se lever"}, {"fr": "grow up", "en": "grandir"}, {"fr": "lie down", "en": "s'allonger"}, {"fr": "pull over", "en": "s'arrêter sur le bas-côté"}, {"fr": "run away", "en": "s'enfuir"}, {"fr": "run into", "en": "rencontrer par hasard"}, {"fr": "turn around", "en": "se retourner"}, {"fr": "turn up", "en": "arriver"}, {"fr": "blow up", "en": "exploser"}, {"fr": "break down", "en": "tomber en panne"}, {"fr": "calm down", "en": "se calmer"}, {"fr": "fall apart", "en": "tomber en morceaux"}, {"fr": "get over", "en": "se remettre de (une maladie"}, {"fr": "get through", "en": "traverser (une épreuve)"}, {"fr": "look out", "en": "faire attention (au danger)"}, {"fr": "pass away", "en": "décéder"}, {"fr": "pass out", "en": "s'évanouir"}, {"fr": "slow down", "en": "ralentir"}, {"fr": "speed up", "en": "accélérer"}, {"fr": "stay up", "en": "veiller"}, {"fr": "turn into", "en": "se transformer en"}, {"fr": "warm up", "en": "s'échauffer"}, {"fr": "watch out", "en": "faire attention (danger)"}, {"fr": "wear out", "en": "user"}, {"fr": "act up", "en": "mal fonctionner"}, {"fr": "back up", "en": "soutenir"}, {"fr": "call off", "en": "annuler"}, {"fr": "come across", "en": "trouver par hasard"}, {"fr": "deal with", "en": "traiter"}, {"fr": "do without", "en": "se passer de"}, {"fr": "end up", "en": "finir par"}, {"fr": "figure out", "en": "comprendre"}, {"fr": "fill in / out", "en": "remplir (un formulaire)"}, {"fr": "find out", "en": "découvrir"}, {"fr": "get by", "en": "s'en sortir"}, {"fr": "get out of", "en": "éviter"}, {"fr": "give up", "en": "abandonner"}, {"fr": "look for", "en": "chercher"}, {"fr": "look into", "en": "examiner"}, {"fr": "mess up", "en": "gâcher"}, {"fr": "pay back", "en": "rembourser"}, {"fr": "put off", "en": "reporter"}, {"fr": "run out of", "en": "être à court de"}, {"fr": "set up", "en": "installer"}, {"fr": "take over", "en": "prendre le contrôle"}, {"fr": "take up", "en": "se mettre à (une activité)"}, {"fr": "turn out", "en": "s'avérer"}, {"fr": "work out", "en": "faire de l'exercice"}];
+let dir = 'fr2en';
+let qcount = 15;
+let quiz = [];
+let cur = 0;
+let score = 0;
+
+document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); dir = b.dataset.dir;
+  };
+});
+document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); qcount = parseInt(b.dataset.n);
+  };
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildQuiz(){
+  const pool = shuffle(DATA);
+  quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
+    const question = dir==='fr2en' ? item.fr : item.en;
+    const correct = dir==='fr2en' ? item.en : item.fr;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const distractors = shuffle(distractorPool).slice(0,3);
+    const options = shuffle([correct, ...distractors]);
+    return {question, correct, options};
+  });
+  cur = 0; score = 0;
+}
+
+document.getElementById('startBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenStart').classList.add('hidden');
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+document.getElementById('retryBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+
+function renderQ(){
+  const q = quiz[cur];
+  document.getElementById('progFill').style.width = ((cur)/quiz.length*100)+'%';
+  document.getElementById('progText').textContent = (cur+1)+' / '+quiz.length;
+  document.getElementById('qnum').textContent = 'Question '+(cur+1);
+  document.getElementById('qword').textContent = q.question;
+  const cWrap = document.getElementById('choices');
+  cWrap.innerHTML = '';
+  document.getElementById('nextWrap').innerHTML = '';
+  q.options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.textContent = opt;
+    b.onclick = ()=>selectAnswer(opt);
+    cWrap.appendChild(b);
+  });
+}
+
+function selectAnswer(opt){
+  const q = quiz[cur];
+  const buttons = document.querySelectorAll('#choices .choice-btn');
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.correct) b.classList.add('correct');
+    else if(b.textContent === opt && opt !== q.correct) b.classList.add('incorrect');
+  });
+  if(opt === q.correct) score++;
+  const nextWrap = document.getElementById('nextWrap');
+  const btn = document.createElement('button');
+  btn.className = 'next-btn';
+  btn.textContent = (cur < quiz.length-1) ? 'Suivant →' : 'Voir le résultat';
+  btn.onclick = ()=>{
+    cur++;
+    if(cur < quiz.length) renderQ();
+    else showResult();
+  };
+  nextWrap.appendChild(btn);
+}
+
+function showResult(){
+  document.getElementById('screenQuiz').classList.add('hidden');
+  document.getElementById('screenResult').classList.remove('hidden');
+  document.getElementById('resScore').textContent = score+'/'+quiz.length;
+  const pct = Math.round(score/quiz.length*100);
+  let msg = 'Continue à réviser, tu vas progresser !';
+  if(pct>=90) msg = 'Excellent ! Maîtrise quasi parfaite.';
+  else if(pct>=75) msg = 'Très bien, presque tout est acquis.';
+  else if(pct>=50) msg = 'Pas mal, encore un peu de révision.';
+  document.getElementById('resMsg').textContent = msg;
+}
+</script>
+</body>
+</html>
