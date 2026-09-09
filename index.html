@@ -452,8 +452,12 @@ function vocabCard(v){
   const doc = `vocabulaire/${v.n}_VOCABULAIRE.pdf`;
   const label = v.n + ' : ' + v.title.replace(/&amp;/g,'&');
   const pid = "v-" + v.n;
+  const testUrl = `vocabulaire/tests/${v.n}_test.html`;
   const testBtn = VOCAB_WITH_TEST.includes(v.n)
-    ? `<a class="btn test" href="vocabulaire/tests/${v.n}_test.html" target="_blank">🎲 Test</a>`
+    ? `<span class="res-pair">
+        <a class="btn test" href="${testUrl}" target="_blank">🎲 Test</a>
+        <a class="wa-icon" href="${waLink('🎲 Test aléatoire — ' + label, testUrl)}" target="_blank" title="Envoyer le test par WhatsApp (lien direct, sans accès au hub)">💬</a>
+      </span>`
     : '';
   return `
   <div class="card${doneClass(pid)}">
