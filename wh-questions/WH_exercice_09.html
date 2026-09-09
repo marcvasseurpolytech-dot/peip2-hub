@@ -54,6 +54,18 @@ main{max-width:600px;margin:0 auto;padding:1rem 1rem 3rem}
 .rbar{height:100%;background:var(--gold);border-radius:4px;transition:width 1s cubic-bezier(.2,1,.3,1)}
 .restart{width:100%;font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;padding:.8rem;border-radius:14px;background:var(--gold);color:var(--navy);border:none;cursor:pointer;transition:.18s;margin-top:1rem}
 .restart:hover{background:var(--gold-l)}
+.recap-toggle{width:100%;margin-top:.7rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;padding:.65rem;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);color:var(--cream);cursor:pointer;transition:.18s}
+.recap-toggle:hover{background:rgba(255,255,255,.12)}
+.recap-list{margin-top:.8rem;display:flex;flex-direction:column;gap:.5rem}
+.recap-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.15rem .2rem}
+.recap-item summary{cursor:pointer;padding:.55rem .7rem;font-size:.88rem;line-height:1.45;list-style:none}
+.recap-item summary::-webkit-details-marker{display:none}
+.recap-item summary::before{content:'▸ ';color:var(--gold)}
+.recap-item[open] summary::before{content:'▾ '}
+.recap-num{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:rgba(250,246,237,.4);margin-right:.4rem}
+.recap-body{padding:0 .7rem .7rem}
+.recap-q{font-size:.85rem;color:var(--gold-l);margin-bottom:.3rem;line-height:1.5}
+.recap-expl{font-size:.78rem;color:rgba(250,246,237,.55);line-height:1.5}
 
 .tag-wh{color:var(--gold);font-weight:800}
 .tag-aux{color:#7fb4ff;font-weight:700}
@@ -138,13 +150,14 @@ function check(user,q){
     if(lev(u,c)<=3)return {status:'ok',missing:[]};
     return {status:'near',missing:[]};
   }
-  if(info.prep && missing.includes(info.prep)){
+  const critical=missing.filter(w=>w===info.wh||(info.aux&&w===info.aux));
+  if(info.prep && missing.includes(info.prep) && critical.length===0){
     return {status:'near',missing,prepMissing:true,prep:info.prep};
   }
   if(missing.every(w=>IGNORABLE.includes(w))){
     return {status:'ok-minor',missing};
   }
-  if(lev(u,c)<=3)return {status:'near',missing};
+  if(critical.length===0 && lev(u,c)<=3)return {status:'near',missing};
   return {status:'ko',missing};
 }
 
@@ -167,6 +180,87 @@ function buildAnnotatedQuestion(q){
     return w;
   }).join(' ');
   return html+(hasQ?'?':'');
+}
+
+function detectTense(qStr){
+  const toks=tokenize(qStr);
+  const has=w=>toks.includes(w);
+  const anyIng=toks.some(w=>/ing$/.test(w));
+  const goingTo=toks.some((w,i)=>w==='going'&&toks[i+1]==='to');
+  if(has('will')&&has('have')&&has('been')&&anyIng)return "futur antérieur en BE + -ING (will have been + -ing)";
+  if(has('had')&&has('been')&&anyIng)return "plus-que-parfait en BE + -ING (had been + -ing)";
+  if((has('has')||has('have'))&&has('been')&&anyIng)return "present perfect en BE + -ING (has/have been + -ing)";
+  if(has('will')&&has('have'))return "futur antérieur (will have + participe passé)";
+  if(has('will')&&has('be')&&anyIng)return "futur en BE + -ING (will be + -ing)";
+  if(has('had'))return "plus-que-parfait (had + participe passé)";
+  if(has('has')||has('have'))return "present perfect (has/have + participe passé)";
+  if((has('was')||has('were'))&&anyIng)return "passé en BE + -ING (was/were + -ing)";
+  if(goingTo)return "futur proche (be going to)";
+  if((has('is')||has('are')||has('am'))&&anyIng)return "présent en BE + -ING (present continuous)";
+  if(has('will'))return "futur simple (will)";
+  if(has('did'))return "prétérit, do-support (did)";
+  if(has('does'))return "présent simple, do-support (does)";
+  if(has('do'))return "présent simple, do-support (do)";
+  return "temps simple (présent ou passé), sans auxiliaire — question sur le sujet";
+}
+
+function whLabel(qStr){
+  const t=norm(qStr);
+  if(t.startsWith('how long'))return 'How long (durée)';
+  if(t.startsWith('how many'))return 'How many + nom dénombrable (quantité)';
+  if(t.startsWith('how much'))return 'How much + nom indénombrable (quantité)';
+  if(t.startsWith('how often'))return 'How often (fréquence)';
+  if(t.startsWith('how far'))return 'How far (distance)';
+  if(t.startsWith('how fast'))return 'How fast (vitesse)';
+  if(t.startsWith('by how much'))return 'By how much (ampleur du changement)';
+  if(t.startsWith('in how many'))return 'In how many + nom (quantité en contexte)';
+  if(t.startsWith('since when'))return 'Since when (point de départ)';
+  if(t.startsWith('how'))return 'How (manière)';
+  if(t.startsWith('who'))return 'Who (personne)';
+  if(t.startsWith('what'))return 'What (chose / action)';
+  if(t.startsWith('where'))return 'Where (lieu)';
+  if(t.startsWith('when'))return 'When (moment)';
+  if(t.startsWith('why'))return 'Why (cause)';
+  return t.split(' ')[0];
+}
+
+function explainQuestion(q){
+  const info=analyze(q.q);
+  const isSubjectQ=!!q.n;
+  const tense=detectTense(q.q);
+  const wh=whLabel(q.q);
+  let structure;
+  if(isSubjectQ){
+    structure="Question sur le SUJET → pas d'inversion, pas d'auxiliaire supplémentaire : mot interrogatif + verbe, ordre normal de la phrase.";
+  } else if(info.aux){
+    structure=`Question sur un complément → inversion : mot interrogatif + auxiliaire (${info.aux}) + sujet + verbe…`;
+  } else {
+    structure="Mot interrogatif suivi du reste de la structure de la phrase.";
+  }
+  const prepNote=info.prep?` La préposition « ${info.prep} », liée au verbe, est reportée en fin de question.`:'';
+  return `${wh} · ${tense}. ${structure}${prepNote}`;
+}
+
+function buildRecap(){
+  return QS.map((q,i)=>{
+    const annotated=buildAnnotatedQuestion(q);
+    const expl=explainQuestion(q);
+    return `<details class="recap-item">
+      <summary><span class="recap-num">Q${i+1}</span>${buildSentenceHtml(q.s,q.u)}</summary>
+      <div class="recap-body">
+        <div class="recap-q">→ ${annotated}</div>
+        <div class="recap-expl">${expl}</div>
+      </div>
+    </details>`;
+  }).join('');
+}
+
+function toggleRecap(){
+  const el=document.getElementById('recapList');
+  const btn=document.getElementById('rt');
+  const show=el.style.display==='none';
+  el.style.display=show?'block':'none';
+  btn.textContent=show?'📖 Masquer le récap':'📖 Voir le récap complet (20 questions)';
 }
 
 function start(){
@@ -209,7 +303,7 @@ function submit(){
   const note=q.n?`<div class="rule-box">${q.n}</div>`:'';
   const fb=document.getElementById('fb');
 
-  if(res.status==='ok'||res.status==='ok-minor'||res.status==='near')ok++;
+  if(res.status==='ok'||res.status==='ok-minor')ok++;
 
   if(res.status==='ok'){
     inp.className='type-input ok';
@@ -253,6 +347,8 @@ function showResults(){
       </div>
       <div class="rbar-wrap"><div class="rbar" id="rb" style="width:0%"></div></div>
     </div>
+    <button class="recap-toggle" id="rt" onclick="toggleRecap()">📖 Voir le récap complet (20 questions)</button>
+    <div class="recap-list" id="recapList" style="display:none">${buildRecap()}</div>
     <button class="restart" onclick="location.reload()">↻ Recommencer l'exercice</button>
   </div>`;
   setTimeout(()=>{const b=document.getElementById('rb');if(b)b.style.width=pct+'%';},200);
