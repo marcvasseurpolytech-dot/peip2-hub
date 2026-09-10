@@ -220,6 +220,13 @@ footer a{color:var(--gold-l);text-decoration:none}
       <div id="whList" style="display:flex;flex-direction:column;gap:.5rem"></div>
     </div>
 
+    <div class="tab-panel" data-panel="g22">
+      <div class="section-title">G22 — Poser des questions sur les mots soulignés</div>
+      <div class="section-sub">10 fiches de 10 phrases (présent → conditionnel passé), à imprimer ou envoyer par WhatsApp</div>
+      <div class="grid" id="g22Grid" style="margin-bottom:1rem"></div>
+      <div id="g22List" style="display:flex;flex-direction:column;gap:.5rem"></div>
+    </div>
+
     <div class="tab-panel" data-panel="vocabbase">
       <div class="section-title">Vocabulaire de base</div>
       <div class="section-sub">Petit vocabulaire illustré + quiz</div>
@@ -271,6 +278,7 @@ const TABS = [
   {id:"vocabulaire", label:"Vocabulaire"},
   {id:"verbes", label:"Verbes irr."},
   {id:"wh", label:"WH Questions"},
+  {id:"g22", label:"WH — Mots soulignés"},
   {id:"vocabbase", label:"Vocab. de base"},
   {id:"wrapup", label:"Wrap-up"},
   {id:"complements", label:"Compléments"},
@@ -528,6 +536,38 @@ for(let i=1;i<=10;i++){
   </div>`;
 }
 document.getElementById("whList").innerHTML = whRows;
+
+/* G22 - WH Questions sur mots soulignes */
+document.getElementById("g22Grid").innerHTML = `
+  <div class="card${doneClass('g22-main')}">
+    <div class="card-head"><span class="badge wh">G22</span><span class="card-title">PDF complet — 100 questions (à imprimer)</span>${progressCheckbox('g22-main')}</div>
+    <div class="btn-row">
+      ${resPair("fiche", "📄", "PDF complet", "cours/G22_ETUDIANT_COMPLET.pdf", "PEIP2 — G22 : 100 questions sur mots soulignes")}
+    </div>
+    ${corrigeBox("corrige-g22", "prof/G22_PROF_CORRIGE.pdf")}
+  </div>`;
+const G22_TITLES = [
+  "Intelligence artificielle & données", "Énergie renouvelable & climat", "Exploration spatiale",
+  "Biotechnologie & santé", "Cybersécurité & réseaux", "Robotique & automatisation",
+  "Télétravail & carrières modernes", "Véhicules électriques & transport",
+  "Informatique quantique & innovation", "Ingénierie durable & villes intelligentes"
+];
+let g22Rows = "";
+for(let i=1;i<=10;i++){
+  const num = String(i).padStart(2,"0");
+  const file = `cours/G22_fiche_${num}.pdf`;
+  const pid = "g22-fiche-" + i;
+  g22Rows += `
+  <div class="list-row${doneClass(pid)}">
+    <span class="badge wh">Fiche ${i}</span>
+    <span class="card-title">${G22_TITLES[i-1]}</span>
+    <div class="btn-row">
+      ${resPair("fiche", "📄", "Ouvrir", file, "PEIP2 — G22, fiche " + i + " : " + G22_TITLES[i-1])}
+    </div>
+    ${progressCheckbox(pid)}
+  </div>`;
+}
+document.getElementById("g22List").innerHTML = g22Rows;
 
 /* Vocabulaire de base */
 document.getElementById("vocabBaseGrid").innerHTML = `
