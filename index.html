@@ -390,7 +390,7 @@ const THEME_CORRIGE_PAGE = {
 
 const THEME_RAPPEL = {
   g02:"extra/g02/", g04:"extra/g04/", g05:"extra/g05/", g06:"extra/g06/", g07:"extra/g07/",
-  g08:"extra/g08/", g10:"extra/g10/", g12:"extra/g12/", g13:"extra/g13/", g19:"extra/g19/", "relative-clauses":"extra/relative-clauses/"
+  g08:"extra/g08/", g10:"extra/g10/", g12:"extra/g12/", g13:"extra/g13/", g19:"extra/g19/", wh:"extra/wh/", "relative-clauses":"extra/relative-clauses/"
 };
 
 function rappelButtons(slug, label){
@@ -518,6 +518,7 @@ document.getElementById("whGrid").innerHTML = `
       ${resPair("cours", "▶", "Cours", "wh-questions/WH_cours.html", "PEIP2 — WH Questions : cours")}
       ${resPair("fiche", "📄", "Fiche", "wh-questions/partie1_wh_questions.pdf", "PEIP2 — WH Questions : fiche")}
     </div>
+    ${rappelButtons("wh")}
     ${corrigeBox("corrige-wh", "prof/WH_questions_correction.pdf")}
   </div>`;
 let whRows = "";
