@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batches 1–2 — Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;--bg2:#171614;--bg3:#1e1c19;
+  --gold:#c9a84c;--gold2:#e8c96a;--cream:#f0ead8;
+  --muted:#7a7060;--border:#2a2820;
+  --ok:#5a9e52;--ok-bg:#1a2e18;--ok-border:#3a6e34;
+  --bad:#c0574a;--bad-bg:#2e1614;--bad-border:#7a3028;
+}
+body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px}
+.wrap{max-width:560px;width:100%}
+.hdr{text-align:center;margin-bottom:24px}
+.hdr-code{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.hdr-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.hdr-sub{font-size:.82rem;color:var(--muted);font-style:italic}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;margin-top:8px}
+
+.opts{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.opt-row{display:flex;gap:8px;flex-wrap:wrap}
+.opt-btn{flex:1;min-width:60px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 6px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--cream);cursor:pointer;transition:all .15s;text-align:center}
+.opt-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.1)}
+.opt-label{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.start-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:13px;font-size:.88rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700;margin-top:6px;transition:opacity .15s}
+.start-btn:hover{opacity:.85}
+
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.progress-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.qtype{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.qword{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--cream);margin-bottom:18px;text-align:center;padding:14px;background:var(--bg3);border-radius:8px}
+.qinstr{font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:14px}
+
+.answer-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.field-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.field-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 12px;font-size:.95rem;color:var(--cream);font-family:'Source Serif 4',serif}
+.field-input:focus{outline:none;border-color:var(--gold)}
+.field-input.correct{border-color:var(--ok-border);background:var(--ok-bg);color:var(--ok)}
+.field-input.incorrect{border-color:var(--bad-border);background:var(--bad-bg);color:var(--bad)}
+.correction-note{font-size:.75rem;color:var(--gold2);margin-top:4px;font-style:italic}
+
+.submit-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:12px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700;margin-top:4px}
+.submit-btn:hover{opacity:.85}
+.next-wrap{margin-top:14px;text-align:center;min-height:44px}
+.next-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:10px 28px;font-size:.8rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700}
+.next-btn:hover{opacity:.85}
+
+.result-score{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);text-align:center;margin:12px 0 4px}
+.result-label{text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:20px;font-family:'JetBrains Mono',monospace}
+.result-msg{text-align:center;font-size:.95rem;color:var(--cream);margin-bottom:22px;font-style:italic}
+.retry-btn{width:100%;background:transparent;border:2px solid var(--gold);border-radius:8px;padding:12px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--gold);font-weight:700;letter-spacing:.03em;transition:all .2s}
+.retry-btn:hover{background:var(--gold);color:var(--bg)}
+
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-code">Verbes irréguliers — Test</div>
+    <div class="hdr-title">Batches 1–2</div>
+    <div class="hdr-sub">Révision cumulée — 40 verbes · 40 verbes</div>
+    <a class="back-link" href="../index.html" style="display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px">← Retour au hub</a>
+  </div>
+
+  <div class="card" id="screenStart">
+    <div class="opt-label">Types de questions</div>
+    <div class="opt-row" id="typeRow">
+      <button class="opt-btn active" data-type="all">Tous types</button>
+      <button class="opt-btn" data-type="forms">Prét/PP</button>
+      <button class="opt-btn" data-type="fr">Français</button>
+    </div>
+    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-row" id="lenRow">
+      <button class="opt-btn" data-n="10">10</button>
+      <button class="opt-btn active" data-n="20">20</button>
+      <button class="opt-btn" data-n="60">Max (60)</button>
+    </div>
+    <button class="start-btn" id="startBtn">🎲 Générer un test aléatoire</button>
+  </div>
+
+  <div class="card hidden" id="screenQuiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progText">0 / 0</div>
+    </div>
+    <div class="qnum" id="qnum">Question 1</div>
+    <div class="qtype" id="qtype"></div>
+    <div class="qword" id="qword"></div>
+    <div class="qinstr" id="qinstr"></div>
+    <div class="answer-fields" id="answerFields"></div>
+    <button class="submit-btn" id="submitBtn">Valider</button>
+    <div class="next-wrap" id="nextWrap"></div>
+  </div>
+
+  <div class="card hidden" id="screenResult">
+    <div class="result-score" id="resScore">0/0</div>
+    <div class="result-label">RÉSULTAT</div>
+    <div class="result-msg" id="resMsg"></div>
+    <button class="retry-btn" id="retryBtn">🎲 Nouveau test aléatoire</button>
+  </div>
+</div>
+
+<script>
+const VERBS = [{"id": 1, "batch": 1, "base": "be", "pret": "was / were", "pp": "been", "fr": "être"}, {"id": 2, "batch": 1, "base": "have", "pret": "had", "pp": "had", "fr": "avoir"}, {"id": 3, "batch": 1, "base": "do", "pret": "did", "pp": "done", "fr": "faire"}, {"id": 4, "batch": 1, "base": "go", "pret": "went", "pp": "gone", "fr": "aller"}, {"id": 5, "batch": 1, "base": "say", "pret": "said", "pp": "said", "fr": "dire"}, {"id": 6, "batch": 1, "base": "get", "pret": "got", "pp": "got", "fr": "obtenir"}, {"id": 7, "batch": 1, "base": "make", "pret": "made", "pp": "made", "fr": "fabriquer / réaliser"}, {"id": 8, "batch": 1, "base": "know", "pret": "knew", "pp": "known", "fr": "savoir / connaître"}, {"id": 9, "batch": 1, "base": "think", "pret": "thought", "pp": "thought", "fr": "penser"}, {"id": 10, "batch": 1, "base": "take", "pret": "took", "pp": "taken", "fr": "prendre"}, {"id": 11, "batch": 1, "base": "see", "pret": "saw", "pp": "seen", "fr": "voir"}, {"id": 12, "batch": 1, "base": "come", "pret": "came", "pp": "come", "fr": "venir"}, {"id": 13, "batch": 1, "base": "give", "pret": "gave", "pp": "given", "fr": "donner"}, {"id": 14, "batch": 1, "base": "find", "pret": "found", "pp": "found", "fr": "trouver"}, {"id": 15, "batch": 1, "base": "tell", "pret": "told", "pp": "told", "fr": "raconter / dire"}, {"id": 16, "batch": 1, "base": "put", "pret": "put", "pp": "put", "fr": "mettre / poser"}, {"id": 17, "batch": 1, "base": "feel", "pret": "felt", "pp": "felt", "fr": "ressentir"}, {"id": 18, "batch": 1, "base": "become", "pret": "became", "pp": "become", "fr": "devenir"}, {"id": 19, "batch": 1, "base": "leave", "pret": "left", "pp": "left", "fr": "partir / laisser"}, {"id": 20, "batch": 1, "base": "keep", "pret": "kept", "pp": "kept", "fr": "garder / maintenir"}, {"id": 21, "batch": 2, "base": "let", "pret": "let", "pp": "let", "fr": "laisser / permettre"}, {"id": 22, "batch": 2, "base": "begin", "pret": "began", "pp": "begun", "fr": "commencer"}, {"id": 23, "batch": 2, "base": "show", "pret": "showed", "pp": "shown", "fr": "montrer"}, {"id": 24, "batch": 2, "base": "bring", "pret": "brought", "pp": "brought", "fr": "apporter"}, {"id": 25, "batch": 2, "base": "write", "pret": "wrote", "pp": "written", "fr": "écrire"}, {"id": 26, "batch": 2, "base": "meet", "pret": "met", "pp": "met", "fr": "rencontrer"}, {"id": 27, "batch": 2, "base": "speak", "pret": "spoke", "pp": "spoken", "fr": "parler"}, {"id": 28, "batch": 2, "base": "hear", "pret": "heard", "pp": "heard", "fr": "entendre"}, {"id": 29, "batch": 2, "base": "sit", "pret": "sat", "pp": "sat", "fr": "s'asseoir"}, {"id": 30, "batch": 2, "base": "stand", "pret": "stood", "pp": "stood", "fr": "se tenir debout"}, {"id": 31, "batch": 2, "base": "lose", "pret": "lost", "pp": "lost", "fr": "perdre"}, {"id": 32, "batch": 2, "base": "pay", "pret": "paid", "pp": "paid", "fr": "payer"}, {"id": 33, "batch": 2, "base": "read", "pret": "read", "pp": "read", "fr": "lire"}, {"id": 34, "batch": 2, "base": "grow", "pret": "grew", "pp": "grown", "fr": "grandir / pousser"}, {"id": 35, "batch": 2, "base": "run", "pret": "ran", "pp": "run", "fr": "courir"}, {"id": 36, "batch": 2, "base": "drive", "pret": "drove", "pp": "driven", "fr": "conduire"}, {"id": 37, "batch": 2, "base": "break", "pret": "broke", "pp": "broken", "fr": "casser"}, {"id": 38, "batch": 2, "base": "buy", "pret": "bought", "pp": "bought", "fr": "acheter"}, {"id": 39, "batch": 2, "base": "send", "pret": "sent", "pp": "sent", "fr": "envoyer"}, {"id": 40, "batch": 2, "base": "build", "pret": "built", "pp": "built", "fr": "construire"}];
+let typeFilter = 'all';
+let qcount = 20;
+let quiz = [];
+let cur = 0;
+let score = 0;
+
+document.querySelectorAll('#typeRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#typeRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); typeFilter = b.dataset.type;
+  };
+});
+document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); qcount = parseInt(b.dataset.n);
+  };
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+const QTYPES_ALL = ['pp','pret','both','fr','pp_from_fr'];
+const QTYPES_FORMS = ['pp','pret','both'];
+const QTYPES_FR = ['fr','pp_from_fr'];
+
+function normalize(s){
+  return (s||'').toLowerCase().trim().replace(/\s+/g,' ');
+}
+function answerMatches(userVal, correctVal){
+  const u = normalize(userVal);
+  if(!u) return false;
+  const alts = correctVal.split('/').map(s=>normalize(s));
+  return alts.includes(u);
+}
+
+function buildQuiz(){
+  const pool = shuffle(VERBS);
+  const chosen = pool.slice(0, Math.min(qcount, VERBS.length));
+  const typePool = typeFilter==='all' ? QTYPES_ALL : (typeFilter==='forms' ? QTYPES_FORMS : QTYPES_FR);
+  quiz = chosen.map(v=>{
+    const qt = typePool[Math.floor(Math.random()*typePool.length)];
+    return {v, qt};
+  });
+  cur = 0; score = 0;
+}
+
+document.getElementById('startBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenStart').classList.add('hidden');
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+document.getElementById('retryBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+
+const TYPE_LABELS = {
+  pp: 'Participe passé', pret: 'Prétérit', both: 'Prétérit + Participe passé',
+  fr: 'Traduction française', pp_from_fr: 'Participe passé (depuis le français)'
+};
+
+function renderQ(){
+  const {v, qt} = quiz[cur];
+  document.getElementById('progFill').style.width = ((cur)/quiz.length*100)+'%';
+  document.getElementById('progText').textContent = (cur+1)+' / '+quiz.length;
+  document.getElementById('qnum').textContent = 'Question '+(cur+1);
+  document.getElementById('qtype').textContent = TYPE_LABELS[qt];
+
+  let shown, instr;
+  if(qt==='pp_from_fr'){ shown = v.fr; instr = 'Donne le participe passé en anglais'; }
+  else if(qt==='fr'){ shown = v.base; instr = 'Donne la traduction française'; }
+  else { shown = v.base; instr = qt==='pp' ? 'Donne le participe passé' : qt==='pret' ? 'Donne le prétérit' : 'Donne le prétérit ET le participe passé'; }
+  document.getElementById('qword').textContent = shown;
+  document.getElementById('qinstr').textContent = instr;
+
+  const fields = document.getElementById('answerFields');
+  fields.innerHTML = '';
+  if(qt==='both'){
+    fields.innerHTML = `
+      <div><div class="field-label">Prétérit</div><input class="field-input" id="ans0" autocomplete="off"></div>
+      <div><div class="field-label">Participe passé</div><input class="field-input" id="ans1" autocomplete="off"></div>`;
+  } else {
+    fields.innerHTML = `<div><input class="field-input" id="ans0" autocomplete="off" placeholder="Ta réponse"></div>`;
+  }
+  document.getElementById('nextWrap').innerHTML = '';
+  document.getElementById('submitBtn').classList.remove('hidden');
+  document.getElementById('submitBtn').disabled = false;
+  setTimeout(()=>{ const el = document.getElementById('ans0'); if(el) el.focus(); }, 50);
+}
+
+document.getElementById('submitBtn').onclick = checkAnswer;
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && !document.getElementById('submitBtn').classList.contains('hidden') && !document.getElementById('submitBtn').disabled){
+    checkAnswer();
+  }
+});
+
+function checkAnswer(){
+  const {v, qt} = quiz[cur];
+  const ans0 = document.getElementById('ans0');
+  let isCorrect = false;
+  let correctText = '';
+
+  if(qt==='pp'){
+    isCorrect = answerMatches(ans0.value, v.pp);
+    correctText = v.pp;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='pret'){
+    isCorrect = answerMatches(ans0.value, v.pret);
+    correctText = v.pret;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='fr'){
+    isCorrect = answerMatches(ans0.value, v.fr);
+    correctText = v.fr;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='pp_from_fr'){
+    isCorrect = answerMatches(ans0.value, v.pp);
+    correctText = v.pp;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='both'){
+    const ans1 = document.getElementById('ans1');
+    const c0 = answerMatches(ans0.value, v.pret);
+    const c1 = answerMatches(ans1.value, v.pp);
+    isCorrect = c0 && c1;
+    ans0.classList.add(c0?'correct':'incorrect');
+    ans1.classList.add(c1?'correct':'incorrect');
+    correctText = v.pret+' / '+v.pp;
+  }
+
+  ans0.disabled = true;
+  if(document.getElementById('ans1')) document.getElementById('ans1').disabled = true;
+  document.getElementById('submitBtn').disabled = true;
+
+  if(!isCorrect){
+    const note = document.createElement('div');
+    note.className = 'correction-note';
+    note.textContent = '✅ Réponse attendue : ' + correctText;
+    document.getElementById('answerFields').appendChild(note);
+  }
+  if(isCorrect) score++;
+
+  const nextWrap = document.getElementById('nextWrap');
+  const btn = document.createElement('button');
+  btn.className = 'next-btn';
+  btn.textContent = (cur < quiz.length-1) ? 'Suivant →' : 'Voir le résultat';
+  btn.onclick = ()=>{
+    cur++;
+    if(cur < quiz.length) renderQ();
+    else showResult();
+  };
+  nextWrap.appendChild(btn);
+  btn.focus();
+}
+
+function showResult(){
+  document.getElementById('screenQuiz').classList.add('hidden');
+  document.getElementById('screenResult').classList.remove('hidden');
+  document.getElementById('resScore').textContent = score+'/'+quiz.length;
+  const pct = Math.round(score/quiz.length*100);
+  let msg = 'Continue à réviser, tu vas progresser !';
+  if(pct>=90) msg = 'Excellent ! Maîtrise quasi parfaite.';
+  else if(pct>=75) msg = 'Très bien, presque tout est acquis.';
+  else if(pct>=50) msg = 'Pas mal, encore un peu de révision.';
+  document.getElementById('resMsg').textContent = msg;
+}
+</script>
+</body>
+</html>
