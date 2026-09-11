@@ -2,403 +2,291 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Verbes irréguliers · Batch 5 · Pour aller plus loin</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch 5 — Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0d1b2a;--gold:#C9A020;--gold-l:#e8b84b;--cream:#FAF6ED;
-  --red:#ef476f;--red-l:#ffb3c6;--amber:#ffd166;
-  --green:#2ecc71;--green-l:#a8f0c0;
-  --col:#a97bd4;
+  --bg:#0f0e0c;--bg2:#171614;--bg3:#1e1c19;
+  --gold:#c9a84c;--gold2:#e8c96a;--cream:#f0ead8;
+  --muted:#7a7060;--border:#2a2820;
+  --ok:#5a9e52;--ok-bg:#1a2e18;--ok-border:#3a6e34;
+  --bad:#c0574a;--bad-bg:#2e1614;--bad-border:#7a3028;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%;background:var(--navy);color:var(--cream);font-family:'Source Serif 4',serif}
-.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:drift 20s ease-in-out infinite alternate}
-.o1{width:500px;height:500px;background:color-mix(in srgb,var(--col) 12%,transparent);top:-160px;left:-130px}
-.o2{width:400px;height:400px;background:color-mix(in srgb,var(--col) 7%,transparent);bottom:-120px;right:-80px;animation-delay:-8s}
-@keyframes drift{from{transform:translate(0,0)}to{transform:translate(45px,30px)}}
+body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px}
+.wrap{max-width:560px;width:100%}
+.hdr{text-align:center;margin-bottom:24px}
+.hdr-code{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.hdr-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.hdr-sub{font-size:.82rem;color:var(--muted);font-style:italic}
 
-/* HDR */
-.hdr{position:sticky;top:0;z-index:100;background:rgba(13,27,42,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);padding:.55rem 1.4rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
-.brand{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);flex-shrink:0}
-.batch-tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;padding:.2rem .65rem;border-radius:12px;background:color-mix(in srgb,var(--col) 22%,transparent);color:var(--col);border:1px solid color-mix(in srgb,var(--col) 40%,transparent);flex-shrink:0}
-.timer{font-family:'JetBrains Mono',monospace;font-size:.98rem;font-weight:700;min-width:3.5rem;text-align:center;padding:.16rem .5rem;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--cream)}
-.timer.warn{color:var(--amber);animation:blink 1s infinite}
-.timer.danger{color:var(--red-l);animation:blink .5s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.prog-w{flex:1;min-width:80px;max-width:180px}
-.prog-t{height:4px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
-.prog-f{height:100%;background:var(--col);border-radius:3px;transition:width .3s}
-.prog-l{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(250,246,237,.3);margin-top:.2rem;text-align:right}
-.sc{font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:.18rem .55rem;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);color:rgba(250,246,237,.6);flex-shrink:0}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;margin-top:8px}
 
-/* MAIN */
-main{max-width:580px;margin:0 auto;padding:1rem 1rem 3rem;position:relative;z-index:1}
+.opts{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.opt-row{display:flex;gap:8px;flex-wrap:wrap}
+.opt-btn{flex:1;min-width:60px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 6px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--cream);cursor:pointer;transition:all .15s;text-align:center}
+.opt-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.1)}
+.opt-label{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.start-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:13px;font-size:.88rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700;margin-top:6px;transition:opacity .15s}
+.start-btn:hover{opacity:.85}
 
-/* SPLASH */
-.splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 54px);gap:1.3rem;text-align:center;padding:1rem}
-.splash h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.2rem);font-weight:900;line-height:1.1}
-.splash h1 span{color:var(--col)}
-.splash p{font-size:.92rem;color:rgba(250,246,237,.52);max-width:34ch;line-height:1.65}
-.info-pills{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
-.ip{font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.22rem .65rem;border-radius:13px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);color:rgba(250,246,237,.52)}
-.start-btn{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.88rem;letter-spacing:.08em;padding:.72rem 2.2rem;border-radius:28px;background:var(--col);color:var(--navy);border:none;cursor:pointer;transition:.2s}
-.start-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.progress-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.qtype{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.qword{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--cream);margin-bottom:18px;text-align:center;padding:14px;background:var(--bg3);border-radius:8px}
+.qinstr{font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:14px}
 
-/* QUESTION CARD */
-.qcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:1.4rem 1.4rem 1.1rem;margin-bottom:1rem;animation:su .28s both}
-@keyframes su{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.qmeta{display:flex;align-items:center;gap:.5rem;margin-bottom:.8rem}
-.qnum{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(250,246,237,.28);letter-spacing:.1em}
-.qt-badge{font-family:'JetBrains Mono',monospace;font-size:.58rem;padding:.16rem .5rem;border-radius:9px;background:rgba(255,255,255,.07);color:rgba(250,246,237,.4)}
+.answer-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.field-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.field-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 12px;font-size:.95rem;color:var(--cream);font-family:'Source Serif 4',serif}
+.field-input:focus{outline:none;border-color:var(--gold)}
+.field-input.correct{border-color:var(--ok-border);background:var(--ok-bg);color:var(--ok)}
+.field-input.incorrect{border-color:var(--bad-border);background:var(--bad-bg);color:var(--bad)}
+.correction-note{font-size:.75rem;color:var(--gold2);margin-top:4px;font-style:italic}
 
-/* Verb display */
-.verb-inf{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--cream);text-align:center;margin-bottom:.2rem}
-.verb-tr{font-family:'Source Serif 4',serif;font-style:italic;font-size:.92rem;color:rgba(250,246,237,.35);text-align:center;margin-bottom:1.1rem}
-.ask-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--col);text-align:center;margin-bottom:.85rem}
+.submit-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:12px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700;margin-top:4px}
+.submit-btn:hover{opacity:.85}
+.next-wrap{margin-top:14px;text-align:center;min-height:44px}
+.next-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:10px 28px;font-size:.8rem;font-family:'JetBrains Mono',monospace;cursor:pointer;font-weight:700}
+.next-btn:hover{opacity:.85}
 
-/* TYPE-IN */
-.type-row{display:flex;gap:.5rem;align-items:center}
-.type-input{flex:1;font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);border-radius:10px;color:var(--cream);padding:.55rem .8rem;outline:none;transition:.18s;-webkit-appearance:none}
-.type-input:focus{border-color:var(--col);background:rgba(255,255,255,.11)}
-.type-input.ok{border-color:var(--green);background:rgba(46,204,113,.12);color:var(--green-l)}
-.type-input.near{border-color:var(--amber);background:rgba(255,209,102,.1);color:var(--amber)}
-.type-input.ko{border-color:var(--red);background:rgba(239,71,111,.13);color:var(--red-l)}
-.val-btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;padding:.55rem 1.1rem;border-radius:10px;background:var(--col);color:var(--navy);border:none;cursor:pointer;transition:.18s;flex-shrink:0}
-.val-btn:hover{filter:brightness(1.1)}
-.val-btn:disabled{opacity:.35;pointer-events:none}
+.result-score{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);text-align:center;margin:12px 0 4px}
+.result-label{text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:20px;font-family:'JetBrains Mono',monospace}
+.result-msg{text-align:center;font-size:.95rem;color:var(--cream);margin-bottom:22px;font-style:italic}
+.retry-btn{width:100%;background:transparent;border:2px solid var(--gold);border-radius:8px;padding:12px;font-size:.85rem;font-family:'JetBrains Mono',monospace;cursor:pointer;color:var(--gold);font-weight:700;letter-spacing:.03em;transition:all .2s}
+.retry-btn:hover{background:var(--gold);color:var(--bg)}
 
-/* TRUE / FALSE */
-.shown-form{
-  font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;
-  text-align:center;padding:.8rem 1rem;
-  border-radius:14px;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.12);
-  color:var(--cream);margin-bottom:.9rem;
-  transition:all .35s ease;
-}
-.shown-form.reveal-ok{background:rgba(46,204,113,.14);border-color:var(--green);color:var(--green-l)}
-.shown-form.reveal-ko{background:rgba(239,71,111,.14);border-color:var(--red);color:var(--red-l);text-decoration:line-through}
-.tf-btns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
-.tf-btn{
-  font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;
-  padding:.65rem;border-radius:12px;border:1.5px solid rgba(255,255,255,.18);
-  background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;transition:.2s;
-}
-.tf-btn:hover{background:rgba(255,255,255,.12)}
-.tf-btn.disabled{pointer-events:none}
-.tf-btn.selected-ok{background:rgba(46,204,113,.18);border-color:var(--green);color:var(--green-l)}
-.tf-btn.selected-ko{background:rgba(239,71,111,.18);border-color:var(--red);color:var(--red-l)}
-.tf-btn.hint-ok{background:rgba(46,204,113,.1);border-color:rgba(46,204,113,.4);color:var(--green-l)}
-
-/* Correction input (shown after wrong TF answer) */
-.correction-wrap{margin-top:.8rem;animation:su .25s both}
-.corr-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(250,246,237,.4);margin-bottom:.4rem}
-.corr-input{width:100%;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);border-radius:10px;color:var(--cream);padding:.55rem .8rem;outline:none;transition:.18s;-webkit-appearance:none}
-.corr-input:focus{border-color:var(--col)}
-.corr-input.ok{border-color:var(--green);background:rgba(46,204,113,.12);color:var(--green-l)}
-.corr-input.near{border-color:var(--amber);background:rgba(255,209,102,.1);color:var(--amber)}
-.corr-input.ko{border-color:var(--red);background:rgba(239,71,111,.13);color:var(--red-l)}
-.corr-submit{margin-top:.5rem;width:100%;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;padding:.55rem;border-radius:10px;background:var(--col);color:var(--navy);border:none;cursor:pointer;transition:.18s}
-.corr-submit:hover{filter:brightness(1.1)}
-.corr-submit:disabled{opacity:.35;pointer-events:none}
-
-/* FEEDBACK */
-.fb{margin-top:.85rem;padding:.7rem 1rem;border-radius:10px;font-size:.9rem;line-height:1.55;animation:su .22s both}
-.fb.ok{background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.24);color:var(--green-l)}
-.fb.near{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.24);color:var(--amber)}
-.fb.ko{background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.24);color:var(--red-l)}
-.fb .ans{color:var(--cream);font-weight:700}
-.fb .note{margin-top:.35rem;font-size:.82rem;color:rgba(250,246,237,.5);font-style:italic}
-
-.nxt{width:100%;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;letter-spacing:.06em;padding:.65rem;border-radius:12px;background:var(--col);color:var(--navy);border:none;cursor:pointer;transition:.18s;display:none}
-.nxt.show{display:block}
-.nxt:hover{filter:brightness(1.1)}
-
-/* RESULTS */
-.results{animation:su .4s both;padding:1rem 0 3rem;text-align:center}
-.rpct{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--col);line-height:1}
-.rlabel{font-size:.88rem;color:rgba(250,246,237,.42);margin-top:.22rem}
-.rgrade{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;margin-top:.5rem;margin-bottom:1.2rem}
-.rcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1rem 1.2rem;margin:0 auto 1.1rem;max-width:400px;text-align:left}
-.rrow{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.88rem}
-.rrow:last-child{border-bottom:none}
-.rrow span:first-child{color:rgba(250,246,237,.5)}
-.rrow span:last-child{font-family:'JetBrains Mono',monospace;font-weight:700}
-.rbar-w{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin:.4rem 0}
-.rbar{height:100%;background:var(--col);border-radius:3px;transition:width 1.2s cubic-bezier(.2,1,.3,1)}
-.rbtn{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;letter-spacing:.06em;padding:.62rem 1.6rem;border-radius:26px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--cream);cursor:pointer;transition:.2s;margin:.35rem}
-.rbtn:hover{background:rgba(255,255,255,.13)}
-.rbtn.prim{background:var(--col);border-color:var(--col);color:var(--navy)}
-.rbtn.prim:hover{filter:brightness(1.1)}
-.timeout-b{text-align:center;padding:1.1rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--red-l);letter-spacing:.06em;margin-bottom:.8rem;background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.24);border-radius:12px}
+.hidden{display:none !important}
 </style>
 </head>
 <body>
-<div class="orb o1"></div>
-<div class="orb o2"></div>
-<div class="hdr" id="hdr" style="display:none">
-  <div class="brand">Marc Vasseur · Polytech Lille</div>
-  <div class="batch-tag">Batch 5 · Pour aller plus loin</div>
-  <div class="timer" id="tmr">5:00</div>
-  <div class="prog-w">
-    <div class="prog-t"><div class="prog-f" id="pf" style="width:0%"></div></div>
-    <div class="prog-l" id="pl">0 / 25</div>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-code">Verbes irréguliers — Test</div>
+    <div class="hdr-title">Batch 5</div>
+    <div class="hdr-sub">Verbes 81–100 · 20 verbes</div>
+    <a class="back-link" href="../index.html" style="display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px">← Retour au hub</a>
   </div>
-  <div class="sc" id="slive">0 pts</div>
+
+  <div class="card" id="screenStart">
+    <div class="opt-label">Types de questions</div>
+    <div class="opt-row" id="typeRow">
+      <button class="opt-btn active" data-type="all">Tous types</button>
+      <button class="opt-btn" data-type="forms">Prét/PP</button>
+      <button class="opt-btn" data-type="fr">Français</button>
+    </div>
+    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-row" id="lenRow">
+      <button class="opt-btn" data-n="10">10</button>
+      <button class="opt-btn active" data-n="20">20</button>
+      <button class="opt-btn" data-n="40">Max (40)</button>
+    </div>
+    <button class="start-btn" id="startBtn">🎲 Générer un test aléatoire</button>
+  </div>
+
+  <div class="card hidden" id="screenQuiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progText">0 / 0</div>
+    </div>
+    <div class="qnum" id="qnum">Question 1</div>
+    <div class="qtype" id="qtype"></div>
+    <div class="qword" id="qword"></div>
+    <div class="qinstr" id="qinstr"></div>
+    <div class="answer-fields" id="answerFields"></div>
+    <button class="submit-btn" id="submitBtn">Valider</button>
+    <div class="next-wrap" id="nextWrap"></div>
+  </div>
+
+  <div class="card hidden" id="screenResult">
+    <div class="result-score" id="resScore">0/0</div>
+    <div class="result-label">RÉSULTAT</div>
+    <div class="result-msg" id="resMsg"></div>
+    <button class="retry-btn" id="retryBtn">🎲 Nouveau test aléatoire</button>
+  </div>
 </div>
-<main id="main"></main>
+
 <script>
-const QS=[{qt:'tf',ask:'pret',shown:'struck',correct:true,v:[94,'strike','struck','struck','frapper / affecter']},{qt:'tf',ask:'pret',shown:'winded',correct:false,v:[99,'wind','wound','wound','enrouler / remonter']},{qt:'type',ask:'pret',v:[89,'cast','cast','cast','lancer / projeter']},{qt:'tf',ask:'pp',shown:'sank',correct:false,v:[83,'sink','sank','sunk','couler / sombrer']},{qt:'tf',ask:'pret',shown:'bursted',correct:false,v:[87,'burst','burst','burst','éclater / exploser']},{qt:'tf',ask:'pret',shown:'ground',correct:true,v:[98,'grind','ground','ground','broyer / moudre']},{qt:'type',ask:'pp',v:[92,'shed','shed','shed','verser / perdre (poils)']},{qt:'tf',ask:'pret',shown:'casted',correct:false,v:[89,'cast','cast','cast','lancer / projeter']},{qt:'tf',ask:'pret',shown:'spun',correct:true,v:[84,'spin','spun','spun','tourner / tournoyer']},{qt:'type',ask:'pp',v:[98,'grind','ground','ground','broyer / moudre']},{qt:'tf',ask:'pret',shown:'set',correct:true,v:[90,'set','set','set','régler / poser']},{qt:'tf',ask:'pret',shown:'sweeped',correct:false,v:[95,'sweep','swept','swept','balayer']},{qt:'tf',ask:'pret',shown:'shut',correct:true,v:[88,'shut','shut','shut','fermer']},{qt:'type',ask:'pp',v:[94,'strike','struck','struck','frapper / affecter']},{qt:'tf',ask:'pret',shown:'sticked',correct:false,v:[85,'stick','stuck','stuck','coller / rester bloqué']},{qt:'tf',ask:'pret',shown:'shed',correct:true,v:[92,'shed','shed','shed','verser / perdre (poils)']},{qt:'type',ask:'pp',v:[100,'swear','swore','sworn','jurer']},{qt:'tf',ask:'pret',shown:'binded',correct:false,v:[97,'bind','bound','bound','lier / relier']},{qt:'type',ask:'pp',v:[90,'set','set','set','régler / poser']},{qt:'type',ask:'pp',v:[84,'spin','spun','spun','tourner / tournoyer']},{qt:'type',ask:'pret',v:[97,'bind','bound','bound','lier / relier']},{qt:'type',ask:'pret',v:[99,'wind','wound','wound','enrouler / remonter']},{qt:'tf',ask:'pret',shown:'stung',correct:true,v:[86,'sting','stung','stung','piquer']},{qt:'tf',ask:'pret',shown:'wept',correct:true,v:[96,'weep','wept','wept','pleurer']},{qt:'type',ask:'pret',v:[93,'slide','slid','slid','glisser']}];
-const TOTAL=QS.length, TIMER=300;
-let cur=0,pts=0,maxPts=0,secs=TIMER,tInt=null,timedOut=false;
+const VERBS = [{"id": 81, "batch": 5, "base": "hang", "pret": "hung", "pp": "hung", "fr": "accrocher"}, {"id": 82, "batch": 5, "base": "swing", "pret": "swung", "pp": "swung", "fr": "se balancer"}, {"id": 83, "batch": 5, "base": "sink", "pret": "sank", "pp": "sunk", "fr": "couler / sombrer"}, {"id": 84, "batch": 5, "base": "spin", "pret": "spun", "pp": "spun", "fr": "tourner / tournoyer"}, {"id": 85, "batch": 5, "base": "stick", "pret": "stuck", "pp": "stuck", "fr": "coller / rester bloqué"}, {"id": 86, "batch": 5, "base": "sting", "pret": "stung", "pp": "stung", "fr": "piquer"}, {"id": 87, "batch": 5, "base": "burst", "pret": "burst", "pp": "burst", "fr": "éclater / exploser"}, {"id": 88, "batch": 5, "base": "shut", "pret": "shut", "pp": "shut", "fr": "fermer"}, {"id": 89, "batch": 5, "base": "cast", "pret": "cast", "pp": "cast", "fr": "lancer / projeter"}, {"id": 90, "batch": 5, "base": "set", "pret": "set", "pp": "set", "fr": "régler / poser"}, {"id": 91, "batch": 5, "base": "spread", "pret": "spread", "pp": "spread", "fr": "répandre / étaler"}, {"id": 92, "batch": 5, "base": "shed", "pret": "shed", "pp": "shed", "fr": "verser / perdre (poils)"}, {"id": 93, "batch": 5, "base": "slide", "pret": "slid", "pp": "slid", "fr": "glisser"}, {"id": 94, "batch": 5, "base": "strike", "pret": "struck", "pp": "struck", "fr": "frapper / affecter"}, {"id": 95, "batch": 5, "base": "sweep", "pret": "swept", "pp": "swept", "fr": "balayer"}, {"id": 96, "batch": 5, "base": "weep", "pret": "wept", "pp": "wept", "fr": "pleurer"}, {"id": 97, "batch": 5, "base": "bind", "pret": "bound", "pp": "bound", "fr": "lier / relier"}, {"id": 98, "batch": 5, "base": "grind", "pret": "ground", "pp": "ground", "fr": "broyer / moudre"}, {"id": 99, "batch": 5, "base": "wind", "pret": "wound", "pp": "wound", "fr": "enrouler / remonter"}, {"id": 100, "batch": 5, "base": "swear", "pret": "swore", "pp": "sworn", "fr": "jurer"}];
+let typeFilter = 'all';
+let qcount = 20;
+let quiz = [];
+let cur = 0;
+let score = 0;
 
-function norm(s){
-  return s.toLowerCase()
-    .trim()
-    .replace(/[/\\*,.;:!?()\[\]{}"'\-]/g,' ')  // strip punctuation incl. slashes
-    .replace(/\s+/g,' ')
-    .trim();
-}
-function parseSlash(s){return s.split('/').map(p=>p.trim().toLowerCase());}
-function lev(a,b){
-  const dp=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);
-  for(let j=1;j<=b.length;j++)dp[0][j]=j;
-  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
-    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
-  return dp[a.length][b.length];
-}
-function chk(userRaw,correctRaw){
-  const u=norm(userRaw);
-  // Accept if user matches ANY individual form (e.g. just "was" for "was / were")
-  const opts=parseSlash(correctRaw);
-  if(opts.some(o=>norm(o)===u))return'ok';
-  // Accept if user typed all forms together (e.g. "was were" for "was / were")
-  const fullNorm=norm(correctRaw);
-  if(fullNorm===u)return'ok';
-  // Near-miss on any option
-  if(opts.some(o=>lev(norm(o),u)<=2))return'near';
-  if(lev(fullNorm,u)<=2)return'near';
-  return'ko';
+document.querySelectorAll('#typeRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#typeRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); typeFilter = b.dataset.type;
+  };
+});
+document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); qcount = parseInt(b.dataset.n);
+  };
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
 }
 
-/* TIMER */
-function updateTimer(){
-  const m=Math.floor(secs/60),s=secs%60;
-  const el=document.getElementById('tmr');
-  el.textContent=m+':'+(s<10?'0':'')+s;
-  el.className='timer'+(secs<=60?' danger':secs<=120?' warn':'');
-}
-function startTimer(){
-  updateTimer();
-  tInt=setInterval(()=>{secs--;updateTimer();if(secs<=0){clearInterval(tInt);timedOut=true;showResults();}},1000);
-}
+const QTYPES_ALL = ['pp','pret','both','fr','pp_from_fr'];
+const QTYPES_FORMS = ['pp','pret','both'];
+const QTYPES_FR = ['fr','pp_from_fr'];
 
-/* SPLASH */
-document.getElementById('main').innerHTML=`
-<div class="splash">
-  <h1>Batch 5<br><span>Pour aller plus loin</span></h1>
-  <p>25 questions · 5 minutes<br>Saisie libre + Vrai / Faux à corriger</p>
-  <div class="info-pills">
-    <span class="ip">⏱ 5 min</span>
-    <span class="ip">25 questions</span>
-    <span class="ip">Ordre aléatoire</span>
-    <span class="ip">Verbes n°81–100</span>
-  </div>
-  <button class="start-btn" onclick="startQuiz()">▶ Démarrer</button>
-  <div style="font-family:'JetBrains Mono',monospace;font-size:.56rem;color:rgba(250,246,237,.18);letter-spacing:.1em;text-transform:uppercase">Polytech Lille · PEIP2 · Anglais</div>
-</div>`;
-
-function startQuiz(){
-  maxPts=QS.reduce((s,q)=>s+1+(q.qt==='tf'&&!q.correct?1:0),0);
-  document.getElementById('hdr').style.display='flex';
-  startTimer();
-  render();
+function normalize(s){
+  return (s||'').toLowerCase().trim().replace(/\s+/g,' ');
+}
+function answerMatches(userVal, correctVal){
+  const u = normalize(userVal);
+  if(!u) return false;
+  const alts = correctVal.split('/').map(s=>normalize(s));
+  return alts.includes(u);
 }
 
-function updateHdr(){
-  const pct=cur/TOTAL*100;
-  document.getElementById('pf').style.width=pct+'%';
-  document.getElementById('pl').textContent=(cur+1)+' / '+TOTAL;
-  document.getElementById('slive').textContent=pts+' / '+maxPts+' pts';
+function buildQuiz(){
+  const pool = shuffle(VERBS);
+  const chosen = pool.slice(0, Math.min(qcount, VERBS.length));
+  const typePool = typeFilter==='all' ? QTYPES_ALL : (typeFilter==='forms' ? QTYPES_FORMS : QTYPES_FR);
+  quiz = chosen.map(v=>{
+    const qt = typePool[Math.floor(Math.random()*typePool.length)];
+    return {v, qt};
+  });
+  cur = 0; score = 0;
 }
 
-/* ── RENDER ── */
-function render(){
-  if(cur>=TOTAL){clearInterval(tInt);showResults();return;}
-  const q=QS[cur];
-  const v=q.v;
-  updateHdr();
+document.getElementById('startBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenStart').classList.add('hidden');
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
+document.getElementById('retryBtn').onclick = ()=>{
+  buildQuiz();
+  document.getElementById('screenResult').classList.add('hidden');
+  document.getElementById('screenQuiz').classList.remove('hidden');
+  renderQ();
+};
 
-  const askStr=q.ask==='pret'
-    ?'<span style="color:var(--col)">Prétérit</span>'
-    :'<span style="color:var(--col)">Participe passé</span>';
-  const badgeStr=q.qt==='type'?'Saisie libre':'Vrai / Faux';
+const TYPE_LABELS = {
+  pp: 'Participe passé', pret: 'Prétérit', both: 'Prétérit + Participe passé',
+  fr: 'Traduction française', pp_from_fr: 'Participe passé (depuis le français)'
+};
 
-  let bodyHtml='';
-  if(q.qt==='type'){
-    const correct=q.ask==='pret'?v[2]:v[3];
-    bodyHtml=`
-    <div class="ask-label">Donne le ${q.ask==='pret'?'prétérit':'participe passé'} de <strong>${v[1]}</strong></div>
-    <div class="type-row">
-      <input class="type-input" id="ti" type="text" placeholder="…"
-        autocorrect="off" autocapitalize="off" spellcheck="false"
-        onkeydown="if(event.key==='Enter')submitType()">
-      <button class="val-btn" id="vb" onclick="submitType()">OK ↵</button>
-    </div>`;
+function renderQ(){
+  const {v, qt} = quiz[cur];
+  document.getElementById('progFill').style.width = ((cur)/quiz.length*100)+'%';
+  document.getElementById('progText').textContent = (cur+1)+' / '+quiz.length;
+  document.getElementById('qnum').textContent = 'Question '+(cur+1);
+  document.getElementById('qtype').textContent = TYPE_LABELS[qt];
+
+  let shown, instr;
+  if(qt==='pp_from_fr'){ shown = v.fr; instr = 'Donne le participe passé en anglais'; }
+  else if(qt==='fr'){ shown = v.base; instr = 'Donne la traduction française'; }
+  else { shown = v.base; instr = qt==='pp' ? 'Donne le participe passé' : qt==='pret' ? 'Donne le prétérit' : 'Donne le prétérit ET le participe passé'; }
+  document.getElementById('qword').textContent = shown;
+  document.getElementById('qinstr').textContent = instr;
+
+  const fields = document.getElementById('answerFields');
+  fields.innerHTML = '';
+  if(qt==='both'){
+    fields.innerHTML = `
+      <div><div class="field-label">Prétérit</div><input class="field-input" id="ans0" autocomplete="off"></div>
+      <div><div class="field-label">Participe passé</div><input class="field-input" id="ans1" autocomplete="off"></div>`;
   } else {
-    const fieldStr=q.ask==='pret'?'prétérit':'participe passé';
-    bodyHtml=`
-    <div class="ask-label">${fieldStr} de <strong>${v[1]}</strong> :</div>
-    <div class="shown-form" id="sf">${q.shown}</div>
-    <div class="tf-btns">
-      <button class="tf-btn" id="tf-v" onclick="submitTF(true)">✓ Correct</button>
-      <button class="tf-btn" id="tf-f" onclick="submitTF(false)">✗ Faux</button>
-    </div>
-    <div id="corr-zone"></div>`;
+    fields.innerHTML = `<div><input class="field-input" id="ans0" autocomplete="off" placeholder="Ta réponse"></div>`;
+  }
+  document.getElementById('nextWrap').innerHTML = '';
+  document.getElementById('submitBtn').classList.remove('hidden');
+  document.getElementById('submitBtn').disabled = false;
+  setTimeout(()=>{ const el = document.getElementById('ans0'); if(el) el.focus(); }, 50);
+}
+
+document.getElementById('submitBtn').onclick = checkAnswer;
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && !document.getElementById('submitBtn').classList.contains('hidden') && !document.getElementById('submitBtn').disabled){
+    checkAnswer();
+  }
+});
+
+function checkAnswer(){
+  const {v, qt} = quiz[cur];
+  const ans0 = document.getElementById('ans0');
+  let isCorrect = false;
+  let correctText = '';
+
+  if(qt==='pp'){
+    isCorrect = answerMatches(ans0.value, v.pp);
+    correctText = v.pp;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='pret'){
+    isCorrect = answerMatches(ans0.value, v.pret);
+    correctText = v.pret;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='fr'){
+    isCorrect = answerMatches(ans0.value, v.fr);
+    correctText = v.fr;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='pp_from_fr'){
+    isCorrect = answerMatches(ans0.value, v.pp);
+    correctText = v.pp;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='both'){
+    const ans1 = document.getElementById('ans1');
+    const c0 = answerMatches(ans0.value, v.pret);
+    const c1 = answerMatches(ans1.value, v.pp);
+    isCorrect = c0 && c1;
+    ans0.classList.add(c0?'correct':'incorrect');
+    ans1.classList.add(c1?'correct':'incorrect');
+    correctText = v.pret+' / '+v.pp;
   }
 
-  document.getElementById('main').innerHTML=`
-  <div class="qcard">
-    <div class="qmeta">
-      <span class="qnum">Q${cur+1} / ${TOTAL}</span>
-      <span class="qt-badge">${badgeStr}</span>
-    </div>
-    <div class="verb-inf">${v[1]}</div>
-    <div class="verb-tr">${v[4]}</div>
-    ${bodyHtml}
-    <div id="fb"></div>
-    <button class="nxt" id="nxt" onclick="nextQ()">${cur+1<TOTAL?'Verbe suivant →':'Voir les résultats →'}</button>
-  </div>`;
+  ans0.disabled = true;
+  if(document.getElementById('ans1')) document.getElementById('ans1').disabled = true;
+  document.getElementById('submitBtn').disabled = true;
 
-  if(q.qt==='type') setTimeout(()=>{const e=document.getElementById('ti');if(e)e.focus();},100);
-}
-
-/* ── TYPE-IN SUBMIT ── */
-function submitType(){
-  const vbtn=document.getElementById('vb');
-  if(!vbtn||vbtn.disabled)return;
-  vbtn.disabled=true;
-  const inp=document.getElementById('ti');
-  inp.disabled=true;
-  const q=QS[cur];
-  const correct=q.ask==='pret'?q.v[2]:q.v[3];
-  const res=chk(inp.value, correct);
-  inp.className='type-input '+res;
-  if(res==='ok'){pts++;showFB('ok',`✓ <span class="ans">${correct}</span>`)}
-  else if(res==='near'){pts++;showFB('near',`~ <span class="ans">${correct}</span> — attention à l'orthographe`)}
-  else{showFB('ko',`✗ La bonne réponse : <span class="ans">${correct}</span>`)}
-  document.getElementById('slive').textContent=pts+' / '+maxPts+' pts';
-  document.getElementById('nxt').classList.add('show');
-}
-
-/* ── TF SUBMIT ── */
-function submitTF(userSaysTrue){
-  const q=QS[cur];
-  document.getElementById('tf-v').classList.add('disabled');
-  document.getElementById('tf-f').classList.add('disabled');
-  const sf=document.getElementById('sf');
-  const correct=q.ask==='pret'?q.v[2]:q.v[3];
-  const isActuallyCorrect=q.correct;
-
-  const userRight=(userSaysTrue===isActuallyCorrect);
-
-  if(userSaysTrue){document.getElementById('tf-v').classList.add(userRight?'selected-ok':'selected-ko');}
-  else{document.getElementById('tf-f').classList.add(userRight?'selected-ok':'selected-ko');}
-
-  if(isActuallyCorrect){sf.classList.add('reveal-ok');}
-  else{sf.classList.add('reveal-ko');}
-
-  if(userRight){
-    // User correctly identified it — now must type the correct form if it was wrong
-    pts++;
-    if(!isActuallyCorrect){
-      // They said "faux" correctly — must now TYPE the right answer (+1 bonus pt)
-      showCorrectionInput(correct);
-    } else {
-      showFB('ok','✓ Correct !');
-      document.getElementById('nxt').classList.add('show');
-    }
-  } else {
-    // User was wrong
-    if(isActuallyCorrect){
-      // It WAS correct but they said faux
-      showFB('ko',`✗ C'était correct : <span class="ans">${correct}</span>`);
-    } else {
-      // It WAS wrong but they said vrai
-      // Reveal the correct answer + show correction input
-      showFB('ko',`✗ Faux — la bonne réponse : <span class="ans">${correct}</span>`);
-    }
-    document.getElementById('slive').textContent=pts+' / '+maxPts+' pts';
-    document.getElementById('nxt').classList.add('show');
+  if(!isCorrect){
+    const note = document.createElement('div');
+    note.className = 'correction-note';
+    note.textContent = '✅ Réponse attendue : ' + correctText;
+    document.getElementById('answerFields').appendChild(note);
   }
+  if(isCorrect) score++;
+
+  const nextWrap = document.getElementById('nextWrap');
+  const btn = document.createElement('button');
+  btn.className = 'next-btn';
+  btn.textContent = (cur < quiz.length-1) ? 'Suivant →' : 'Voir le résultat';
+  btn.onclick = ()=>{
+    cur++;
+    if(cur < quiz.length) renderQ();
+    else showResult();
+  };
+  nextWrap.appendChild(btn);
+  btn.focus();
 }
 
-function showCorrectionInput(correct){
-  const zone=document.getElementById('corr-zone');
-  zone.innerHTML='<div class="correction-wrap">'
-    +'<div class="corr-label">Bien repéré ! Maintenant écris la bonne forme :</div>'
-    +'<input class="corr-input" id="ci" type="text" placeholder="…" '
-    +'data-correct="'+correct.replace(/"/g,'&quot;')+'" '
-    +'autocorrect="off" autocapitalize="off" spellcheck="false" autofocus '
-    +'onkeydown="if(event.key===\'Enter\')submitCorrFromInput()">'
-    +'<button class="corr-submit" id="cs" onclick="submitCorrFromInput()">Valider ↵</button>'
-    +'</div>';
-  setTimeout(()=>{const e=document.getElementById('ci');if(e)e.focus();},120);
-}
-
-function submitCorrFromInput(){
-  const inp=document.getElementById('ci');
-  if(!inp)return;
-  const correct=inp.getAttribute('data-correct')||'';
-  submitCorr(correct);
-}
-
-function submitCorr(correct){
-  const csBtn=document.getElementById('cs');
-  if(!csBtn||csBtn.disabled)return;
-  csBtn.disabled=true;
-  const inp=document.getElementById('ci');
-  inp.disabled=true;
-  const res=chk(inp.value, correct);
-  inp.className='corr-input '+res;
-  if(res==='ok'){pts++;showFB('ok',`✓ Parfait : <span class="ans">${correct}</span> (+1 pt bonus)`)}
-  else if(res==='near'){pts++;showFB('near',`~ Presque : <span class="ans">${correct}</span> — orthographe (+1 pt)`)}
-  else{showFB('ko',`✗ La bonne forme : <span class="ans">${correct}</span>`)}
-  document.getElementById('slive').textContent=pts+' / '+maxPts+' pts';
-  document.getElementById('nxt').classList.add('show');
-}
-
-function showFB(cls, msg){
-  const same=(cls==='ok'||cls==='near') && QS[cur].v[2]===QS[cur].v[3];
-  const note=same?'<div class="note">💡 Ce verbe a la même forme au prétérit et au participe passé.</div>':'';
-  document.getElementById('fb').innerHTML=`<div class="fb ${cls}">${msg}${note}</div>`;
-}
-
-function nextQ(){cur++;render();}
-
-/* ── RESULTS ── */
-function showResults(){
-  clearInterval(tInt);
-  document.getElementById('hdr').style.display='none';
-  const pct=Math.round(pts/maxPts*100);
-  const grade=pct>=90?'🏆 Excellent':pct>=75?'✅ Bien':pct>=55?'📚 Assez bien':pct>=40?'⚠ À revoir':'📖 À reprendre';
-  document.getElementById('main').innerHTML=`
-  <div class="results">
-    ${timedOut?'<div class="timeout-b">⏱ Temps écoulé !</div>':''}
-    <div class="rpct">${pct}%</div>
-    <div class="rlabel">${pts} / ${maxPts} points · Batch 5 — Pour aller plus loin</div>
-    <div class="rgrade">${grade}</div>
-    <div class="rcard">
-      <div class="rrow"><span>Questions</span><span>${TOTAL}</span></div>
-      <div class="rrow"><span>Points</span><span style="color:var(--col)">${pts} / ${maxPts}</span></div>
-      <div class="rrow"><span>Score</span><span>${pct}%</span></div>
-      <div class="rbar-w"><div class="rbar" id="rb" style="width:0%"></div></div>
-    </div>
-    <button class="rbtn prim" onclick="location.reload()">↺ Recommencer (ordre différent)</button>
-  </div>`;
-  setTimeout(()=>{const b=document.getElementById('rb');if(b)b.style.width=pct+'%';},200);
+function showResult(){
+  document.getElementById('screenQuiz').classList.add('hidden');
+  document.getElementById('screenResult').classList.remove('hidden');
+  document.getElementById('resScore').textContent = score+'/'+quiz.length;
+  const pct = Math.round(score/quiz.length*100);
+  let msg = 'Continue à réviser, tu vas progresser !';
+  if(pct>=90) msg = 'Excellent ! Maîtrise quasi parfaite.';
+  else if(pct>=75) msg = 'Très bien, presque tout est acquis.';
+  else if(pct>=50) msg = 'Pas mal, encore un peu de révision.';
+  document.getElementById('resMsg').textContent = msg;
 }
 </script>
 </body>
