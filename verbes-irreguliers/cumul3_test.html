@@ -76,14 +76,14 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
     <div class="opt-label">Types de questions</div>
     <div class="opt-row" id="typeRow">
       <button class="opt-btn active" data-type="all">Tous types</button>
-      <button class="opt-btn" data-type="forms">Prét/PP</button>
-      <button class="opt-btn" data-type="fr">Français</button>
+      <button class="opt-btn" data-type="forms">Depuis l'anglais</button>
+      <button class="opt-btn" data-type="fr">Depuis le français</button>
     </div>
     <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="20">20</button>
-      <button class="opt-btn" data-n="60">Max (60)</button>
+      <button class="opt-btn" data-n="120">Max (120)</button>
     </div>
     <button class="start-btn" id="startBtn">🎲 Générer un test aléatoire</button>
   </div>
@@ -103,9 +103,10 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   </div>
 
   <div class="card hidden" id="screenResult">
-    <div class="result-score" id="resScore">0/0</div>
-    <div class="result-label">RÉSULTAT</div>
+    <div class="result-score" id="resScore">0/20</div>
+    <div class="result-label">RÉSULTAT (note sur 20)</div>
     <div class="result-msg" id="resMsg"></div>
+    <div id="recapWrap"></div>
     <button class="retry-btn" id="retryBtn">🎲 Nouveau test aléatoire</button>
   </div>
 </div>
@@ -117,6 +118,7 @@ let qcount = 20;
 let quiz = [];
 let cur = 0;
 let score = 0;
+let mistakes = [];
 
 document.querySelectorAll('#typeRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
@@ -140,9 +142,9 @@ function shuffle(arr){
   return a;
 }
 
-const QTYPES_ALL = ['pp','pret','both','fr','pp_from_fr'];
+const QTYPES_ALL = ['pp','pret','both','pp_from_fr','pret_from_fr'];
 const QTYPES_FORMS = ['pp','pret','both'];
-const QTYPES_FR = ['fr','pp_from_fr'];
+const QTYPES_FR = ['pp_from_fr','pret_from_fr'];
 
 function normalize(s){
   return (s||'').toLowerCase().trim().replace(/\s+/g,' ');
@@ -155,14 +157,23 @@ function answerMatches(userVal, correctVal){
 }
 
 function buildQuiz(){
-  const pool = shuffle(VERBS);
-  const chosen = pool.slice(0, Math.min(qcount, VERBS.length));
   const typePool = typeFilter==='all' ? QTYPES_ALL : (typeFilter==='forms' ? QTYPES_FORMS : QTYPES_FR);
-  quiz = chosen.map(v=>{
-    const qt = typePool[Math.floor(Math.random()*typePool.length)];
-    return {v, qt};
-  });
-  cur = 0; score = 0;
+  quiz = [];
+  let pool = shuffle(VERBS);
+  let pi = 0;
+  let lastKey = null;
+  for(let i=0;i<qcount;i++){
+    if(pi >= pool.length){ pool = shuffle(VERBS); pi = 0; }
+    const v = pool[pi++];
+    let qt, tries=0;
+    do {
+      qt = typePool[Math.floor(Math.random()*typePool.length)];
+      tries++;
+    } while(tries<5 && (v.id+qt)===lastKey);
+    lastKey = v.id+qt;
+    quiz.push({v, qt});
+  }
+  cur = 0; score = 0; mistakes = [];
 }
 
 document.getElementById('startBtn').onclick = ()=>{
@@ -181,7 +192,7 @@ document.getElementById('retryBtn').onclick = ()=>{
 
 const TYPE_LABELS = {
   pp: 'Participe passé', pret: 'Prétérit', both: 'Prétérit + Participe passé',
-  fr: 'Traduction française', pp_from_fr: 'Participe passé (depuis le français)'
+  pp_from_fr: 'Participe passé (depuis le français)', pret_from_fr: 'Prétérit (depuis le français)'
 };
 
 function renderQ(){
@@ -193,7 +204,7 @@ function renderQ(){
 
   let shown, instr;
   if(qt==='pp_from_fr'){ shown = v.fr; instr = 'Donne le participe passé en anglais'; }
-  else if(qt==='fr'){ shown = v.base; instr = 'Donne la traduction française'; }
+  else if(qt==='pret_from_fr'){ shown = v.fr; instr = 'Donne le prétérit en anglais'; }
   else { shown = v.base; instr = qt==='pp' ? 'Donne le participe passé' : qt==='pret' ? 'Donne le prétérit' : 'Donne le prétérit ET le participe passé'; }
   document.getElementById('qword').textContent = shown;
   document.getElementById('qinstr').textContent = instr;
@@ -225,6 +236,7 @@ function checkAnswer(){
   const ans0 = document.getElementById('ans0');
   let isCorrect = false;
   let correctText = '';
+  let userText = ans0 ? ans0.value : '';
 
   if(qt==='pp'){
     isCorrect = answerMatches(ans0.value, v.pp);
@@ -234,13 +246,13 @@ function checkAnswer(){
     isCorrect = answerMatches(ans0.value, v.pret);
     correctText = v.pret;
     ans0.classList.add(isCorrect?'correct':'incorrect');
-  } else if(qt==='fr'){
-    isCorrect = answerMatches(ans0.value, v.fr);
-    correctText = v.fr;
-    ans0.classList.add(isCorrect?'correct':'incorrect');
   } else if(qt==='pp_from_fr'){
     isCorrect = answerMatches(ans0.value, v.pp);
     correctText = v.pp;
+    ans0.classList.add(isCorrect?'correct':'incorrect');
+  } else if(qt==='pret_from_fr'){
+    isCorrect = answerMatches(ans0.value, v.pret);
+    correctText = v.pret;
     ans0.classList.add(isCorrect?'correct':'incorrect');
   } else if(qt==='both'){
     const ans1 = document.getElementById('ans1');
@@ -250,6 +262,7 @@ function checkAnswer(){
     ans0.classList.add(c0?'correct':'incorrect');
     ans1.classList.add(c1?'correct':'incorrect');
     correctText = v.pret+' / '+v.pp;
+    userText = (ans0.value||'—')+' / '+(ans1.value||'—');
   }
 
   ans0.disabled = true;
@@ -261,6 +274,7 @@ function checkAnswer(){
     note.className = 'correction-note';
     note.textContent = '✅ Réponse attendue : ' + correctText;
     document.getElementById('answerFields').appendChild(note);
+    mistakes.push({base: v.base, fr: v.fr, qtype: TYPE_LABELS[qt], userText: userText||'(vide)', correctText});
   }
   if(isCorrect) score++;
 
@@ -280,13 +294,30 @@ function checkAnswer(){
 function showResult(){
   document.getElementById('screenQuiz').classList.add('hidden');
   document.getElementById('screenResult').classList.remove('hidden');
-  document.getElementById('resScore').textContent = score+'/'+quiz.length;
+  const scoreOn20 = Math.round((score/quiz.length*20) * 10) / 10;
+  document.getElementById('resScore').textContent = scoreOn20+'/20';
   const pct = Math.round(score/quiz.length*100);
   let msg = 'Continue à réviser, tu vas progresser !';
   if(pct>=90) msg = 'Excellent ! Maîtrise quasi parfaite.';
   else if(pct>=75) msg = 'Très bien, presque tout est acquis.';
   else if(pct>=50) msg = 'Pas mal, encore un peu de révision.';
-  document.getElementById('resMsg').textContent = msg;
+  document.getElementById('resMsg').textContent = msg + ' (' + score + ' / ' + quiz.length + ' questions correctes)';
+
+  const recapWrap = document.getElementById('recapWrap');
+  if(mistakes.length === 0){
+    recapWrap.innerHTML = '<div style="text-align:center;color:var(--ok);font-size:.9rem;margin:14px 0;font-family:JetBrains Mono,monospace">🎉 Aucune erreur !</div>';
+  } else {
+    let rows = mistakes.map(m => `
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+        <div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--cream);font-size:1rem">${m.base} <span style="color:var(--muted);font-size:.75rem;font-style:italic">(${m.fr})</span></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 2px">${m.qtype}</div>
+        <div style="font-size:.82rem;color:var(--bad)">Ta réponse : ${m.userText}</div>
+        <div style="font-size:.82rem;color:var(--ok)">Réponse attendue : ${m.correctText}</div>
+      </div>`).join('');
+    recapWrap.innerHTML = `
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px;text-align:center">📋 Récap des erreurs (${mistakes.length})</div>
+      ${rows}`;
+  }
 }
 </script>
 </body>
