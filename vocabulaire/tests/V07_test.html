@@ -70,12 +70,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   </div>
 
   <div class="card" id="screenStart">
-    <div class="opt-label">Sens du test</div>
-    <div class="opt-row" id="dirRow">
-      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
-      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
-    </div>
-    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-label">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="15">15</button>
@@ -106,18 +101,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
 
 <script>
 const DATA = [{"fr": "accueillant", "en": "welcoming"}, {"fr": "brusque", "en": "abrupt"}, {"fr": "capable", "en": "capable"}, {"fr": "chaleureux", "en": "warm"}, {"fr": "compatissant", "en": "compassionate"}, {"fr": "confiant", "en": "trusting"}, {"fr": "curieux", "en": "curious"}, {"fr": "déterminé", "en": "determined"}, {"fr": "gentil", "en": "nice"}, {"fr": "joueur", "en": "playful"}, {"fr": "méfiant", "en": "wary"}, {"fr": "optimiste", "en": "optimistic"}, {"fr": "paresseux", "en": "lazy"}, {"fr": "sincère", "en": "sincere"}, {"fr": "sportif", "en": "sporting"}, {"fr": "admirable", "en": "admirable"}, {"fr": "amer", "en": "bitter"}, {"fr": "dégoûté", "en": "disgusted"}, {"fr": "déprimé", "en": "depressed"}, {"fr": "énervé", "en": "angry"}, {"fr": "exaspéré", "en": "exasperated"}, {"fr": "fatigué", "en": "tired"}, {"fr": "heureux", "en": "happy"}, {"fr": "inquiet", "en": "worried"}, {"fr": "malheureux", "en": "unfortunate"}, {"fr": "émouvant", "en": "moving"}, {"fr": "passionnant", "en": "exciting"}, {"fr": "coupable", "en": "guilty"}, {"fr": "banal", "en": "banal"}, {"fr": "bizarre", "en": "weird"}, {"fr": "bon marché", "en": "inexpensive"}, {"fr": "classique", "en": "classic"}, {"fr": "convaincant", "en": "convincing"}, {"fr": "crédible", "en": "credible"}, {"fr": "drôle", "en": "funny"}, {"fr": "éblouissant", "en": "dazzling"}, {"fr": "efficace", "en": "effective"}, {"fr": "équivalent", "en": "equivalent"}, {"fr": "évident", "en": "obvious"}, {"fr": "excusable", "en": "excusable"}, {"fr": "facile", "en": "easy"}, {"fr": "fiable", "en": "reliable"}, {"fr": "horrible", "en": "horrible"}, {"fr": "identique", "en": "identical"}, {"fr": "imprévisible", "en": "unpredictable"}, {"fr": "incroyable", "en": "amazing"}, {"fr": "insupportable", "en": "unbearable"}, {"fr": "inventif", "en": "inventive"}, {"fr": "louable", "en": "commendable"}, {"fr": "minable", "en": "crummy"}, {"fr": "phénoménal", "en": "phenomenal"}, {"fr": "pertinent", "en": "relevant"}, {"fr": "prodigieux", "en": "prodigious"}, {"fr": "rare", "en": "rare"}, {"fr": "récent", "en": "recent"}, {"fr": "remarquable", "en": "remarkable"}, {"fr": "romantique", "en": "romantic"}, {"fr": "satisfaisant", "en": "satisfactory"}, {"fr": "superficiel", "en": "superficial"}, {"fr": "supportable", "en": "supportable"}, {"fr": "tolérable", "en": "tolerable"}, {"fr": "unique", "en": "unique"}, {"fr": "âgé (e)", "en": "elderly"}, {"fr": "ancien", "en": "former"}, {"fr": "carré", "en": "square"}, {"fr": "chaud", "en": "hot"}, {"fr": "comestible", "en": "edible"}, {"fr": "disparu", "en": "missing"}, {"fr": "électrique", "en": "electrical"}, {"fr": "énorme", "en": "huge"}, {"fr": "entier", "en": "whole"}, {"fr": "fragile", "en": "fragile"}, {"fr": "froid", "en": "cold"}, {"fr": "illimité", "en": "unlimited"}, {"fr": "important", "en": "important"}, {"fr": "interdit", "en": "prohibited"}, {"fr": "légal", "en": "legal"}, {"fr": "local", "en": "local"}, {"fr": "moelleux", "en": "soft"}, {"fr": "mortel", "en": "lethal"}, {"fr": "muet", "en": "mute"}, {"fr": "naturel", "en": "natural"}, {"fr": "nombreux", "en": "numerous"}, {"fr": "nul", "en": "void"}, {"fr": "pauvre", "en": "poor"}, {"fr": "politique", "en": "political"}, {"fr": "populaire", "en": "popular"}, {"fr": "pratique", "en": "practical"}, {"fr": "premier", "en": "first"}, {"fr": "privé", "en": "private"}, {"fr": "public", "en": "public"}, {"fr": "sec", "en": "dry"}, {"fr": "silencieux", "en": "silent"}, {"fr": "solitaire", "en": "lonely"}, {"fr": "spacieux", "en": "spacious"}, {"fr": "temporaire", "en": "temporary"}, {"fr": "toxique", "en": "toxic"}, {"fr": "triangulaire", "en": "triangular"}, {"fr": "vaste", "en": "extensive"}, {"fr": "vivant", "en": "living"}];
-let dir = 'fr2en';
 let qcount = 15;
 let quiz = [];
 let cur = 0;
 let score = 0;
 
-document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
-  b.onclick = ()=>{
-    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); dir = b.dataset.dir;
-  };
-});
 document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
     document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
@@ -137,9 +125,9 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = dir==='fr2en' ? item.fr : item.en;
-    const correct = dir==='fr2en' ? item.en : item.fr;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const question = item.fr;
+    const correct = item.en;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
     return {question, correct, options};
