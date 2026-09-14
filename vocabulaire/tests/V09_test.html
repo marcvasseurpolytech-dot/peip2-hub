@@ -70,12 +70,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   </div>
 
   <div class="card" id="screenStart">
-    <div class="opt-label">Sens du test</div>
-    <div class="opt-row" id="dirRow">
-      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
-      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
-    </div>
-    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-label">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="15">15</button>
@@ -106,18 +101,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
 
 <script>
 const DATA = [{"fr": "Bonjour !", "en": "Hello!"}, {"fr": "À bientôt !", "en": "See you soon!"}, {"fr": "Allons-y.", "en": "Let’s go."}, {"fr": "Attends-moi ici.", "en": "Wait for me here."}, {"fr": "Attends.", "en": "Wait."}, {"fr": "Au revoir !", "en": "Goodbye!"}, {"fr": "Bonne chance !", "en": "Good luck!"}, {"fr": "C’est délicieux.", "en": "It’s delicious."}, {"fr": "C’est difficile.", "en": "It’s difficult."}, {"fr": "C’est facile.", "en": "It’s easy."}, {"fr": "C’est mon nouveau téléphone.", "en": "It’s my new phone."}, {"fr": "C’est par là.", "en": "It’s that way."}, {"fr": "C’est une bonne question.", "en": "That’s a good question."}, {"fr": "C’est assez loin.", "en": "It’s quite far."}, {"fr": "C’est de pire en pire", "en": "It’s getting worse and worse."}, {"fr": "C’est tout près.", "en": "It’s very close."}, {"fr": "C’est une super idée.", "en": "That’s a great idea."}, {"fr": "Ça a l’air bon.", "en": "It looks good."}, {"fr": "Ça coûte trop cher.", "en": "It’s too expensive."}, {"fr": "Ça m’est égal.", "en": "I don’t mind."}, {"fr": "Ça ne fait rien.", "en": "It doesn’t matter."}, {"fr": "Ça ne m’intéresse pas.", "en": "I’m not interested."}, {"fr": "Ça ne me dérange pas.", "en": "It doesn’t bother me."}, {"fr": "Ce n’est pas grave.", "en": "It’s not serious."}, {"fr": "Ce n’est pas loin.", "en": "It’s not far."}, {"fr": "De rien.", "en": "You’re welcome."}, {"fr": "Donne-moi ça.", "en": "Give me that."}, {"fr": "Donne-moi une minute.", "en": "Give me a minute."}, {"fr": "Êtes-vous prêt ?", "en": "Are you ready?"}, {"fr": "Fais-moi confiance !", "en": "Trust me!"}, {"fr": "Il a l’air perplexe.", "en": "He looks perplexed."}, {"fr": "Il fait beau aujourd’hui.", "en": "It’s nice weather today."}, {"fr": "Il faut qu’on parle.", "en": "We need to talk."}, {"fr": "Il faut que je mange.", "en": "I need to eat."}, {"fr": "J’ai beaucoup de travail.", "en": "I have a lot of work."}, {"fr": "J’ai réservé une chambre.", "en": "I booked a room."}, {"fr": "J’aime ça !", "en": "I like that!"}, {"fr": "J’en ai aucune idée.", "en": "I have no idea."}, {"fr": "J’ai de la fièvre", "en": "I have a fever."}, {"fr": "J’ai mal à la tête", "en": "I have a headache."}, {"fr": "J’ai mal aux dents.", "en": "I have a toothache."}, {"fr": "Je cherche des chaussures.", "en": "I’m looking for shoes."}, {"fr": "Je cherche du travail.", "en": "I’m looking for a job."}, {"fr": "Je dois y aller.", "en": "I have to go."}, {"fr": "Je m’appelle [prénom].", "en": "My name is [name]."}, {"fr": "Je me sens bien.", "en": "I feel good."}, {"fr": "Je me suis perdu.", "en": "I am lost."}, {"fr": "Je n’ai pas le temps.", "en": "I don’t have time."}, {"fr": "Je n’aime pas ça.", "en": "I don’t like that."}, {"fr": "Je n’en crois pas mes yeux !", "en": "I can’t believe my eyes!"}, {"fr": "Je n’y arrive pas.", "en": "I can’t do it."}, {"fr": "Je ne comprends pas.", "en": "I don’t understand."}, {"fr": "Je ne me sens pas bien.", "en": "I don’t feel well."}, {"fr": "Je ne peux pas.", "en": "I can’t."}, {"fr": "Je ne sais pas trop.", "en": "I’m not sure."}, {"fr": "Je ne sais pas.", "en": "I don’t know."}, {"fr": "Je ne suis pas d’accord.", "en": "I disagree."}, {"fr": "Je ne vous entends pas bien.", "en": "I can’t hear you well."}, {"fr": "Je suis content de te voir.", "en": "I’m glad to see you."}, {"fr": "Je suis d’accord.", "en": "I agree."}, {"fr": "Je suis désolé(e) de vous déranger.", "en": "I’m sorry to bother you."}, {"fr": "Je suis désolé(e).", "en": "I’m sorry."}, {"fr": "Je suis en avance.", "en": "I’m early."}, {"fr": "Je suis en retard.", "en": "I’m late."}, {"fr": "Je suis en train d’apprendre le français.", "en": "I’m learning French."}, {"fr": "Je suis étranger(ère).", "en": "I am a foreigner."}, {"fr": "Je suis fatigué(e).", "en": "I am tired."}, {"fr": "Je suis heureux(se).", "en": "I am happy."}, {"fr": "Je suis ici.", "en": "I am here."}, {"fr": "Je suis intéressé(e).", "en": "I am interested."}, {"fr": "Je suis libre.", "en": "I am free."}, {"fr": "Je suis occupé(e).", "en": "I am busy."}, {"fr": "Je suis perdu(e).", "en": "I am lost."}, {"fr": "Je suis prêt.", "en": "I am ready."}, {"fr": "Je suis très fatigué.", "en": "I am very tired."}, {"fr": "Je suis triste.", "en": "I am sad."}, {"fr": "Je vais m’en occuper.", "en": "I’ll take care of it."}, {"fr": "Je vais m’habiller.", "en": "I’m going to get dressed."}, {"fr": "Je vais y aller en train.", "en": "I’m going to go by train."}, {"fr": "Je veux y aller.", "en": "I want to go there."}, {"fr": "Je vous aime.", "en": "I love you."}, {"fr": "Je vous déteste.", "en": "I hate you."}, {"fr": "Je vous souhaite une bonne journée !", "en": "Have a nice day!"}, {"fr": "Merci beaucoup !", "en": "Thank you very much!"}, {"fr": "Merci de votre aide.", "en": "Thank you for your help."}, {"fr": "Mon choix est fait.", "en": "My choice is made."}, {"fr": "Ne t’inquiète pas.", "en": "Don’t worry."}, {"fr": "Nous sommes du même avis.", "en": "We are of the same opinion."}, {"fr": "Pardon, pouvez-vous répéter ?", "en": "Sorry, can you repeat?"}, {"fr": "Pas du tout.", "en": "Not at all."}, {"fr": "Quel dommage !", "en": "What a pity!"}, {"fr": "Repose-toi bien.", "en": "Rest well."}, {"fr": "S’il vous plaît.", "en": "Please."}, {"fr": "Suis-moi.", "en": "Follow me."}, {"fr": "Tiens-moi au courant.", "en": "Keep me informed."}, {"fr": "Tu devrais essayer.", "en": "You should try."}, {"fr": "Tu devrais venir.", "en": "You should come."}, {"fr": "Viens avec moi.", "en": "Come with me."}, {"fr": "Viens ici.", "en": "Come here."}];
-let dir = 'fr2en';
 let qcount = 15;
 let quiz = [];
 let cur = 0;
 let score = 0;
 
-document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
-  b.onclick = ()=>{
-    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); dir = b.dataset.dir;
-  };
-});
 document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
     document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
@@ -137,9 +125,9 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = dir==='fr2en' ? item.fr : item.en;
-    const correct = dir==='fr2en' ? item.en : item.fr;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const question = item.fr;
+    const correct = item.en;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
     return {question, correct, options};
