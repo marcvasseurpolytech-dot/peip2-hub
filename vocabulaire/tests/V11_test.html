@@ -70,12 +70,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   </div>
 
   <div class="card" id="screenStart">
-    <div class="opt-label">Sens du test</div>
-    <div class="opt-row" id="dirRow">
-      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
-      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
-    </div>
-    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-label">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="15">15</button>
@@ -106,18 +101,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
 
 <script>
 const DATA = [{"fr": "acheter", "en": "to buy"}, {"fr": "aider", "en": "to help"}, {"fr": "allumer", "en": "to turn on"}, {"fr": "apporter", "en": "to bring"}, {"fr": "boire", "en": "to drink"}, {"fr": "changer", "en": "to change"}, {"fr": "chercher", "en": "to search"}, {"fr": "couper", "en": "to cut"}, {"fr": "donner", "en": "to give"}, {"fr": "dormir", "en": "to sleep"}, {"fr": "écrire", "en": "to write"}, {"fr": "éteindre", "en": "to turn off"}, {"fr": "fermer", "en": "to close"}, {"fr": "gagner", "en": "to win"}, {"fr": "jouer", "en": "to play"}, {"fr": "laisser", "en": "to leave"}, {"fr": "laver", "en": "to clean (up)"}, {"fr": "lire", "en": "to read"}, {"fr": "manger", "en": "to eat"}, {"fr": "mettre", "en": "to put"}, {"fr": "montrer", "en": "to show"}, {"fr": "ouvrir", "en": "to open (up)"}, {"fr": "payer", "en": "to pay"}, {"fr": "perdre", "en": "to lose"}, {"fr": "porter", "en": "to wear"}, {"fr": "préparer", "en": "to prepare something"}, {"fr": "recevoir", "en": "to receive"}, {"fr": "rendre", "en": "to return something"}, {"fr": "s’endormir", "en": "to fall asleep"}, {"fr": "se réveiller", "en": "to awake"}, {"fr": "tenir", "en": "to hold"}, {"fr": "utiliser", "en": "to use"}, {"fr": "vendre", "en": "to sell"}, {"fr": "aller", "en": "to go"}, {"fr": "arriver", "en": "to arrive"}, {"fr": "conduire", "en": "to drive"}, {"fr": "courir", "en": "to run"}, {"fr": "descendre", "en": "to go down"}, {"fr": "entrer", "en": "to enter"}, {"fr": "marcher", "en": "to walk"}, {"fr": "partir", "en": "to leave"}, {"fr": "rester", "en": "to stay"}, {"fr": "retourner", "en": "to return"}, {"fr": "revenir", "en": "to come back"}, {"fr": "sortir", "en": "to get out"}, {"fr": "tomber", "en": "to fall"}, {"fr": "tourner", "en": "to turn"}, {"fr": "venir", "en": "to come"}, {"fr": "voler", "en": "to fly"}, {"fr": "apprendre", "en": "to learn"}, {"fr": "comprendre", "en": "to understand"}, {"fr": "connaître", "en": "to know"}, {"fr": "croire", "en": "to believe (in)"}, {"fr": "décider", "en": "to decide"}, {"fr": "penser", "en": "to think"}, {"fr": "reconnaître", "en": "to recognize"}, {"fr": "savoir", "en": "to know"}, {"fr": "se souvenir", "en": "to remember"}, {"fr": "trouver", "en": "to find"}, {"fr": "regarder", "en": "to watch"}, {"fr": "oublier", "en": "to forget"}, {"fr": "appeler", "en": "to call"}, {"fr": "demander", "en": "to ask for"}, {"fr": "dire", "en": "to say"}, {"fr": "écouter", "en": "to listen to"}, {"fr": "entendre", "en": "to hear"}, {"fr": "expliquer", "en": "to explain"}, {"fr": "parler", "en": "to speak"}, {"fr": "rappeler", "en": "to call back"}, {"fr": "répéter", "en": "to repeat"}, {"fr": "répondre", "en": "to answer"}, {"fr": "rencontrer", "en": "to meet"}, {"fr": "chanter", "en": "to sing"}, {"fr": "rire", "en": "to laugh"}, {"fr": "pleurer", "en": "to cry"}, {"fr": "avoir", "en": "to have"}, {"fr": "arrêter", "en": "to stop"}, {"fr": "attendre", "en": "to wait for"}, {"fr": "commencer", "en": "to begin"}, {"fr": "continuer", "en": "to continue"}, {"fr": "devenir", "en": "to become"}, {"fr": "devoir", "en": "must"}, {"fr": "essayer", "en": "to try"}, {"fr": "être", "en": "to be"}, {"fr": "faire", "en": "to do"}, {"fr": "finir", "en": "to finish"}, {"fr": "choisir", "en": "to choose"}, {"fr": "envoyer", "en": "to send"}, {"fr": "pouvoir", "en": "to be able (can)"}, {"fr": "prendre", "en": "to take"}, {"fr": "réussir", "en": "to succeed"}, {"fr": "suivre", "en": "to follow"}, {"fr": "travailler", "en": "to work"}, {"fr": "vivre", "en": "to live"}, {"fr": "vouloir", "en": "to want"}, {"fr": "ajouter", "en": "to add"}, {"fr": "accepter", "en": "to accept"}, {"fr": "aimer", "en": "to like"}, {"fr": "refuser", "en": "to refuse"}];
-let dir = 'fr2en';
 let qcount = 15;
 let quiz = [];
 let cur = 0;
 let score = 0;
 
-document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
-  b.onclick = ()=>{
-    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); dir = b.dataset.dir;
-  };
-});
 document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
     document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
@@ -137,9 +125,9 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = dir==='fr2en' ? item.fr : item.en;
-    const correct = dir==='fr2en' ? item.en : item.fr;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const question = item.fr;
+    const correct = item.en;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
     return {question, correct, options};
