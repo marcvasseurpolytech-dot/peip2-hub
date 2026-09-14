@@ -202,7 +202,7 @@ footer a{color:var(--gold-l);text-decoration:none}
     </div>
 
     <div class="tab-panel" data-panel="vocabulaire">
-      <div class="section-title">Vocabulaire — V01 à V09</div>
+      <div class="section-title">Vocabulaire — V01 à V12</div>
       <div class="section-sub">Vocabulaire thématique avancé</div>
       <div class="grid" id="vocabGrid"></div>
     </div>
@@ -323,6 +323,9 @@ const VOCAB = [
   {n:"V07", title:"100 Adjectifs Utiles (sélection sur 400)"},
   {n:"V08", title:"Les Contraires (sélection)"},
   {n:"V09", title:"Phrases Utiles en Anglais"},
+  {n:"V10", title:"Adverbes Utiles"},
+  {n:"V11", title:"100 Verbes Usuels"},
+  {n:"V12", title:"Verbes de Communication"},
 ];
 
 function waLink(text, url){
@@ -456,7 +459,7 @@ function grammaireCard(g){
   </div>`;
 }
 
-const VOCAB_WITH_TEST = ["V01","V02","V03","V04","V05","V06","V07","V08","V09"];
+const VOCAB_WITH_TEST = ["V01","V02","V03","V04","V05","V06","V07","V08","V09","V10","V11","V12"];
 
 function vocabCard(v){
   const doc = `vocabulaire/${v.n}_VOCABULAIRE.pdf`;
@@ -636,7 +639,7 @@ document.getElementById("complementsGrid").innerHTML =
 /* Générateur de test de semestre */
 const TEST_THEMES = [
   ...GRAMMAIRE.map(g => ({id:g.n, label:g.n+' — '+g.title.replace(/&amp;/g,'&')})),
-  {id:"vocab", label:"Vocabulaire (V01–V09)"},
+  {id:"vocab", label:"Vocabulaire (V01–V12)"},
   {id:"verbes", label:"Verbes irréguliers"},
   {id:"wh", label:"WH Questions"},
   {id:"vocabbase", label:"Vocabulaire de base"},
