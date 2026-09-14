@@ -66,16 +66,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   <div class="hdr">
     <div class="hdr-code">V02 — Test aléatoire</div>
     <div class="hdr-title">Technical &amp; Engineering Vocabulary</div>
-    <div class="hdr-sub">Teste-toi sur le vocabulaire technique</div>
+    <div class="hdr-sub">Teste-toi</div>
   </div>
 
   <div class="card" id="screenStart">
-    <div class="opt-label">Sens du test</div>
-    <div class="opt-row" id="dirRow">
-      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
-      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
-    </div>
-    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-label">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="15">15</button>
@@ -106,18 +101,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
 
 <script>
 const DATA = [{"fr": "process", "en": "processus, procédé"}, {"fr": "system", "en": "système"}, {"fr": "component / part", "en": "composant, pièce"}, {"fr": "device", "en": "appareil, dispositif"}, {"fr": "equipment", "en": "équipement (indén.)"}, {"fr": "tool", "en": "outil"}, {"fr": "prototype", "en": "prototype"}, {"fr": "specification", "en": "spécification, cahier des charges"}, {"fr": "requirement", "en": "exigence, condition"}, {"fr": "constraint", "en": "contrainte"}, {"fr": "input / output", "en": "entrée / sortie"}, {"fr": "efficiency", "en": "efficacité, rendement"}, {"fr": "performance", "en": "performance, rendement"}, {"fr": "reliability", "en": "fiabilité"}, {"fr": "maintenance", "en": "maintenance, entretien"}, {"fr": "measurement", "en": "mesure"}, {"fr": "accuracy", "en": "précision (exactitude)"}, {"fr": "precision", "en": "précision (répétabilité)"}, {"fr": "tolerance", "en": "tolérance"}, {"fr": "error / uncertainty", "en": "erreur / incertitude"}, {"fr": "calibration", "en": "étalonnage"}, {"fr": "sensor", "en": "capteur"}, {"fr": "signal", "en": "signal"}, {"fr": "threshold", "en": "seuil"}, {"fr": "deviation", "en": "écart, déviation"}, {"fr": "frequency", "en": "fréquence"}, {"fr": "load", "en": "charge"}, {"fr": "force", "en": "force"}, {"fr": "pressure", "en": "pression"}, {"fr": "voltage / current", "en": "tension / courant"}, {"fr": "design", "en": "concevoir"}, {"fr": "manufacture", "en": "fabriquer"}, {"fr": "assemble", "en": "assembler"}, {"fr": "test / trial", "en": "tester / essai"}, {"fr": "monitor", "en": "surveiller, suivre"}, {"fr": "control", "en": "contrôler, réguler"}, {"fr": "detect", "en": "détecter"}, {"fr": "diagnose", "en": "diagnostiquer"}, {"fr": "optimise", "en": "optimiser"}, {"fr": "model", "en": "modéliser"}, {"fr": "simulate", "en": "simuler"}, {"fr": "validate", "en": "valider"}, {"fr": "verify", "en": "vérifier"}, {"fr": "troubleshoot", "en": "dépanner"}, {"fr": "implement", "en": "implémenter, mettre en œuvre"}];
-let dir = 'fr2en';
 let qcount = 15;
 let quiz = [];
 let cur = 0;
 let score = 0;
 
-document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
-  b.onclick = ()=>{
-    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); dir = b.dataset.dir;
-  };
-});
 document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
     document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
@@ -137,9 +125,9 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = dir==='fr2en' ? item.fr : item.en;
-    const correct = dir==='fr2en' ? item.en : item.fr;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const question = item.fr;
+    const correct = item.en;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
     return {question, correct, options};
