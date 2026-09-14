@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   <div class="hdr">
     <div class="hdr-code">V09 — Test aléatoire</div>
     <div class="hdr-title">Phrases Utiles en Anglais</div>
-    <div class="hdr-sub">Teste-toi sur les phrases utiles</div>
+    <div class="hdr-sub">Teste-toi</div>
   </div>
 
   <div class="card" id="screenStart">
@@ -125,12 +125,13 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = item.fr;
-    const correct = item.en;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
+    const dir = Math.random() < 0.5 ? 'fr2en' : 'en2fr';
+    const question = dir==='fr2en' ? item.fr : item.en;
+    const correct = dir==='fr2en' ? item.en : item.fr;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
-    return {question, correct, options};
+    return {question, correct, options, dir};
   });
   cur = 0; score = 0;
 }
@@ -153,7 +154,7 @@ function renderQ(){
   const q = quiz[cur];
   document.getElementById('progFill').style.width = ((cur)/quiz.length*100)+'%';
   document.getElementById('progText').textContent = (cur+1)+' / '+quiz.length;
-  document.getElementById('qnum').textContent = 'Question '+(cur+1);
+  document.getElementById('qnum').textContent = 'Question '+(cur+1)+'  ·  '+(q.dir==='fr2en' ? '🇫🇷 → 🇬🇧' : '🇬🇧 → 🇫🇷');
   document.getElementById('qword').textContent = q.question;
   const cWrap = document.getElementById('choices');
   cWrap.innerHTML = '';
