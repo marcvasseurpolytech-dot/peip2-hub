@@ -70,12 +70,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   </div>
 
   <div class="card" id="screenStart">
-    <div class="opt-label">Sens du test</div>
-    <div class="opt-row" id="dirRow">
-      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
-      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
-    </div>
-    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-label">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="15">15</button>
@@ -106,18 +101,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
 
 <script>
 const DATA = [{"fr": "accuser", "en": "to accuse"}, {"fr": "admettre", "en": "to admit"}, {"fr": "affirmer", "en": "to affirm"}, {"fr": "annoncer", "en": "to announce"}, {"fr": "approuver", "en": "to approve"}, {"fr": "avouer", "en": "to confess"}, {"fr": "confirmer", "en": "to confirm"}, {"fr": "contredire", "en": "to contradict"}, {"fr": "convaincre", "en": "to convince"}, {"fr": "déclarer", "en": "to declare"}, {"fr": "décrire", "en": "to describe"}, {"fr": "mentionner", "en": "to mention"}, {"fr": "nier", "en": "to deny"}, {"fr": "prédire", "en": "to predict"}, {"fr": "raconter", "en": "to tell"}, {"fr": "commander", "en": "to order"}, {"fr": "débattre", "en": "to debate"}, {"fr": "discuter", "en": "to discuss"}, {"fr": "dialoguer", "en": "to dialogue"}, {"fr": "insister", "en": "to insist"}, {"fr": "protester", "en": "to protest"}, {"fr": "réfléchir", "en": "to think about"}, {"fr": "se disputer", "en": "to fight"}, {"fr": "s’opposer", "en": "to oppose"}, {"fr": "proposer", "en": "to propose"}, {"fr": "suggérer", "en": "to suggest"}, {"fr": "recommander", "en": "to recommend"}, {"fr": "autoriser", "en": "to authorize"}, {"fr": "contacter", "en": "to contact"}, {"fr": "défendre", "en": "to defend"}, {"fr": "établir", "en": "to establish"}, {"fr": "influencer", "en": "to influence"}, {"fr": "interdire", "en": "to prohibit"}, {"fr": "interroger", "en": "to interview"}, {"fr": "intervenir", "en": "to intervene"}, {"fr": "obliger", "en": "to force"}, {"fr": "ordonner", "en": "to command"}, {"fr": "persuader", "en": "to persuade"}, {"fr": "planifier", "en": "to plan"}, {"fr": "bégayer", "en": "to stutter"}, {"fr": "balbutier", "en": "to stammer"}, {"fr": "chuchoter", "en": "to whisper"}, {"fr": "crier", "en": "to shout"}, {"fr": "douter", "en": "to doubt"}, {"fr": "exagérer", "en": "to exaggerate"}, {"fr": "féliciter", "en": "to congratulate"}, {"fr": "hurler", "en": "to howl"}, {"fr": "jurer", "en": "to swear"}, {"fr": "marmonner", "en": "to mumble"}, {"fr": "murmurer", "en": "to murmur"}, {"fr": "prier", "en": "to pray"}, {"fr": "remercier", "en": "to thank"}, {"fr": "reprocher", "en": "to reproach"}, {"fr": "s’exclamer", "en": "to exclaim"}, {"fr": "s’excuser", "en": "to apologize"}, {"fr": "se moquer", "en": "to mock"}, {"fr": "soupirer", "en": "to sigh"}, {"fr": "supplier", "en": "to beg"}, {"fr": "communiquer", "en": "to communicate"}, {"fr": "conclure", "en": "to conclude"}, {"fr": "conseiller", "en": "to advise"}, {"fr": "critiquer", "en": "to criticize"}, {"fr": "décevoir", "en": "to disappoint"}, {"fr": "échanger", "en": "to exchange"}, {"fr": "enregistrer", "en": "to register"}, {"fr": "enseigner", "en": "to teach"}, {"fr": "exprimer", "en": "to express"}, {"fr": "ignorer", "en": "to ignore"}, {"fr": "imiter", "en": "to imitate"}, {"fr": "indiquer", "en": "to indicate"}, {"fr": "informer", "en": "to inform"}, {"fr": "interpréter", "en": "to interpret"}, {"fr": "inviter", "en": "to invite"}, {"fr": "modifier", "en": "to modify"}, {"fr": "notifier", "en": "to notify"}, {"fr": "partager", "en": "to share"}, {"fr": "présenter", "en": "to present"}, {"fr": "faire semblant", "en": "to pretend"}, {"fr": "promettre", "en": "to promise"}, {"fr": "se demander", "en": "to wonder"}, {"fr": "signaler", "en": "to report"}, {"fr": "souhaiter", "en": "to wish"}, {"fr": "spécifier", "en": "to specify"}, {"fr": "supposer", "en": "to assume"}, {"fr": "téléphoner", "en": "to phone"}, {"fr": "traduire", "en": "to translate"}, {"fr": "répliquer", "en": "to reply"}];
-let dir = 'fr2en';
 let qcount = 15;
 let quiz = [];
 let cur = 0;
 let score = 0;
 
-document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
-  b.onclick = ()=>{
-    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); dir = b.dataset.dir;
-  };
-});
 document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
     document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
@@ -137,9 +125,9 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = dir==='fr2en' ? item.fr : item.en;
-    const correct = dir==='fr2en' ? item.en : item.fr;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const question = item.fr;
+    const correct = item.en;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
     return {question, correct, options};
