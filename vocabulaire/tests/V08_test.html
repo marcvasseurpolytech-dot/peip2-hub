@@ -70,12 +70,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   </div>
 
   <div class="card" id="screenStart">
-    <div class="opt-label">Sens du test</div>
-    <div class="opt-row" id="dirRow">
-      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
-      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
-    </div>
-    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-label">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="15">15</button>
@@ -106,18 +101,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
 
 <script>
 const DATA = [{"fr": "jeune", "en": "young"}, {"fr": "vieux", "en": "old"}, {"fr": "vide", "en": "empty"}, {"fr": "plein", "en": "full"}, {"fr": "utile", "en": "useful"}, {"fr": "inutile", "en": "useless"}, {"fr": "une question", "en": "a question"}, {"fr": "une réponse", "en": "an answer"}, {"fr": "tout", "en": "everything"}, {"fr": "rien", "en": "nothing"}, {"fr": "tôt", "en": "early"}, {"fr": "tard", "en": "late"}, {"fr": "premier", "en": "first"}, {"fr": "dernier", "en": "last"}, {"fr": "proche", "en": "near / close"}, {"fr": "loin", "en": "far"}, {"fr": "sec", "en": "dry"}, {"fr": "mouillé", "en": "wet"}, {"fr": "toujours", "en": "always"}, {"fr": "jamais", "en": "never"}, {"fr": "sale", "en": "dirty"}, {"fr": "propre", "en": "clean"}, {"fr": "petit", "en": "small / little"}, {"fr": "grand", "en": "big"}, {"fr": "le plafond", "en": "the ceiling"}, {"fr": "le sol", "en": "the ground"}, {"fr": "coupable", "en": "guilty"}, {"fr": "innocent", "en": "innocent"}, {"fr": "la faim", "en": "hunger"}, {"fr": "la soif", "en": "thirst"}, {"fr": "la sœur", "en": "sister"}, {"fr": "le frère", "en": "brother"}, {"fr": "minuscule", "en": "tiny"}, {"fr": "gigantesque", "en": "huge"}, {"fr": "ancien", "en": "ancient"}, {"fr": "nouveau", "en": "new"}, {"fr": "facile", "en": "easy"}, {"fr": "difficile", "en": "difficult / hard"}, {"fr": "ami", "en": "friend"}, {"fr": "ennemi", "en": "enemy"}, {"fr": "épais", "en": "thick"}, {"fr": "fin", "en": "thin"}, {"fr": "froid", "en": "cool / cold"}, {"fr": "chaud", "en": "warm / hot"}, {"fr": "une femme", "en": "a woman"}, {"fr": "un homme", "en": "a man"}, {"fr": "lent", "en": "slow"}, {"fr": "rapide", "en": "fast"}, {"fr": "faux", "en": "wrong"}, {"fr": "vrai", "en": "true"}, {"fr": "profond", "en": "deep"}, {"fr": "peu profond", "en": "shallow"}, {"fr": "fort", "en": "strong"}, {"fr": "faible", "en": "weak"}, {"fr": "beaucoup", "en": "a lot of / many"}, {"fr": "peu", "en": "few"}, {"fr": "exactement", "en": "exactly"}, {"fr": "approximativement / probablement", "en": "approximately / probably"}, {"fr": "blanc", "en": "white"}, {"fr": "noir", "en": "black"}, {"fr": "bruyant", "en": "noisy"}, {"fr": "calme", "en": "calm"}, {"fr": "rugueux", "en": "rough"}, {"fr": "lisse", "en": "smooth"}, {"fr": "maintenant", "en": "now"}, {"fr": "plus tard", "en": "later"}, {"fr": "dehors", "en": "out"}, {"fr": "dedans", "en": "in"}, {"fr": "intéressant", "en": "interesting"}, {"fr": "ennuyeux", "en": "boring"}, {"fr": "marcher", "en": "to walk"}, {"fr": "courir", "en": "to run"}, {"fr": "attacher", "en": "to attach"}, {"fr": "détacher", "en": "to detach"}, {"fr": "augmenter", "en": "to increase"}, {"fr": "diminuer", "en": "to decrease"}, {"fr": "décoller", "en": "to take off"}, {"fr": "atterrir", "en": "to land"}, {"fr": "avancer", "en": "to move forward"}, {"fr": "reculer", "en": "to move back"}, {"fr": "montrer", "en": "to show"}, {"fr": "cacher", "en": "to hide"}, {"fr": "économiser", "en": "to save money"}, {"fr": "dépenser", "en": "to spend"}, {"fr": "arriver", "en": "to arrive"}, {"fr": "partir", "en": "to leave"}, {"fr": "rire", "en": "to laugh"}, {"fr": "pleurer", "en": "to cry"}, {"fr": "casser", "en": "to break"}, {"fr": "réparer", "en": "to fix"}, {"fr": "gagner", "en": "to win"}, {"fr": "perdre", "en": "to lose"}, {"fr": "ralentir", "en": "to slow down"}, {"fr": "accélérer", "en": "to accelerate"}, {"fr": "tirer", "en": "to pull"}, {"fr": "pousser", "en": "to push"}, {"fr": "se réveiller", "en": "to wake up"}, {"fr": "s’endormir", "en": "to fall asleep"}, {"fr": "allumer", "en": "to turn on"}, {"fr": "éteindre", "en": "to turn off"}];
-let dir = 'fr2en';
 let qcount = 15;
 let quiz = [];
 let cur = 0;
 let score = 0;
 
-document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
-  b.onclick = ()=>{
-    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); dir = b.dataset.dir;
-  };
-});
 document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
     document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
@@ -137,9 +125,9 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = dir==='fr2en' ? item.fr : item.en;
-    const correct = dir==='fr2en' ? item.en : item.fr;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const question = item.fr;
+    const correct = item.en;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
     return {question, correct, options};
