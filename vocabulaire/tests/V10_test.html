@@ -70,12 +70,7 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
   </div>
 
   <div class="card" id="screenStart">
-    <div class="opt-label">Sens du test</div>
-    <div class="opt-row" id="dirRow">
-      <button class="opt-btn active" data-dir="fr2en">🇫🇷 → 🇬🇧</button>
-      <button class="opt-btn" data-dir="en2fr">🇬🇧 → 🇫🇷</button>
-    </div>
-    <div class="opt-label" style="margin-top:14px">Nombre de questions</div>
+    <div class="opt-label">Nombre de questions</div>
     <div class="opt-row" id="lenRow">
       <button class="opt-btn" data-n="10">10</button>
       <button class="opt-btn active" data-n="15">15</button>
@@ -106,18 +101,11 @@ body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;
 
 <script>
 const DATA = [{"fr": "toujours", "en": "always"}, {"fr": "souvent", "en": "often"}, {"fr": "rarement", "en": "rarely"}, {"fr": "jamais", "en": "never"}, {"fr": "Parfois", "en": "sometimes"}, {"fr": "d’habitude", "en": "usually"}, {"fr": "constamment", "en": "constantly"}, {"fr": "encore", "en": "again"}, {"fr": "à plusieurs reprises", "en": "repeatedly"}, {"fr": "après", "en": "after"}, {"fr": "autrefois", "en": "in the old days"}, {"fr": "dernièrement", "en": "recently"}, {"fr": "désormais", "en": "from now on"}, {"fr": "longtemps", "en": "for a long time"}, {"fr": "maintenant", "en": "now"}, {"fr": "ensuite", "en": "next"}, {"fr": "tout de suite", "en": "immediately"}, {"fr": "immédiatement", "en": "straight away"}, {"fr": "bientôt", "en": "soon"}, {"fr": "finalement", "en": "eventually"}, {"fr": "premièrement", "en": "firstly"}, {"fr": "actuellement", "en": "currently"}, {"fr": "n’importe quand", "en": "anytime"}, {"fr": "soudainement", "en": "suddenly"}, {"fr": "absolument", "en": "absolutely"}, {"fr": "accidentellement", "en": "accidentally"}, {"fr": "attentivement", "en": "closely"}, {"fr": "automatiquement", "en": "automatically"}, {"fr": "calmement", "en": "calmly"}, {"fr": "clairement", "en": "clearly"}, {"fr": "complètement", "en": "completely"}, {"fr": "confortablement", "en": "comfortably"}, {"fr": "correctement", "en": "correctly"}, {"fr": "courageusement", "en": "courageously"}, {"fr": "couramment", "en": "fluently"}, {"fr": "difficilement", "en": "with difficulty"}, {"fr": "doucement", "en": "softly"}, {"fr": "facilement", "en": "easily"}, {"fr": "franchement", "en": "frankly"}, {"fr": "honnêtement", "en": "truthfully"}, {"fr": "légèrement", "en": "lightly"}, {"fr": "lentement", "en": "slowly"}, {"fr": "librement", "en": "freely"}, {"fr": "parfaitement", "en": "perfectly"}, {"fr": "patiemment", "en": "patiently"}, {"fr": "prudemment", "en": "carefully"}, {"fr": "rapidement", "en": "rapidly"}, {"fr": "sérieusement", "en": "seriously"}, {"fr": "silencieusement", "en": "silently"}, {"fr": "simplement", "en": "simply"}, {"fr": "strictement", "en": "strictly"}, {"fr": "tranquillement", "en": "quietly"}, {"fr": "bruyamment", "en": "loudly"}, {"fr": "bizarrement", "en": "oddly"}, {"fr": "curieusement", "en": "curiously"}, {"fr": "mystérieusement", "en": "mysteriously"}, {"fr": "étonnamment", "en": "surprisingly"}, {"fr": "à tort", "en": "wrongly"}, {"fr": "délibérément", "en": "deliberately"}, {"fr": "anormalement", "en": "abnormally"}, {"fr": "autrement", "en": "differently"}, {"fr": "bien", "en": "well"}, {"fr": "brièvement", "en": "briefly"}, {"fr": "ensemble", "en": "together"}, {"fr": "exprès", "en": "on purpose"}, {"fr": "assez", "en": "enough"}, {"fr": "beaucoup", "en": "a lot"}, {"fr": "considérablement", "en": "greatly"}, {"fr": "énormément", "en": "very much"}, {"fr": "extrêmement", "en": "extremely"}, {"fr": "presque", "en": "almost"}, {"fr": "très", "en": "very"}, {"fr": "exactement", "en": "exactly"}, {"fr": "approximativement", "en": "approximately"}, {"fr": "environ", "en": "about/around"}, {"fr": "de plus en plus", "en": "more and more"}, {"fr": "inutilement", "en": "unnecessarily"}, {"fr": "activement", "en": "actively"}, {"fr": "à peine", "en": "scarcely"}, {"fr": "aussi", "en": "too"}, {"fr": "fortement", "en": "heavily"}, {"fr": "seulement", "en": "only"}, {"fr": "vraiment", "en": "really"}, {"fr": "ailleurs", "en": "elsewhere"}, {"fr": "au hasard", "en": "randomly"}, {"fr": "n’importe où", "en": "anywhere"}, {"fr": "nulle part", "en": "nowhere"}, {"fr": "partout", "en": "everywhere"}, {"fr": "quelque part", "en": "somewhere"}, {"fr": "à l’envers", "en": "upside-down"}, {"fr": "apparemment", "en": "apparently"}, {"fr": "certainement", "en": "certainly"}, {"fr": "évidemment", "en": "obviously"}, {"fr": "heureusement", "en": "fortunately"}, {"fr": "malheureusement", "en": "unfortunately"}, {"fr": "naturellement", "en": "naturally"}, {"fr": "normalement", "en": "normally"}, {"fr": "probablement", "en": "probably"}, {"fr": "peut-être", "en": "perhaps"}, {"fr": "désespérément", "en": "hopelessly"}];
-let dir = 'fr2en';
 let qcount = 15;
 let quiz = [];
 let cur = 0;
 let score = 0;
 
-document.querySelectorAll('#dirRow .opt-btn').forEach(b=>{
-  b.onclick = ()=>{
-    document.querySelectorAll('#dirRow .opt-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); dir = b.dataset.dir;
-  };
-});
 document.querySelectorAll('#lenRow .opt-btn').forEach(b=>{
   b.onclick = ()=>{
     document.querySelectorAll('#lenRow .opt-btn').forEach(x=>x.classList.remove('active'));
@@ -137,9 +125,9 @@ function shuffle(arr){
 function buildQuiz(){
   const pool = shuffle(DATA);
   quiz = pool.slice(0, Math.min(qcount, DATA.length)).map(item=>{
-    const question = dir==='fr2en' ? item.fr : item.en;
-    const correct = dir==='fr2en' ? item.en : item.fr;
-    const distractorPool = DATA.filter(d=>d!==item).map(d=> dir==='fr2en' ? d.en : d.fr);
+    const question = item.fr;
+    const correct = item.en;
+    const distractorPool = DATA.filter(d=>d!==item).map(d=>d.en);
     const distractors = shuffle(distractorPool).slice(0,3);
     const options = shuffle([correct, ...distractors]);
     return {question, correct, options};
