@@ -681,7 +681,7 @@ function renderBatch(b) {
         <button data-mode="quiz"  class="${currentMode==='quiz'?'on':''}">✏️ Quiz</button>
         <button data-mode="flashcard" class="${currentMode==='flashcard'?'on':''}">🃏 Flashcards</button>
       </div>
-      <button class="shuffle-btn" onclick="shuffleFC(${b})">🔀 Mélanger</button>
+      ${currentMode === 'flashcard' ? `<button class="shuffle-btn" onclick="shuffleFC(${b})">🔀 Mélanger</button>` : ''}
     </div>`;
 
   if (currentMode === 'table') {
