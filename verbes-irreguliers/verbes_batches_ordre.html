@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verbes irréguliers — Les 5 batches</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;--bg2:#171614;--bg3:#1e1c19;
+  --gold:#c9a84c;--gold2:#e8c96a;--cream:#f0ead8;
+  --muted:#7a7060;--border:#2a2820;
+  --ok:#5a9e52;--ok-bg:#1a2e18;--ok-border:#3a6e34;
+}
+body{background:var(--bg);color:var(--cream);font-family:'Source Serif 4',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px}
+.wrap{max-width:920px;width:100%}
+.hdr{text-align:center;margin-bottom:22px}
+.hdr-code{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.hdr-title{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.hdr-sub{font-size:.85rem;color:var(--muted);font-style:italic}
+
+.batch-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0 6px}
+.batch-tab{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:8px 18px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.batch-tab.active{border-color:var(--gold);color:var(--bg);background:var(--gold);font-weight:700}
+.batch-tab .n{opacity:.7;margin-left:4px}
+
+.progress-wrap{display:flex;align-items:center;gap:10px;margin:14px 0 24px}
+.progress-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);white-space:nowrap}
+
+.batch-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.batch-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--cream)}
+.batch-title .rng{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:400;margin-left:8px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.tool-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--cream);cursor:pointer;transition:all .15s;letter-spacing:.03em}
+.tool-btn:hover{border-color:var(--gold)}
+.tool-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.1)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 14px;cursor:pointer;transition:border-color .15s, background .15s;perspective:800px;min-height:96px;display:flex;flex-direction:column;justify-content:center}
+.card:hover{border-color:var(--gold)}
+.card.revealed{border-color:var(--ok-border);background:var(--ok-bg)}
+.card .num{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);margin-bottom:6px}
+.card .base{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--gold2)}
+.card .details{margin-top:10px;font-size:.82rem;line-height:1.55;display:none}
+.card.revealed .details{display:block}
+.card .details .row{display:flex;gap:6px}
+.card .details .lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;min-width:64px;padding-top:2px}
+.card .details .val{color:var(--cream)}
+.card .hint{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:8px;letter-spacing:.03em}
+.card.revealed .hint{display:none}
+
+.table-view table{width:100%;border-collapse:collapse;font-size:.85rem}
+.table-view th{font-family:'JetBrains Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+.table-view td{padding:9px 10px;border-bottom:1px solid var(--border)}
+.table-view tr:hover td{background:var(--bg3)}
+.table-view .base-cell{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold2)}
+.hidden{display:none !important}
+
+.nav-foot{display:flex;justify-content:space-between;align-items:center;margin-top:26px;gap:10px}
+.nav-btn{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--cream);cursor:pointer;transition:all .15s}
+.nav-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold2)}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.nav-mid{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-code">Verbes irréguliers</div>
+    <div class="hdr-title">Les 5 batches, dans l'ordre</div>
+    <div class="hdr-sub">100 verbes · clique sur une carte pour révéler prétérit, participe passé et traduction</div>
+  </div>
+
+  <div class="batch-tabs" id="batchTabs"></div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+    <div class="progress-text" id="progText"></div>
+  </div>
+
+  <div class="batch-hdr">
+    <div class="batch-title" id="batchTitle">Batch 1 <span class="rng" id="batchRange"></span></div>
+    <div class="tools">
+      <button class="tool-btn active" id="modeCards">🎴 Fiches</button>
+      <button class="tool-btn" id="modeTable">📋 Tableau</button>
+      <button class="tool-btn" id="revealAll">👁 Tout révéler</button>
+      <button class="tool-btn" id="hideAll">🙈 Tout masquer</button>
+    </div>
+  </div>
+
+  <div class="grid" id="cardsView"></div>
+
+  <div class="table-view hidden" id="tableView">
+    <table>
+      <thead><tr><th>#</th><th>Base</th><th>Prétérit</th><th>Participe passé</th><th>Français</th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="nav-foot">
+    <button class="nav-btn" id="prevBatch">← Batch précédent</button>
+    <div class="nav-mid" id="navMid"></div>
+    <button class="nav-btn" id="nextBatch">Batch suivant →</button>
+  </div>
+</div>
+
+<script>
+const VERBS = [{"id": 1, "batch": 1, "base": "be", "pret": "was / were", "pp": "been", "fr": "être"}, {"id": 2, "batch": 1, "base": "have", "pret": "had", "pp": "had", "fr": "avoir"}, {"id": 3, "batch": 1, "base": "do", "pret": "did", "pp": "done", "fr": "faire"}, {"id": 4, "batch": 1, "base": "go", "pret": "went", "pp": "gone", "fr": "aller"}, {"id": 5, "batch": 1, "base": "say", "pret": "said", "pp": "said", "fr": "dire"}, {"id": 6, "batch": 1, "base": "get", "pret": "got", "pp": "got", "fr": "obtenir"}, {"id": 7, "batch": 1, "base": "make", "pret": "made", "pp": "made", "fr": "fabriquer / réaliser"}, {"id": 8, "batch": 1, "base": "know", "pret": "knew", "pp": "known", "fr": "savoir / connaître"}, {"id": 9, "batch": 1, "base": "think", "pret": "thought", "pp": "thought", "fr": "penser"}, {"id": 10, "batch": 1, "base": "take", "pret": "took", "pp": "taken", "fr": "prendre"}, {"id": 11, "batch": 1, "base": "see", "pret": "saw", "pp": "seen", "fr": "voir"}, {"id": 12, "batch": 1, "base": "come", "pret": "came", "pp": "come", "fr": "venir"}, {"id": 13, "batch": 1, "base": "give", "pret": "gave", "pp": "given", "fr": "donner"}, {"id": 14, "batch": 1, "base": "find", "pret": "found", "pp": "found", "fr": "trouver"}, {"id": 15, "batch": 1, "base": "tell", "pret": "told", "pp": "told", "fr": "raconter / dire"}, {"id": 16, "batch": 1, "base": "put", "pret": "put", "pp": "put", "fr": "mettre / poser"}, {"id": 17, "batch": 1, "base": "feel", "pret": "felt", "pp": "felt", "fr": "ressentir"}, {"id": 18, "batch": 1, "base": "become", "pret": "became", "pp": "become", "fr": "devenir"}, {"id": 19, "batch": 1, "base": "leave", "pret": "left", "pp": "left", "fr": "partir / laisser"}, {"id": 20, "batch": 1, "base": "keep", "pret": "kept", "pp": "kept", "fr": "garder / maintenir"}, {"id": 21, "batch": 2, "base": "let", "pret": "let", "pp": "let", "fr": "laisser / permettre"}, {"id": 22, "batch": 2, "base": "begin", "pret": "began", "pp": "begun", "fr": "commencer"}, {"id": 23, "batch": 2, "base": "show", "pret": "showed", "pp": "shown", "fr": "montrer"}, {"id": 24, "batch": 2, "base": "bring", "pret": "brought", "pp": "brought", "fr": "apporter"}, {"id": 25, "batch": 2, "base": "write", "pret": "wrote", "pp": "written", "fr": "écrire"}, {"id": 26, "batch": 2, "base": "meet", "pret": "met", "pp": "met", "fr": "rencontrer"}, {"id": 27, "batch": 2, "base": "speak", "pret": "spoke", "pp": "spoken", "fr": "parler"}, {"id": 28, "batch": 2, "base": "hear", "pret": "heard", "pp": "heard", "fr": "entendre"}, {"id": 29, "batch": 2, "base": "sit", "pret": "sat", "pp": "sat", "fr": "s'asseoir"}, {"id": 30, "batch": 2, "base": "stand", "pret": "stood", "pp": "stood", "fr": "se tenir debout"}, {"id": 31, "batch": 2, "base": "lose", "pret": "lost", "pp": "lost", "fr": "perdre"}, {"id": 32, "batch": 2, "base": "pay", "pret": "paid", "pp": "paid", "fr": "payer"}, {"id": 33, "batch": 2, "base": "read", "pret": "read", "pp": "read", "fr": "lire"}, {"id": 34, "batch": 2, "base": "grow", "pret": "grew", "pp": "grown", "fr": "grandir / pousser"}, {"id": 35, "batch": 2, "base": "run", "pret": "ran", "pp": "run", "fr": "courir"}, {"id": 36, "batch": 2, "base": "drive", "pret": "drove", "pp": "driven", "fr": "conduire"}, {"id": 37, "batch": 2, "base": "break", "pret": "broke", "pp": "broken", "fr": "casser"}, {"id": 38, "batch": 2, "base": "buy", "pret": "bought", "pp": "bought", "fr": "acheter"}, {"id": 39, "batch": 2, "base": "send", "pret": "sent", "pp": "sent", "fr": "envoyer"}, {"id": 40, "batch": 2, "base": "build", "pret": "built", "pp": "built", "fr": "construire"}, {"id": 41, "batch": 3, "base": "fall", "pret": "fell", "pp": "fallen", "fr": "tomber"}, {"id": 42, "batch": 3, "base": "cut", "pret": "cut", "pp": "cut", "fr": "couper"}, {"id": 43, "batch": 3, "base": "eat", "pret": "ate", "pp": "eaten", "fr": "manger"}, {"id": 44, "batch": 3, "base": "choose", "pret": "chose", "pp": "chosen", "fr": "choisir"}, {"id": 45, "batch": 3, "base": "win", "pret": "won", "pp": "won", "fr": "gagner"}, {"id": 46, "batch": 3, "base": "wear", "pret": "wore", "pp": "worn", "fr": "porter (vêtements)"}, {"id": 47, "batch": 3, "base": "understand", "pret": "understood", "pp": "understood", "fr": "comprendre"}, {"id": 48, "batch": 3, "base": "catch", "pret": "caught", "pp": "caught", "fr": "attraper"}, {"id": 49, "batch": 3, "base": "sleep", "pret": "slept", "pp": "slept", "fr": "dormir"}, {"id": 50, "batch": 3, "base": "hold", "pret": "held", "pp": "held", "fr": "tenir"}, {"id": 51, "batch": 3, "base": "draw", "pret": "drew", "pp": "drawn", "fr": "dessiner"}, {"id": 52, "batch": 3, "base": "fly", "pret": "flew", "pp": "flown", "fr": "voler"}, {"id": 53, "batch": 3, "base": "ride", "pret": "rode", "pp": "ridden", "fr": "chevaucher / faire du vélo"}, {"id": 54, "batch": 3, "base": "spend", "pret": "spent", "pp": "spent", "fr": "dépenser / passer (du temps)"}, {"id": 55, "batch": 3, "base": "teach", "pret": "taught", "pp": "taught", "fr": "enseigner"}, {"id": 56, "batch": 3, "base": "mean", "pret": "meant", "pp": "meant", "fr": "signifier / vouloir dire"}, {"id": 57, "batch": 3, "base": "sell", "pret": "sold", "pp": "sold", "fr": "vendre"}, {"id": 58, "batch": 3, "base": "lead", "pret": "led", "pp": "led", "fr": "mener / diriger"}, {"id": 59, "batch": 3, "base": "throw", "pret": "threw", "pp": "thrown", "fr": "lancer"}, {"id": 60, "batch": 3, "base": "forget", "pret": "forgot", "pp": "forgotten", "fr": "oublier"}, {"id": 61, "batch": 4, "base": "fight", "pret": "fought", "pp": "fought", "fr": "se battre"}, {"id": 62, "batch": 4, "base": "hide", "pret": "hid", "pp": "hidden", "fr": "cacher"}, {"id": 63, "batch": 4, "base": "hit", "pret": "hit", "pp": "hit", "fr": "frapper / heurter"}, {"id": 64, "batch": 4, "base": "hurt", "pret": "hurt", "pp": "hurt", "fr": "blesser"}, {"id": 65, "batch": 4, "base": "forgive", "pret": "forgave", "pp": "forgiven", "fr": "pardonner"}, {"id": 66, "batch": 4, "base": "freeze", "pret": "froze", "pp": "frozen", "fr": "geler"}, {"id": 67, "batch": 4, "base": "steal", "pret": "stole", "pp": "stolen", "fr": "voler (dérober)"}, {"id": 68, "batch": 4, "base": "shake", "pret": "shook", "pp": "shaken", "fr": "secouer"}, {"id": 69, "batch": 4, "base": "wake", "pret": "woke", "pp": "woken", "fr": "se réveiller"}, {"id": 70, "batch": 4, "base": "sing", "pret": "sang", "pp": "sung", "fr": "chanter"}, {"id": 71, "batch": 4, "base": "swim", "pret": "swam", "pp": "swum", "fr": "nager"}, {"id": 72, "batch": 4, "base": "drink", "pret": "drank", "pp": "drunk", "fr": "boire"}, {"id": 73, "batch": 4, "base": "ring", "pret": "rang", "pp": "rung", "fr": "sonner"}, {"id": 74, "batch": 4, "base": "blow", "pret": "blew", "pp": "blown", "fr": "souffler"}, {"id": 75, "batch": 4, "base": "bite", "pret": "bit", "pp": "bitten", "fr": "mordre"}, {"id": 76, "batch": 4, "base": "bend", "pret": "bent", "pp": "bent", "fr": "plier / courber"}, {"id": 77, "batch": 4, "base": "lend", "pret": "lent", "pp": "lent", "fr": "prêter"}, {"id": 78, "batch": 4, "base": "deal", "pret": "dealt", "pp": "dealt", "fr": "traiter / distribuer"}, {"id": 79, "batch": 4, "base": "feed", "pret": "fed", "pp": "fed", "fr": "nourrir"}, {"id": 80, "batch": 4, "base": "shoot", "pret": "shot", "pp": "shot", "fr": "tirer (arme / photo)"}, {"id": 81, "batch": 5, "base": "hang", "pret": "hung", "pp": "hung", "fr": "accrocher"}, {"id": 82, "batch": 5, "base": "swing", "pret": "swung", "pp": "swung", "fr": "se balancer"}, {"id": 83, "batch": 5, "base": "sink", "pret": "sank", "pp": "sunk", "fr": "couler / sombrer"}, {"id": 84, "batch": 5, "base": "spin", "pret": "spun", "pp": "spun", "fr": "tourner / tournoyer"}, {"id": 85, "batch": 5, "base": "stick", "pret": "stuck", "pp": "stuck", "fr": "coller / rester bloqué"}, {"id": 86, "batch": 5, "base": "sting", "pret": "stung", "pp": "stung", "fr": "piquer"}, {"id": 87, "batch": 5, "base": "burst", "pret": "burst", "pp": "burst", "fr": "éclater / exploser"}, {"id": 88, "batch": 5, "base": "shut", "pret": "shut", "pp": "shut", "fr": "fermer"}, {"id": 89, "batch": 5, "base": "cast", "pret": "cast", "pp": "cast", "fr": "lancer / projeter"}, {"id": 90, "batch": 5, "base": "set", "pret": "set", "pp": "set", "fr": "régler / poser"}, {"id": 91, "batch": 5, "base": "spread", "pret": "spread", "pp": "spread", "fr": "répandre / étaler"}, {"id": 92, "batch": 5, "base": "shed", "pret": "shed", "pp": "shed", "fr": "verser / perdre (poils)"}, {"id": 93, "batch": 5, "base": "slide", "pret": "slid", "pp": "slid", "fr": "glisser"}, {"id": 94, "batch": 5, "base": "strike", "pret": "struck", "pp": "struck", "fr": "frapper / affecter"}, {"id": 95, "batch": 5, "base": "sweep", "pret": "swept", "pp": "swept", "fr": "balayer"}, {"id": 96, "batch": 5, "base": "weep", "pret": "wept", "pp": "wept", "fr": "pleurer"}, {"id": 97, "batch": 5, "base": "bind", "pret": "bound", "pp": "bound", "fr": "lier / relier"}, {"id": 98, "batch": 5, "base": "grind", "pret": "ground", "pp": "ground", "fr": "broyer / moudre"}, {"id": 99, "batch": 5, "base": "wind", "pret": "wound", "pp": "wound", "fr": "enrouler / remonter"}, {"id": 100, "batch": 5, "base": "swear", "pret": "swore", "pp": "sworn", "fr": "jurer"}];
+const BATCHES = [1,2,3,4,5];
+let currentBatch = 1;
+let mode = 'cards';
+const revealedSet = new Set();
+
+function verbsOf(b){ return VERBS.filter(v => v.batch === b); }
+
+function renderTabs(){
+  const wrap = document.getElementById('batchTabs');
+  wrap.innerHTML = '';
+  BATCHES.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'batch-tab' + (b === currentBatch ? ' active' : '');
+    const vs = verbsOf(b);
+    btn.innerHTML = 'Batch ' + b + '<span class="n">(' + vs[0].id + '–' + vs[vs.length-1].id + ')</span>';
+    btn.onclick = () => { currentBatch = b; render(); };
+    wrap.appendChild(btn);
+  });
+}
+
+function renderProgress(){
+  const idx = BATCHES.indexOf(currentBatch);
+  document.getElementById('progFill').style.width = ((idx+1)/BATCHES.length*100) + '%';
+  document.getElementById('progText').textContent = 'Batch ' + currentBatch + ' / ' + BATCHES.length;
+}
+
+function renderCards(){
+  const grid = document.getElementById('cardsView');
+  grid.innerHTML = '';
+  verbsOf(currentBatch).forEach(v => {
+    const card = document.createElement('div');
+    const key = v.id;
+    card.className = 'card' + (revealedSet.has(key) ? ' revealed' : '');
+    card.innerHTML = `
+      <div class="num">#${v.id}</div>
+      <div class="base">${v.base}</div>
+      <div class="details">
+        <div class="row"><div class="lbl">Prétérit</div><div class="val">${v.pret}</div></div>
+        <div class="row"><div class="lbl">Part. passé</div><div class="val">${v.pp}</div></div>
+        <div class="row"><div class="lbl">Français</div><div class="val">${v.fr}</div></div>
+      </div>
+      <div class="hint">clique pour révéler</div>
+    `;
+    card.onclick = () => {
+      if (revealedSet.has(key)) revealedSet.delete(key); else revealedSet.add(key);
+      card.classList.toggle('revealed');
+    };
+    grid.appendChild(card);
+  });
+}
+
+function renderTable(){
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  verbsOf(currentBatch).forEach(v => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${v.id}</td><td class="base-cell">${v.base}</td><td>${v.pret}</td><td>${v.pp}</td><td>${v.fr}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function render(){
+  renderTabs();
+  renderProgress();
+  document.getElementById('batchTitle').firstChild.textContent = 'Batch ' + currentBatch + ' ';
+  const vs = verbsOf(currentBatch);
+  document.getElementById('batchRange').textContent = 'verbes ' + vs[0].id + '–' + vs[vs.length-1].id;
+  renderCards();
+  renderTable();
+  document.getElementById('prevBatch').disabled = currentBatch === BATCHES[0];
+  document.getElementById('nextBatch').disabled = currentBatch === BATCHES[BATCHES.length-1];
+  document.getElementById('navMid').textContent = (BATCHES.length - BATCHES.indexOf(currentBatch) - 1) > 0
+    ? (BATCHES.length - BATCHES.indexOf(currentBatch) - 1) + ' batch(s) restant(s)'
+    : 'Dernier batch';
+}
+
+document.getElementById('modeCards').onclick = () => {
+  mode = 'cards';
+  document.getElementById('modeCards').classList.add('active');
+  document.getElementById('modeTable').classList.remove('active');
+  document.getElementById('cardsView').classList.remove('hidden');
+  document.getElementById('tableView').classList.add('hidden');
+};
+document.getElementById('modeTable').onclick = () => {
+  mode = 'table';
+  document.getElementById('modeTable').classList.add('active');
+  document.getElementById('modeCards').classList.remove('active');
+  document.getElementById('tableView').classList.remove('hidden');
+  document.getElementById('cardsView').classList.add('hidden');
+};
+document.getElementById('revealAll').onclick = () => {
+  verbsOf(currentBatch).forEach(v => revealedSet.add(v.id));
+  renderCards();
+};
+document.getElementById('hideAll').onclick = () => {
+  verbsOf(currentBatch).forEach(v => revealedSet.delete(v.id));
+  renderCards();
+};
+document.getElementById('prevBatch').onclick = () => {
+  const idx = BATCHES.indexOf(currentBatch);
+  if (idx > 0) { currentBatch = BATCHES[idx-1]; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+};
+document.getElementById('nextBatch').onclick = () => {
+  const idx = BATCHES.indexOf(currentBatch);
+  if (idx < BATCHES.length-1) { currentBatch = BATCHES[idx+1]; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+};
+
+render();
+</script>
+</body>
+</html>
