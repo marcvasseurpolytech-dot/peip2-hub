@@ -626,6 +626,7 @@ let fcIndex = 0;
 let fcFlipped = false;
 let fcOrder = [];
 let quizData = {}; // {batchNum: [{...verb, input refs}]}
+let quizOrder = {}; // {batchNum: [shuffled indices]}
 
 function getBatchVerbs(b) {
   return VERBS.slice((b-1)*20, b*20);
@@ -663,11 +664,17 @@ function renderBatch(b) {
   const meta = BATCH_META[b-1];
   const color = BATCH_COLORS[b-1];
   const verbs = getBatchVerbs(b);
-  const groups = getGroups(verbs);
-  const groupLabels = ["Groupe A · n°"+(1+(b-1)*20)+"–"+(5+(b-1)*20),
+  let groupLabels = ["Groupe A · n°"+(1+(b-1)*20)+"–"+(5+(b-1)*20),
     "Groupe B · n°"+(6+(b-1)*20)+"–"+(10+(b-1)*20),
     "Groupe C · n°"+(11+(b-1)*20)+"–"+(15+(b-1)*20),
     "Groupe D · n°"+(16+(b-1)*20)+"–"+(20+(b-1)*20)];
+
+  let tableVerbs = verbs;
+  if (currentMode === 'quiz' && quizOrder[b] && quizOrder[b].length === verbs.length) {
+    tableVerbs = quizOrder[b].map(i => verbs[i]);
+    groupLabels = ["Série 1", "Série 2", "Série 3", "Série 4"];
+  }
+  const groups = getGroups(tableVerbs);
 
   let inner = `
     <div class="batch-header">
@@ -682,6 +689,7 @@ function renderBatch(b) {
         <button data-mode="flashcard" class="${currentMode==='flashcard'?'on':''}">🃏 Flashcards</button>
       </div>
       ${currentMode === 'flashcard' ? `<button class="shuffle-btn" onclick="shuffleFC(${b})">🔀 Mélanger</button>` : ''}
+      ${currentMode === 'quiz' ? `<button class="shuffle-btn" onclick="shuffleQuiz(${b})">🔀 Mélanger</button>` : ''}
     </div>`;
 
   if (currentMode === 'table') {
@@ -827,6 +835,11 @@ function shuffleFC(b) {
   const verbs = getBatchVerbs(b);
   fcOrder = verbs.map((_,i)=>i).sort(()=>Math.random()-.5);
   fcIndex = 0; fcFlipped = false;
+  renderSection(b);
+}
+function shuffleQuiz(b) {
+  const verbs = getBatchVerbs(b);
+  quizOrder[b] = verbs.map((_,i)=>i).sort(()=>Math.random()-.5);
   renderSection(b);
 }
 
