@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PEIP2 · Hub Anglais · Polytech Lille</title>
+<script>
+  // GitHub Pages has no serverless backend (api/progress 404s there), so the
+  // progress sync only works on Vercel. Same repo/branch serves both, so this
+  // only fires when the page is loaded from the github.io host.
+  if(location.hostname.indexOf('github.io') !== -1){
+    location.replace('https://peip2-hub.vercel.app' + location.pathname.replace(/^\/peip2-hub/, '') + location.search + location.hash);
+  }
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
