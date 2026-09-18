@@ -138,6 +138,22 @@ main{flex:1;padding:2rem 2.2rem 4rem;max-width:1180px;margin:0 auto;width:100%}
 }
 .reset-btn:hover{background:rgba(239,71,111,.18)}
 
+.sync-pill{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(250,246,237,.5);
+  padding:.3rem .5rem;
+}
+.sync-banner{
+  display:none;position:relative;z-index:20;
+  background:var(--red);color:#fff;
+  padding:.7rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;text-align:center;
+}
+.sync-banner.show{display:flex}
+.sync-banner button{
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;
+  background:#fff;color:var(--red);border:none;padding:.3rem .8rem;border-radius:14px;cursor:pointer;
+}
+
 .theme-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.2rem}
 .theme-chip{
   font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.03em;
@@ -191,7 +207,13 @@ footer a{color:var(--gold-l);text-decoration:none}
       <h1>Hub Anglais — Cours &amp; Exercices</h1>
     </div>
     <div class="tab-nav" id="tabNav"></div>
+    <span class="sync-pill" id="syncPill" title="Statut de synchronisation">⟳</span>
     <button class="reset-btn" onclick="resetProgress()">↺ Réinitialiser ma progression</button>
+  </div>
+
+  <div id="syncBanner" class="sync-banner">
+    <span id="syncBannerMsg">⚠️ Connexion au serveur impossible : ta progression n'est enregistrée que sur cet appareil pour l'instant.</span>
+    <button onclick="retrySync()">Réessayer</button>
   </div>
 
   <main>
@@ -332,32 +354,129 @@ function waLink(text, url){
   return "https://wa.me/?text=" + encodeURIComponent(text + " " + BASE_URL + "/" + url);
 }
 
-/* ==== Progression (localStorage) ==== */
-function getProgress(){
+/* ==== Progression (localStorage + sync serveur) ==== */
+let PROGRESS = (function(){
   try { return JSON.parse(localStorage.getItem('peip2_progress') || '{}'); } catch(e){ return {}; }
-}
-function isDone(id){ return !!getProgress()[id]; }
+})();
+let progressSha = null;
+let progressSaving = false;
+let progressSaveTimer = null;
+
+function getProgress(){ return PROGRESS; }
+function isDone(id){ return !!PROGRESS[id]; }
 function doneClass(id){ return isDone(id) ? ' done' : ''; }
+
 function onProgressToggle(id, el){
-  const p = getProgress();
-  if(el.checked) p[id] = true; else delete p[id];
-  localStorage.setItem('peip2_progress', JSON.stringify(p));
+  if(el.checked) PROGRESS[id] = true; else delete PROGRESS[id];
+  localStorage.setItem('peip2_progress', JSON.stringify(PROGRESS));
   const container = el.closest('.card') || el.closest('.extra-item-row') || el.closest('.list-row');
   if(container) container.classList.toggle('done', el.checked);
+  scheduleProgressSave();
 }
+
 function progressCheckbox(id){
   const checked = isDone(id) ? 'checked' : '';
   return `<label class="prog-check" onclick="event.stopPropagation()" title="Marquer comme fait">
-    <input type="checkbox" ${checked} onchange="onProgressToggle('${id}', this)">
+    <input type="checkbox" data-progress-id="${id}" ${checked} onchange="onProgressToggle('${id}', this)">
     <span class="prog-box"></span>
   </label>`;
 }
+
 function resetProgress(){
   if(confirm('Réinitialiser toute ta progression sur le hub ? Cette action est irréversible.')){
+    PROGRESS = {};
     localStorage.removeItem('peip2_progress');
+    scheduleProgressSave(true);
     location.reload();
   }
 }
+
+function setSyncPill(t){ const el = document.getElementById('syncPill'); if(el) el.textContent = t; }
+function showSyncBanner(msg){
+  const b = document.getElementById('syncBanner');
+  document.getElementById('syncBannerMsg').textContent = msg;
+  b.classList.add('show');
+}
+function hideSyncBanner(){ document.getElementById('syncBanner').classList.remove('show'); }
+
+function syncCheckboxesToProgress(){
+  document.querySelectorAll('[data-progress-id]').forEach(input => {
+    const id = input.dataset.progressId;
+    const shouldBeChecked = isDone(id);
+    if(input.checked !== shouldBeChecked){
+      input.checked = shouldBeChecked;
+      const container = input.closest('.card') || input.closest('.extra-item-row') || input.closest('.list-row');
+      if(container) container.classList.toggle('done', shouldBeChecked);
+    }
+  });
+}
+
+async function loadProgressFromServer(){
+  try {
+    const r = await fetch('/api/progress');
+    if(!r.ok) throw new Error('GET failed: ' + r.status);
+    const j = await r.json();
+    progressSha = j.sha;
+    // First-time migration safe merge: union of server + local, local wins on conflict.
+    const merged = Object.assign({}, j.data || {}, PROGRESS);
+    PROGRESS = merged;
+    localStorage.setItem('peip2_progress', JSON.stringify(PROGRESS));
+    syncCheckboxesToProgress();
+    setSyncPill('✓');
+    hideSyncBanner();
+    // Push the merged result back so the server has the union too.
+    scheduleProgressSave();
+  } catch(e){
+    setSyncPill('⚠ offline');
+    showSyncBanner("⚠️ Impossible de charger ta progression depuis le serveur (token/connexion). Ce que tu vois vient uniquement de cet appareil et peut être incomplet.");
+  }
+}
+
+function retrySync(){
+  hideSyncBanner();
+  setSyncPill('⟳');
+  loadProgressFromServer();
+}
+
+function scheduleProgressSave(immediate){
+  clearTimeout(progressSaveTimer);
+  if(immediate){ saveProgressToServer(); return; }
+  progressSaveTimer = setTimeout(saveProgressToServer, 1200);
+}
+
+async function saveProgressToServer(isRetry){
+  if(progressSaving) return;
+  progressSaving = true; setSyncPill('⟳');
+  try {
+    const r = await fetch('/api/progress', {
+      method:'PUT', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({data:PROGRESS, sha:progressSha})
+    });
+    if(r.status === 409 && !isRetry){
+      progressSaving = false;
+      const g = await fetch('/api/progress');
+      if(g.ok){
+        const j = await g.json();
+        progressSha = j.sha;
+        PROGRESS = Object.assign({}, j.data || {}, PROGRESS);
+        localStorage.setItem('peip2_progress', JSON.stringify(PROGRESS));
+        syncCheckboxesToProgress();
+        await saveProgressToServer(true);
+        return;
+      }
+      throw new Error('Conflict, refetch failed');
+    }
+    if(!r.ok) throw new Error('PUT failed: ' + r.status);
+    progressSha = (await r.json()).sha;
+    setSyncPill('✓');
+    hideSyncBanner();
+  } catch(e){
+    setSyncPill('⚠');
+    showSyncBanner("⚠️ La sauvegarde de ta progression vers le serveur a échoué : ce que tu viens de cocher n'est enregistré que sur cet appareil. Clique sur « Réessayer ».");
+  }
+  progressSaving = false;
+}
+
 
 function resPair(cls, icon, label, url, waText){
   return `<span class="res-pair">
@@ -692,6 +811,8 @@ tabNav.addEventListener("click", e => {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b===btn));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.dataset.panel===btn.dataset.tab));
 });
+
+loadProgressFromServer();
 </script>
 </body>
 </html>
