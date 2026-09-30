@@ -243,6 +243,12 @@ footer a{color:var(--gold-l);text-decoration:none}
       <div class="grid" id="verbesGrid"></div>
     </div>
 
+    <div class="tab-panel" data-panel="prononciation">
+      <div class="section-title">Prononciation</div>
+      <div class="section-sub">Fiches interactives avec audio, quiz et correction immédiate</div>
+      <div class="grid" id="pronoGrid"></div>
+    </div>
+
     <div class="tab-panel" data-panel="wh">
       <div class="section-title">WH Questions</div>
       <div class="section-sub">Cours + 10 exercices sur la structure interrogative</div>
@@ -307,6 +313,7 @@ const TABS = [
   {id:"grammaire", label:"Grammaire"},
   {id:"vocabulaire", label:"Vocabulaire"},
   {id:"verbes", label:"Verbes irr."},
+  {id:"prononciation", label:"Prononciation"},
   {id:"wh", label:"WH Questions"},
   {id:"g22", label:"WH — Mots soulignés"},
   {id:"vocabbase", label:"Vocab. de base"},
@@ -719,6 +726,15 @@ document.getElementById("vocabBaseGrid").innerHTML = `
     <div class="card-head"><span class="badge v">QUIZ</span><span class="card-title">Quiz de vocabulaire</span>${progressCheckbox('vocabbase-2')}</div>
     <div class="btn-row">
       ${resPair("cours", "▶", "Ouvrir", "vocabulaire-base/quiz_vocabulaire.html", "PEIP2 — Quiz de vocabulaire")}
+    </div>
+  </div>`;
+
+/* Prononciation */
+document.getElementById("pronoGrid").innerHTML = `
+  <div class="card${doneClass('prono-ed')}">
+    <div class="card-head"><span class="badge v">🔊</span><span class="card-title">Prononciation de -ed : /t/, /d/, /ɪd/</span>${progressCheckbox('prono-ed')}</div>
+    <div class="btn-row">
+      ${resPair("cours", "▶", "Ouvrir", "prononciation/ed.html", "PEIP2 : prononciation de -ed")}
     </div>
   </div>`;
 
