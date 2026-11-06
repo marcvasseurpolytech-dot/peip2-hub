@@ -1,6 +1,8 @@
 // api/progress.js — Vercel serverless proxy for GitHub repo progress.json
 const REPO = 'marcvasseurpolytech-dot/peip2-hub';
 const FILE = 'progress.json';
+// Stored on a dedicated branch so writes never trigger a Pages/Vercel production deploy.
+const BRANCH = 'data';
 const TOKEN = process.env.GITHUB_TOKEN;
 const BASE = 'https://api.github.com';
 
@@ -17,7 +19,7 @@ module.exports = async (req, res) => {
   };
 
   if (req.method === 'GET') {
-    const r = await fetch(`${BASE}/repos/${REPO}/contents/${FILE}`, { headers });
+    const r = await fetch(`${BASE}/repos/${REPO}/contents/${FILE}?ref=${BRANCH}`, { headers });
     const d = await r.json();
     if (!r.ok) return res.status(r.status).json({ error: d.message });
     const content = JSON.parse(Buffer.from(d.content, 'base64').toString('utf8'));
@@ -29,7 +31,7 @@ module.exports = async (req, res) => {
     const content = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
     const r = await fetch(`${BASE}/repos/${REPO}/contents/${FILE}`, {
       method: 'PUT', headers,
-      body: JSON.stringify({ message: 'Update progress.json', content, sha })
+      body: JSON.stringify({ message: 'Update progress.json', content, sha, branch: BRANCH })
     });
     const d = await r.json();
     if (!r.ok) return res.status(r.status).json({ error: d.message });

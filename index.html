@@ -426,6 +426,8 @@ function syncCheckboxesToProgress(){
   });
 }
 
+function sortedKeys(o){ return Object.keys(o).sort().map(k => [k, o[k]]); }
+
 async function loadProgressFromServer(){
   try {
     const r = await fetch('/api/progress');
@@ -439,8 +441,9 @@ async function loadProgressFromServer(){
     syncCheckboxesToProgress();
     setSyncPill('✓');
     hideSyncBanner();
-    // Push the merged result back so the server has the union too.
-    scheduleProgressSave();
+    // Push the merged result back only if it differs from the server copy
+    // (avoids a write on every page load).
+    if(JSON.stringify(sortedKeys(merged)) !== JSON.stringify(sortedKeys(j.data || {}))) scheduleProgressSave();
   } catch(e){
     setSyncPill('⚠ offline');
     showSyncBanner("⚠️ Impossible de charger ta progression depuis le serveur (token/connexion). Ce que tu vois vient uniquement de cet appareil et peut être incomplet.");
